@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caja Ágil - Control Total</title>
+    <style>
+        :root {
+            --bcp-blue: #002A8D;
+            --bcp-orange: #FF6A00;
+            --bg-light: #F4F6F9;
+            --card-bg: #FFFFFF;
+            --text-dark: #1A1A1A;
+            --text-muted: #666666;
+            --border-color: #E2E8F0;
+            --danger-color: #D32F2F;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            padding-bottom: 20px;
+            overflow-x: hidden;
+        }
+
+        /* CABECERA COMPACTA CON BORRADOR ESTÁTICO */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%);
+            color: white;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+
+        .header-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header-info h1 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.85;
+            margin-bottom: 2px;
+            font-weight: 600;
+        }
+
+        .header-info .main-total {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        /* BOTÓN LIMPIAR PEQUEÑO ARRIBA */
+        .btn-clear-compact {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-clear-compact:active {
+            background-color: #B71C1C;
+            transform: scale(0.95);
+        }
+
+        /* NAVEGACIÓN DESLIZABLE POR PESTAÑAS */
+        .tabs-container {
+            background: white;
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 62px;
+            z-index: 999;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 2px;
+            text-align: center;
+            background: none;
+            border: none;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--bcp-blue);
+            border-bottom-color: var(--bcp-orange);
+            background-color: rgba(0, 42, 141, 0.02);
+        }
+
+        /* CONTENEDOR DE VISTAS */
+        .view-content {
+            padding: 12px 15px;
+            max-width: 500px;
+            margin: 0 auto;
+            display: none;
+        }
+
+        .view-content.active {
+            display: block;
+        }
+
+        /* TARJETAS DE FILAS */
+        .item-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 12px 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            width: 80px;
+        }
+
+        .item-denomination {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--bcp-blue);
+        }
+
+        .item-subtotal {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* CONTROLES STEPPER */
+        .stepper-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-step {
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: #F8FAFC;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-qty {
+            width: 90px;
+            height: 50px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--bcp-blue);
+            background-color: #FAFAFA;
+        }
+
+        .input-qty:focus {
+            outline: none;
+            border-color: var(--bcp-orange);
+            background-color: white;
+        }
+
+        /* SECCIÓN DE FAJOS AJUSTADA PARA GALAXY S22 */
+        .block-input-section {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        .block-form {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .input-block-amount {
+            flex: 1 1 0%; /* Permite crecer pero previene que se desborde */
+            min-width: 0; /* Vital para evitar bugs de ancho en pantallas de móviles Samsung */
+            height: 60px;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0 15px;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--bcp-blue);
+            background-color: #FAFAFA;
+        }
+
+        .input-block-amount:focus {
+            outline: none;
+            border-color: var(--bcp-orange);
+            background-color: white;
+        }
+
+        .btn-add-block {
+            flex-shrink: 0; /* ESTO BLINDA EL BOTÓN: Impide que se aplaste o desaparezca */
+            white-space: nowrap; /* Evita que el texto salte a dos líneas */
+            background-color: var(--bcp-orange);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 0 20px;
+            font-size: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.1s, transform 0.1s;
+        }
+
+        .btn-add-block:active {
+            background-color: #E05D00;
+            transform: scale(0.96);
+        }
+
+        /* LISTA DE FAJOS */
+        .blocks-list-header {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin: 10px 0 8px 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .block-item {
+            background: white;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 4px solid var(--bcp-orange);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .block-value {
+            font-size: 18px;
+            font-weight: 700;
+            word-break: break-all;
+        }
+
+        .btn-delete-block {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 26px;
+            padding: 0 10px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* Ocultar flechitas de los inputs numéricos */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sticky-header">
+        <div class="header-info">
+            <h1>Gran Total</h1>
+            <div class="main-total" id="txtGranTotal">S/ 0.00</div>
+        </div>
+        <button class="btn-clear-compact" onclick="clearAllData()">🧹 Limpiar</button>
+    </div>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchTab('tab-billetes', this)">💵 Billetes</button>
+        <button class="tab-btn" onclick="switchTab('tab-monedas', this)">🪙 Monedas</button>
+        <button class="tab-btn" onclick="switchTab('tab-bloques', this)">📦 Fajos</button>
+    </div>
+
+    <div id="tab-billetes" class="view-content active">
+        <div id="containerBilletes"></div>
+    </div>
+
+    <div id="tab-monedas" class="view-content">
+        <div id="containerMonedas"></div>
+    </div>
+
+    <div id="tab-bloques" class="view-content">
+        <div class="block-input-section">
+            <div class="block-form">
+                <input type="text" id="inputMontoBloque" class="input-block-amount" inputmode="decimal" placeholder="0" oninput="formatCurrencyInput(this)" onkeydown="if(event.key==='Enter') addPrecountedBlock()">
+                <button class="btn-add-block" onclick="addPrecountedBlock()">+ Añadir</button>
+            </div>
+        </div>
+
+        <div class="blocks-list-header">
+            <span>Lista de Fajos</span>
+            <span id="txtSubtotalBloques">Subtotal: S/ 0.00</span>
+        </div>
+
+        <div id="listaBloques"></div>
+    </div>
+
+    <script>
+        const denominacionesBilletes = [200, 100, 50, 20, 10];
+        const denominacionesMonedas = [5.00, 2.00, 1.00, 0.50, 0.20, 0.10];
+
+        let cantidadesBilletes = {};
+        let cantidadesMonedas = {};
+        let bloquesPrecontados = [];
+
+        denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
+        denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
+
+        const formatter = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 });
+
+        // RENDERIZAR BILLETES
+        const containerBilletes = document.getElementById('containerBilletes');
+        denominacionesBilletes.forEach(denom => {
+            containerBilletes.innerHTML += `
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-denomination">S/ ${denom}</span>
+                        <span class="item-subtotal" id="sub-b-${denom}">S/ 0.00</span>
+                    </div>
+                    <div class="stepper-control">
+                        <button class="btn-step" onclick="changeQty('billete', ${denom}, -1)">-</button>
+                        <input type="number" class="input-qty" inputmode="numeric" id="input-b-${denom}" placeholder="0" oninput="updateQty('billete', ${denom}, this.value)">
+                        <button class="btn-step" onclick="changeQty('billete', ${denom}, 1)">+</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // RENDERIZAR MONEDAS
+        const containerMonedas = document.getElementById('containerMonedas');
+        denominacionesMonedas.forEach(denom => {
+            containerMonedas.innerHTML += `
+                <div class="item-card">
+                    <div class="item-info">
+                        <span class="item-denomination">S/ ${denom.toFixed(2)}</span>
+                        <span class="item-subtotal" id="sub-m-${denom}">S/ 0.00</span>
+                    </div>
+                    <div class="stepper-control">
+                        <button class="btn-step" onclick="changeQty('moneda', ${denom}, -1)">-</button>
+                        <input type="number" class="input-qty" inputmode="numeric" id="input-m-${denom}" placeholder="0" oninput="updateQty('moneda', ${denom}, this.value)">
+                        <button class="btn-step" onclick="changeQty('moneda', ${denom}, 1)">+</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // FUNCIONES DE PESTAÑAS
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // FUNCIONES DE CANTIDADES
+        function changeQty(type, denom, delta) {
+            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
+            let val = (parseInt(inputEl.value) || 0) + delta;
+            if (val < 0) val = 0;
+            inputEl.value = val === 0 ? '' : val;
+            updateQty(type, denom, val);
+        }
+
+        function updateQty(type, denom, value) {
+            let val = parseInt(value) || 0;
+            if (val < 0) val = 0;
+            if (type === 'billete') cantidadesBilletes[denom] = val;
+            else cantidadesMonedas[denom] = val;
+            calculateAll();
+        }
+
+        // FORMATO DE MILES EN TIEMPO REAL
+        function formatCurrencyInput(input) {
+            let cursorPosition = input.selectionStart;
+            let originalLength = input.value.length;
+            
+            let cleanValue = input.value.replace(/[^0-9.]/g, '');
+            
+            let parts = cleanValue.split('.');
+            if (parts.length > 2) {
+                cleanValue = parts[0] + '.' + parts.slice(1).join('');
+                parts = cleanValue.split('.');
+            }
+            
+            if (parts[0] !== '') {
+                parts[0] = parseInt(parts[0], 10).toLocaleString('en-US');
+            }
+            
+            let formatted = parts.join('.');
+            input.value = formatted;
+            
+            let newLength = input.value.length;
+            input.selectionStart = input.selectionEnd = cursorPosition + (newLength - originalLength);
+        }
+
+        // FUNCIONES DE FAJOS
+        function addPrecountedBlock() {
+            const inputEl = document.getElementById('inputMontoBloque');
+            const amt = parseFloat(inputEl.value.replace(/,/g, '')) || 0;
+            if (amt > 0) {
+                bloquesPrecontados.push(amt);
+                inputEl.value = '';
+                renderBlocks();
+                calculateAll();
+            }
+        }
+
+        function deleteBlock(index) {
+            bloquesPrecontados.splice(index, 1);
+            renderBlocks();
+            calculateAll();
+        }
+
+        function renderBlocks() {
+            const container = document.getElementById('listaBloques');
+            container.innerHTML = '';
+            for (let i = bloquesPrecontados.length - 1; i >= 0; i--) {
+                container.innerHTML += `
+                    <div class="block-item">
+                        <span class="block-value">Fajo #${i + 1}: &nbsp;&nbsp; ${formatter.format(bloquesPrecontados[i])}</span>
+                        <button class="btn-delete-block" onclick="deleteBlock(${i})">×</button>
+                    </div>
+                `;
+            }
+        }
+
+        // CÁLCULO CENTRAL CONECTADO
+        function calculateAll() {
+            let tBilletes = 0, tMonedas = 0, tFajos = 0;
+
+            denominacionesBilletes.forEach(d => {
+                const sub = d * cantidadesBilletes[d];
+                tBilletes += sub;
+                document.getElementById(`sub-b-${d}`).innerText = formatter.format(sub);
+            });
+
+            denominacionesMonedas.forEach(d => {
+                const sub = d * cantidadesMonedas[d];
+                tMonedas += sub;
+                document.getElementById(`sub-m-${d}`).innerText = formatter.format(sub);
+            });
+
+            bloquesPrecontados.forEach(b => tFajos += b);
+            document.getElementById('txtSubtotalBloques').innerText = `Subtotal: ${formatter.format(tFajos)}`;
+
+            document.getElementById('txtGranTotal').innerText = formatter.format(tBilletes + tMonedas + tFajos);
+        }
+
+        // BORRADOR ESTÁTICO
+        function clearAllData() {
+            if (confirm('¿Deseas limpiar todos los datos?')) {
+                denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
+                denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
+                bloquesPrecontados = [];
+                document.querySelectorAll('.input-qty').forEach(i => i.value = '');
+                document.getElementById('inputMontoBloque').value = '';
+                renderBlocks();
+                calculateAll();
+            }
+        }
+    </script>
+</body>
+</html>
