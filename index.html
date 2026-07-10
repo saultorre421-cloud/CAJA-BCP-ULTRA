@@ -420,22 +420,22 @@
         function formatCurrencyInput(input) {
             let cursorPosition = input.selectionStart;
             let originalLength = input.value.length;
-            
+
             let cleanValue = input.value.replace(/[^0-9.]/g, '');
-            
+
             let parts = cleanValue.split('.');
             if (parts.length > 2) {
                 cleanValue = parts[0] + '.' + parts.slice(1).join('');
                 parts = cleanValue.split('.');
             }
-            
+
             if (parts[0] !== '') {
                 parts[0] = parseInt(parts[0], 10).toLocaleString('en-US');
             }
-            
+
             let formatted = parts.join('.');
             input.value = formatted;
-            
+
             let newLength = input.value.length;
             input.selectionStart = input.selectionEnd = cursorPosition + (newLength - originalLength);
         }
@@ -493,17 +493,15 @@
             document.getElementById('txtGranTotal').innerText = formatter.format(tBilletes + tMonedas + tFajos);
         }
 
-        // BORRADOR ESTÁTICO
+        // BORRADOR ESTÁTICO (CORREGIDO)
         function clearAllData() {
-            if (confirm('¿Deseas limpiar todos los datos?')) {
-                denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
-                denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
-                bloquesPrecontados = [];
-                document.querySelectorAll('.input-qty').forEach(i => i.value = '');
-                document.getElementById('inputMontoBloque').value = '';
-                renderBlocks();
-                calculateAll();
-            }
+            denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
+            denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
+            bloquesPrecontados = [];
+            document.querySelectorAll('.input-qty').forEach(i => i.value = '');
+            document.getElementById('inputMontoBloque').value = '';
+            renderBlocks();
+            calculateAll();
         }
     </script>
 </body>
