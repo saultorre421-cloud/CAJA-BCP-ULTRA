@@ -27,7 +27,8 @@
         body {
             background-color: var(--bg-light);
             color: var(--text-dark);
-            padding-bottom: 20px;
+            /* Modificado: Amortiguador de teclado móvil */
+            padding-bottom: 120px; 
             overflow-x: hidden;
         }
 
@@ -48,34 +49,27 @@
         .header-info {
             display: flex;
             flex-direction: column;
-        }
-
-        .header-info h1 {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.85;
-            margin-bottom: 2px;
-            font-weight: 600;
+            align-items: flex-end; /* Alinea el total a la derecha */
         }
 
         .header-info .main-total {
-            font-size: 24px;
+            font-size: 36px; /* Aumentado para mayor visibilidad */
             font-weight: 800;
+            line-height: 1;
         }
 
-        /* BOTÓN LIMPIAR PEQUEÑO ARRIBA */
+        /* BOTÓN LIMPIAR CON MAYOR AMPLITUD */
         .btn-clear-compact {
             background-color: var(--danger-color);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 8px 14px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 12px 24px; /* Área de interacción más amplia */
+            font-size: 16px; /* Texto más grande */
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             cursor: pointer;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
@@ -95,6 +89,7 @@
             z-index: 999;
         }
 
+        /* Selector de pestañas limpio y marcado */
         .tab-btn {
             flex: 1;
             padding: 12px 2px;
@@ -105,13 +100,16 @@
             font-weight: 700;
             color: var(--text-muted);
             cursor: pointer;
-            border-bottom: 3px solid transparent;
+            border-bottom: 4px solid transparent;
+            transition: all 0.2s ease-in-out;
+            border-radius: 8px 8px 0 0;
         }
 
         .tab-btn.active {
             color: var(--bcp-blue);
-            border-bottom-color: var(--bcp-orange);
-            background-color: rgba(0, 42, 141, 0.02);
+            font-weight: 800;
+            background-color: rgba(0, 42, 141, 0.05);
+            border-bottom: 4px solid var(--bcp-orange);
         }
 
         /* CONTENEDOR DE VISTAS */
@@ -136,7 +134,33 @@
             align-items: center;
             justify-content: space-between;
             border: 1px solid var(--border-color);
+            /* Evita que se deformen al abrir teclado */
+            flex-shrink: 0; 
         }
+
+        /* =========================================
+           REDUCCIÓN ESTÉTICA SOLO PARA MONEDAS
+           ========================================= */
+        #tab-monedas .item-card {
+            padding: 8px 10px;
+            margin-bottom: 6px;
+        }
+
+        #tab-monedas .item-denomination {
+            font-size: 20px;
+        }
+
+        #tab-monedas .input-qty {
+            height: 42px;
+            font-size: 24px;
+        }
+
+        #tab-monedas .btn-step {
+            width: 38px;
+            height: 38px;
+            font-size: 20px;
+        }
+        /* ========================================= */
 
         .item-info {
             display: flex;
@@ -194,7 +218,7 @@
             background-color: white;
         }
 
-        /* SECCIÓN DE FAJOS AJUSTADA PARA GALAXY S22 */
+        /* SECCIÓN DE FAJOS */
         .block-input-section {
             background: white;
             padding: 15px;
@@ -212,8 +236,8 @@
         }
 
         .input-block-amount {
-            flex: 1 1 0%; /* Permite crecer pero previene que se desborde */
-            min-width: 0; /* Vital para evitar bugs de ancho en pantallas de móviles Samsung */
+            flex: 1 1 0%;
+            min-width: 0;
             height: 60px;
             border: 2px solid var(--border-color);
             border-radius: 10px;
@@ -231,8 +255,8 @@
         }
 
         .btn-add-block {
-            flex-shrink: 0; /* ESTO BLINDA EL BOTÓN: Impide que se aplaste o desaparezca */
-            white-space: nowrap; /* Evita que el texto salte a dos líneas */
+            flex-shrink: 0;
+            white-space: nowrap;
             background-color: var(--bcp-orange);
             color: white;
             border: none;
@@ -304,11 +328,10 @@
 <body>
 
     <div class="sticky-header">
+        <button class="btn-clear-compact" onclick="clearAllData()">🧹 Limpiar</button>
         <div class="header-info">
-            <h1>Gran Total</h1>
             <div class="main-total" id="txtGranTotal">S/ 0.00</div>
         </div>
-        <button class="btn-clear-compact" onclick="clearAllData()">🧹 Limpiar</button>
     </div>
 
     <div class="tabs-container">
@@ -493,7 +516,7 @@
             document.getElementById('txtGranTotal').innerText = formatter.format(tBilletes + tMonedas + tFajos);
         }
 
-        // BORRADOR ESTÁTICO (CORREGIDO)
+        // BORRADOR ESTÁTICO
         function clearAllData() {
             denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
             denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
