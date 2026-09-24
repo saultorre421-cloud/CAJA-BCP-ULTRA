@@ -2,9 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Caja Ágil - Control Total</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Sistema Ágil Integrado</title>
     <style>
+        /* =========================================
+           VARIABLES Y ESTILOS GLOBALES
+           ========================================= */
         :root {
             --bcp-blue: #002A8D;
             --bcp-orange: #FF6A00;
@@ -14,6 +17,7 @@
             --text-muted: #666666;
             --border-color: #E2E8F0;
             --danger-color: #D32F2F;
+            --app-bg: #f3f4f6;
         }
 
         * {
@@ -24,405 +28,650 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
-            background-color: var(--bg-light);
-            color: var(--text-dark);
-            /* Modificado: Amortiguador de teclado móvil */
-            padding-bottom: 120px; 
+        body { 
+            background-color: var(--app-bg); 
+            color: #0f172a;
+            padding-bottom: 25px; /* Reducido al eliminar la barra inferior */
             overflow-x: hidden;
         }
 
-        /* CABECERA COMPACTA CON BORRADOR ESTÁTICO */
-        .sticky-header {
-            position: sticky;
-            top: 0;
-            background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%);
-            color: white;
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            z-index: 1000;
-        }
-
-        .header-info {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end; /* Alinea el total a la derecha */
-        }
-
-        .header-info .main-total {
-            font-size: 36px; /* Aumentado para mayor visibilidad */
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        /* BOTÓN LIMPIAR CON MAYOR AMPLITUD */
-        .btn-clear-compact {
-            background-color: var(--danger-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 24px; /* Área de interacción más amplia */
-            font-size: 16px; /* Texto más grande */
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .btn-clear-compact:active {
-            background-color: #B71C1C;
-            transform: scale(0.95);
-        }
-
-        /* NAVEGACIÓN DESLIZABLE POR PESTAÑAS */
-        .tabs-container {
-            background: white;
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 62px;
-            z-index: 999;
-        }
-
-        /* Selector de pestañas limpio y marcado */
-        .tab-btn {
-            flex: 1;
-            padding: 12px 2px;
-            text-align: center;
-            background: none;
-            border: none;
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-bottom: 4px solid transparent;
-            transition: all 0.2s ease-in-out;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .tab-btn.active {
-            color: var(--bcp-blue);
-            font-weight: 800;
-            background-color: rgba(0, 42, 141, 0.05);
-            border-bottom: 4px solid var(--bcp-orange);
-        }
-
-        /* CONTENEDOR DE VISTAS */
-        .view-content {
-            padding: 12px 15px;
-            max-width: 500px;
-            margin: 0 auto;
+        /* =========================================
+           ESTRUCTURA DE APLICACIONES PRINCIPALES
+           ========================================= */
+        .main-app-container {
             display: none;
+            opacity: 0;
+            transition: opacity 0.25s ease-in-out;
+            width: 100%;
+            animation: fadeInScreen 0.3s forwards;
         }
 
-        .view-content.active {
+        .main-app-container.active-app {
             display: block;
         }
 
-        /* TARJETAS DE FILAS */
-        .item-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 12px 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid var(--border-color);
-            /* Evita que se deformen al abrir teclado */
-            flex-shrink: 0; 
+        @keyframes fadeInScreen {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* =========================================
-           AJUSTE EQUILIBRADO PARA MONEDAS
+           DIVISORES Y CÍRCULO INTERACTIVO DE NAVEGACIÓN
            ========================================= */
-        #tab-monedas .item-card {
-            padding: 10px 10px;
-            margin-bottom: 8px;
-        }
-
-        #tab-monedas .item-denomination {
-            font-size: 22px;
-        }
-
-        #tab-monedas .input-qty {
-            height: 46px;
-            font-size: 26px;
-        }
-
-        #tab-monedas .btn-step {
-            width: 42px;
-            height: 42px;
-            font-size: 22px;
-        }
-        /* ========================================= */
-
-        .item-info {
-            display: flex;
-            flex-direction: column;
-            width: 80px;
-        }
-
-        .item-denomination {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--bcp-blue);
-        }
-
-        .item-subtotal {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        /* CONTROLES STEPPER */
-        .stepper-control {
+        .header-left-controls {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 12px;
+            flex-shrink: 0; 
         }
 
-        .btn-step {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: #F8FAFC;
-            font-size: 24px;
-            font-weight: bold;
+        .header-divider {
+            width: 2px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            margin: 0 4px;
+        }
+
+        .profile-toggle {
+            width: 56px;
+            height: 56px;
+            background-color: var(--card-bg);
+            border-radius: 50%;
             display: flex;
-            align-items: center;
             justify-content: center;
-        }
-
-        .input-qty {
-            width: 90px;
-            height: 50px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--bcp-blue);
-            background-color: #FAFAFA;
-        }
-
-        .input-qty:focus {
-            outline: none;
-            border-color: var(--bcp-orange);
-            background-color: white;
-        }
-
-        /* SECCIÓN DE FAJOS */
-        .block-input-section {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border-color);
-            width: 100%;
-        }
-
-        .block-form {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            align-items: stretch;
-        }
-
-        .input-block-amount {
-            flex: 1 1 0%;
-            min-width: 0;
-            height: 60px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0 15px;
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--bcp-blue);
-            background-color: #FAFAFA;
-        }
-
-        .input-block-amount:focus {
-            outline: none;
-            border-color: var(--bcp-orange);
-            background-color: white;
-        }
-
-        .btn-add-block {
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+            border: 3px solid var(--bcp-orange);
+            touch-action: none;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            user-select: none;
             flex-shrink: 0;
-            white-space: nowrap;
-            background-color: var(--bcp-orange);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 0 20px;
-            font-size: 20px;
-            font-weight: 800;
             cursor: pointer;
+        }
+        .profile-toggle:active {
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-icon {
+            font-size: 28px;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        /* =========================================
+           CAJA PRINCIPAL
+           ========================================= */
+        .caja-wrapper {
+            padding: 10px;
+        }
+
+        .caja-header-row {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+
+        .btn-limpiar-top { 
+            flex: 1;
+            max-width: 75%; 
+            background-color: #10b981; 
+            color: white; 
+            height: 56px; /* Altura sincronizada con el círculo */
+            padding: 0 10px; 
+            font-size: 17px; 
+            font-weight: 800; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
             transition: background-color 0.1s, transform 0.1s;
         }
-
-        .btn-add-block:active {
-            background-color: #E05D00;
-            transform: scale(0.96);
+        .btn-limpiar-top:active { 
+            background-color: #059669; 
+            transform: scale(0.98); 
         }
 
-        /* LISTA DE FAJOS */
-        .blocks-list-header {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin: 10px 0 8px 5px;
-            display: flex;
-            justify-content: space-between;
+        .panel-total { 
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; 
+            border-radius: 8px; font-size: 22px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .panel-total span:nth-child(2) {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
         }
 
-        .block-item {
-            background: white;
-            padding: 12px 14px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-left: 4px solid var(--bcp-orange);
-            border-bottom: 1px solid var(--border-color);
+        .total-efectivo { background-color: #2563eb; color: white; } 
+        .total-recibo { background-color: #facc15; color: #000; } 
+
+        .caja { padding: 8px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #e5e7eb; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .contenedor-deslizable {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px;
+            scrollbar-width: none; -ms-overflow-style: none;
+            padding-bottom: 5px;
+        }
+        .contenedor-deslizable::-webkit-scrollbar { display: none; }
+        .pagina-deslizable { flex: 0 0 100%; scroll-snap-align: start; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .caja input { 
+            width: 100%; height: 50px; font-size: 34px; font-weight: 800; border: 2px solid #cbd5e1; 
+            border-radius: 6px; box-sizing: border-box; text-align: center; color: #0f172a; 
+            transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+        }
+        .caja input:focus { outline: none; border-color: var(--bcp-blue); background-color: #f8fafc; }
+        .caja input::placeholder { color: #94a3b8; font-size: 18px; font-weight: normal; }
+
+        .caja input.active-sync {
+            background-color: #E8EEF9; 
+            border: 2px dashed var(--bcp-blue); 
+            color: var(--bcp-blue);
         }
 
-        .block-value {
-            font-size: 18px;
-            font-weight: 700;
-            word-break: break-all;
+        .panel-resultado { padding: 15px 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 3px solid; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        .estado-esperando { background-color: #f3f4f6; border-color: #d1d5db; color: #6b7280; }
+        .estado-proceso { background-color: #f3e8ff; border-color: #9333ea; color: #7e22ce; }
+        .estado-cobrar { background-color: #ffedd5; border-color: #ea580c; color: #c2410c; }
+        .estado-vuelto { background-color: #e0f2fe; border-color: #0284c7; color: #0369a1; }
+        .estado-faltante { background-color: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+        .estado-exacto { background-color: #dcfce3; border-color: #16a34a; color: #15803d; }
+        
+        .monto-final { display: block; font-size: 48px; font-weight: 900; margin-top: 4px; line-height: 1; letter-spacing: -1px;}
+
+        /* =========================================
+           MULTIPLICADOR
+           ========================================= */
+        .multiplicador-wrapper {
+            background-color: var(--bg-light);
+            min-height: 100vh;
         }
 
-        .btn-delete-block {
-            background: none;
-            border: none;
-            color: var(--danger-color);
-            font-size: 26px;
-            padding: 0 10px;
-            cursor: pointer;
-            flex-shrink: 0;
+        .sticky-header {
+            position: sticky; top: 0; background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%); color: white;
+            padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15); z-index: 1000;
         }
 
-        /* Ocultar flechitas de los inputs numéricos */
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
+        .header-info { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-end; 
+            min-width: 0; 
+            flex: 1; 
+            margin-left: 10px;
         }
-        input[type=number] {
-            -moz-appearance: textfield;
+        
+        .main-total { 
+            font-size: clamp(32px, 9vw, 50px); 
+            font-weight: 900; 
+            line-height: 1; 
+            letter-spacing: -1px; 
+            white-space: nowrap; 
         }
+        
+        /* BOTÓN LIMPIAR MULTIPLICADOR (AMPLIADO A 56PX DE ALTO) */
+        .btn-clear-compact {
+            background-color: var(--danger-color); color: white; border: none; border-radius: 10px;
+            height: 56px; /* Altura exacta para simetría con el perfil */
+            padding: 0 20px; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            transition: transform 0.1s;
+        }
+        .btn-clear-compact:active { background-color: #B71C1C; transform: scale(0.96); }
+
+        .tabs-container-sub { background: white; display: flex; border-bottom: 1px solid var(--border-color); position: sticky; top: 80px; z-index: 999;}
+        
+        .sub-tab-btn {
+            flex: 1; padding: 12px 2px; text-align: center; background: none; border: none; font-size: 15px;
+            font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 4px solid transparent;
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+        .sub-tab-btn.active { color: var(--bcp-blue); font-weight: 800; background-color: rgba(0, 42, 141, 0.05); border-bottom: 4px solid var(--bcp-orange); }
+
+        .view-content { display: none; padding: 15px; max-width: 500px; margin: 0 auto; }
+        .view-content.active { display: block; animation: fadeInScreen 0.2s; }
+
+        .item-card {
+            background: var(--card-bg); border-radius: 10px; padding: 12px 10px; margin-bottom: 10px;
+            display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        #tab-monedas .item-card { padding: 10px 10px; margin-bottom: 8px; }
+        #tab-monedas .item-denomination { font-size: 28px; } 
+        #tab-monedas .input-qty { height: 46px; font-size: 32px; }
+        #tab-monedas .btn-step { width: 42px; height: 42px; font-size: 36px; padding-bottom: 4px; }
+
+        .item-info { 
+            display: flex; 
+            flex-direction: column; 
+            width: 130px; 
+            justify-content: center;
+            gap: 2px; 
+        }
+        .item-denomination { 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: var(--bcp-blue); 
+            line-height: 1; 
+            letter-spacing: -0.5px;
+        }
+        .item-subtotal { 
+            font-size: 20px; 
+            color: #16A34A; 
+            font-weight: 800; 
+            line-height: 1; 
+        }
+        
+        .stepper-control { display: flex; align-items: center; gap: 6px; }
+        
+        .btn-step {
+            width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border-color);
+            background-color: #F8FAFC; 
+            font-size: 36px; 
+            font-weight: 500; 
+            display: flex; align-items: center; justify-content: center;
+            line-height: 0; 
+            padding-bottom: 4px; 
+            cursor: pointer; color: var(--text-dark); transition: background 0.1s;
+        }
+        .btn-step:active { background-color: #E2E8F0; }
+        
+        .input-qty {
+            width: 90px; height: 50px; border: 2px solid var(--border-color); border-radius: 8px;
+            text-align: center; 
+            font-size: 36px; 
+            font-weight: 900; 
+            color: var(--bcp-blue); background-color: #FAFAFA;
+        }
+        .input-qty:focus { outline: none; border-color: var(--bcp-orange); background-color: white; }
+
+        .block-input-section { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .block-form { display: flex; gap: 8px; width: 100%; align-items: stretch; }
+        
+        .input-block-amount { 
+            flex: 1 1 0%; min-width: 0; height: 60px; border: 2px solid var(--border-color); 
+            border-radius: 10px; padding: 0 15px; 
+            font-size: 42px; 
+            font-weight: 900; 
+            color: var(--bcp-blue); background-color: #FAFAFA; 
+        }
+        .input-block-amount:focus { outline: none; border-color: var(--bcp-orange); background-color: white; }
+        .btn-add-block { flex-shrink: 0; background-color: var(--bcp-orange); color: white; border: none; border-radius: 10px; padding: 0 20px; font-size: 18px; font-weight: 800; cursor: pointer; transition: 0.1s; }
+        .btn-add-block:active { background-color: #E05D00; transform: scale(0.96); }
+        
+        .blocks-list-header { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 10px 0 8px 5px; display: flex; justify-content: space-between; }
+        
+        .block-item { background: white; padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid var(--bcp-orange); border-bottom: 1px solid var(--border-color); }
+        .block-value { font-size: 22px; font-weight: 800; } 
+        .btn-delete-block { background: none; border: none; color: var(--danger-color); font-size: 26px; padding: 0 10px; cursor: pointer; }
+
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
     </style>
 </head>
 <body>
 
-    <div class="sticky-header">
-        <button class="btn-clear-compact" onclick="clearAllData()">🧹 Limpiar</button>
-        <div class="header-info">
-            <div class="main-total" id="txtGranTotal">S/ 0.00</div>
-        </div>
-    </div>
+    <div id="app-caja" class="main-app-container active-app">
+        <div class="caja-wrapper">
+            <!-- CABECERA CAJA CON BLOQUEO DE TECLADO -->
+            <div class="caja-header-row">
+                <button class="btn-limpiar-top" onmousedown="gestionarLimpiarCaja(event)" ontouchstart="gestionarLimpiarCaja(event)">🧹 LIMPIAR CAJA</button>
+                <div class="profile-toggle" id="btn-toggle-caja" style="border-color: #10b981;">
+                    <span class="toggle-icon">💵</span>
+                </div>
+            </div>
 
-    <div class="tabs-container">
-        <button class="tab-btn active" onclick="switchTab('tab-billetes', this)">💵 Billetes</button>
-        <button class="tab-btn" onclick="switchTab('tab-monedas', this)">🪙 Monedas</button>
-        <button class="tab-btn" onclick="switchTab('tab-bloques', this)">📦 Fajos</button>
-    </div>
+            <div class="panel-total total-efectivo">
+                <span>EFECTIVO</span>
+                <span id="lblEfectivo">0.00</span>
+            </div>
+            
+            <div class="caja">
+                <div class="contenedor-deslizable" id="swipeEfectivo">
+                    <div class="pagina-deslizable">
+                        <div class="grid-2">
+                            <input type="text" id="b1" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="b2" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="pagina-deslizable">
+                        <div class="grid-2">
+                            <input type="text" id="b3" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="b4" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div id="tab-billetes" class="view-content active">
-        <div id="containerBilletes"></div>
-    </div>
+            <div class="panel-total total-recibo">
+                <span>RECIBO</span>
+                <span id="lblRecibo">0.00</span>
+            </div>
+            
+            <div class="caja">
+                <div class="contenedor-deslizable" id="swipeRecibo">
+                    <div class="pagina-deslizable">
+                        <div class="grid-2">
+                            <input type="text" id="p1" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="p2" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="p3" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="p4" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                        </div>
+                    </div>
+                    <div class="pagina-deslizable">
+                        <div class="grid-2">
+                            <input type="text" id="p5" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="p6" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="p7" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                            <input type="text" id="p8" inputmode="decimal" oninput="handleInput(this)" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <div id="tab-monedas" class="view-content">
-        <div id="containerMonedas"></div>
-    </div>
-
-    <div id="tab-bloques" class="view-content">
-        <div class="block-input-section">
-            <div class="block-form">
-                <input type="text" id="inputMontoBloque" class="input-block-amount" inputmode="decimal" placeholder="0" oninput="formatCurrencyInput(this)" onkeydown="if(event.key==='Enter') addPrecountedBlock()">
-                <button class="btn-add-block" onclick="addPrecountedBlock()">+ Añadir</button>
+            <div class="panel-resultado estado-esperando" id="panelFinal">
+                <span id="textoFinal" style="font-size: 16px; letter-spacing: 1px;">ESPERANDO...</span>
+                <span class="monto-final" id="montoFinal">0.00</span>
             </div>
         </div>
-
-        <div class="blocks-list-header">
-            <span>Lista de Fajos</span>
-            <span id="txtSubtotalBloques">Subtotal: S/ 0.00</span>
-        </div>
-
-        <div id="listaBloques"></div>
     </div>
 
+
+    <div id="app-multiplicador" class="main-app-container">
+        <div class="multiplicador-wrapper">
+            
+            <!-- CABECERA MULTIPLICADOR CON BLOQUEO DE TECLADO -->
+            <div class="sticky-header">
+                <div class="header-left-controls">
+                    <button class="btn-clear-compact" onmousedown="gestionarLimpiarMultiplicador(event)" ontouchstart="gestionarLimpiarMultiplicador(event)">
+                        <span>🧹</span> Limpiar
+                    </button>
+                    <div class="header-divider"></div>
+                    <div class="profile-toggle" id="btn-toggle-multi">
+                        <span class="toggle-icon">🛒</span>
+                    </div>
+                </div>
+                <div class="header-info">
+                    <div class="main-total" id="txtGranTotal">0.00</div>
+                </div>
+            </div>
+
+            <div class="tabs-container-sub">
+                <button class="sub-tab-btn active" onmousedown="gestionarPestanaMultiplicador(event, 'tab-billetes', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-billetes', this)">💵 Billetes</button>
+                <button class="sub-tab-btn" onmousedown="gestionarPestanaMultiplicador(event, 'tab-monedas', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-monedas', this)">🪙 Monedas</button>
+                <button class="sub-tab-btn" onmousedown="gestionarPestanaMultiplicador(event, 'tab-bloques', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-bloques', this)">📦 Fajos</button>
+            </div>
+
+            <div id="tab-billetes" class="view-content active">
+                <div id="containerBilletes"></div>
+            </div>
+            
+            <div id="tab-monedas" class="view-content">
+                <div id="containerMonedas"></div>
+            </div>
+            
+            <div id="tab-bloques" class="view-content">
+                <div class="block-input-section">
+                    <div class="block-form">
+                        <input type="text" id="inputMontoBloque" class="input-block-amount" inputmode="decimal" placeholder="Monto" oninput="formatCurrencyInput(this)" onkeydown="if(event.key==='Enter') addPrecountedBlock()">
+                        <button class="btn-add-block" onmousedown="gestionarAnadirFajo(event)" ontouchstart="gestionarAnadirFajo(event)">+ Añadir</button>
+                    </div>
+                </div>
+                <div class="blocks-list-header">
+                    <span>Lista de Fajos</span>
+                    <span id="txtSubtotalBloques" style="font-size: 16px; font-weight: 800; color: var(--bcp-blue);">Subtotal: 0.00</span>
+                </div>
+                <div id="listaBloques"></div>
+            </div>
+
+        </div>
+    </div>
+
+
     <script>
+        const formatoSoles = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        
+        // --- NAVEGACIÓN PRINCIPAL ACTUALIZADA (SIN BARRA INFERIOR) ---
+        function switchMainApp(appId) {
+            document.querySelectorAll('.main-app-container').forEach(screen => screen.classList.remove('active-app'));
+            document.getElementById(appId).classList.add('active-app');
+            window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+
+        // --- MANEJO DEL FOCO INMEDIATO (MANTIENE EL TECLADO VIVO) ---
+        function enfocarSiguienteInputVisible(containerId) {
+            let inputs = document.querySelectorAll(`#${containerId} input:not([readonly])`);
+            for (let i = 0; i < inputs.length; i++) {
+                if (inputs[i].value === '' || inputs[i].value === '0') {
+                    inputs[i].focus();
+                    return;
+                }
+            }
+            if(inputs.length > 0) inputs[0].focus();
+        }
+
+        // --- GESTORES CON "FOCUS LOCK" (Evitan que el teclado baje) ---
+        function gestionarLimpiarCaja(event) {
+            event.preventDefault(); 
+            limpiarCaja(); 
+            enfocarSiguienteInputVisible('app-caja'); 
+        }
+
+        function gestionarLimpiarMultiplicador(event) {
+            event.preventDefault(); 
+            clearAllData(); 
+            const tabActiva = document.querySelector('.sub-tab-btn.active');
+            if (tabActiva) {
+                let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : (tabActiva.innerText.includes('Monedas') ? 'tab-monedas' : 'tab-bloques');
+                enfocarSiguienteInputVisible(tabTarget);
+            }
+        }
+
+        function gestionarPestanaMultiplicador(event, tabId, element) {
+            event.preventDefault(); 
+            document.querySelectorAll('#app-multiplicador .view-content').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+            enfocarSiguienteInputVisible(tabId);
+        }
+
+        function gestionarStep(event, type, denom, delta) {
+            event.preventDefault(); 
+            changeQty(type, denom, delta);
+        }
+
+        function gestionarAnadirFajo(event) {
+            event.preventDefault();
+            addPrecountedBlock();
+            document.getElementById('inputMontoBloque').focus();
+        }
+
+        // --- GESTOS GLOBALES Y CÍRCULOS (SWIPE Y TOGGLE) ---
+        let startX = 0;
+        let startY = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            if(e.target.closest('.contenedor-deslizable')) return;
+            if(e.target.closest('.profile-toggle')) return; 
+            if(e.target.closest('.sub-tab-btn')) return; 
+            if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        }, {passive: true});
+
+        document.addEventListener('touchend', (e) => {
+            if(startX === 0) return;
+            let endX = e.changedTouches[0].clientX;
+            let endY = e.changedTouches[0].clientY;
+            let diffX = endX - startX;
+            let diffY = endY - startY;
+
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                const isTyping = document.activeElement && document.activeElement.tagName === 'INPUT';
+                let appCajaActiva = document.getElementById('app-caja').classList.contains('active-app');
+                
+                if (diffX < -60 && appCajaActiva) {
+                    switchMainApp('app-multiplicador');
+                    if (isTyping) enfocarSiguienteInputVisible('app-multiplicador');
+                } else if (diffX > 60 && !appCajaActiva) {
+                    switchMainApp('app-caja');
+                    if (isTyping) enfocarSiguienteInputVisible('app-caja');
+                }
+            }
+            startX = 0;
+            startY = 0;
+        }, {passive: true});
+
+        function setupProfileToggle(elementId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            const handleInteraccion = (e) => {
+                e.preventDefault(); 
+                const isTyping = document.activeElement && document.activeElement.tagName === 'INPUT';
+                
+                el.style.transform = "scale(0.85)";
+                setTimeout(() => { el.style.transform = "scale(1)"; }, 150);
+                
+                const isCajaActive = document.getElementById('app-caja').classList.contains('active-app');
+                if (isCajaActive) {
+                    switchMainApp('app-multiplicador');
+                    const tabActiva = document.querySelector('.sub-tab-btn.active');
+                    if (isTyping && tabActiva) {
+                        let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : (tabActiva.innerText.includes('Monedas') ? 'tab-monedas' : 'tab-bloques');
+                        enfocarSiguienteInputVisible(tabTarget);
+                    }
+                } else {
+                    switchMainApp('app-caja');
+                    if (isTyping) enfocarSiguienteInputVisible('app-caja');
+                }
+            };
+
+            el.addEventListener('mousedown', handleInteraccion, { passive: false });
+            el.addEventListener('touchstart', handleInteraccion, { passive: false });
+        }
+
+        setupProfileToggle('btn-toggle-caja');
+        setupProfileToggle('btn-toggle-multi');
+
+
+        // --- LÓGICA DE LA CAJA PRINCIPAL INTACTA ---
+        const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+
+        function formatInput(input) {
+            let original = input.value;
+            if (original === "") return;
+            let numerico = original.replace(/[^0-9.]/g, '');
+            let partes = numerico.split('.');
+            if (partes.length > 2) { numerico = partes[0] + '.' + partes.slice(1).join(''); partes = numerico.split('.'); }
+            if (partes[0].length > 0) {
+                let entero = parseInt(partes[0], 10);
+                partes[0] = isNaN(entero) ? "" : entero.toLocaleString('en-US');
+            }
+            if (partes[1] && partes[1].length > 2) {
+                partes[1] = partes[1].substring(0, 2);
+            }
+            input.value = partes.join('.');
+        }
+
+        function handleInput(input) { formatInput(input); calcularTodo(); }
+
+        function calcularTodo() {
+            var b1 = getVal('b1'); var b2 = getVal('b2'); var b3 = getVal('b3'); var b4 = getVal('b4');
+            var totalEfectivo = b1 + b2 + b3 + b4;
+            
+            var p1 = getVal('p1'); var p2 = getVal('p2'); var p3 = getVal('p3'); var p4 = getVal('p4'); 
+            var p5 = getVal('p5'); var p6 = getVal('p6'); var p7 = getVal('p7'); var p8 = getVal('p8');
+            var totalRecibo = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8;
+
+            document.getElementById('lblEfectivo').innerText = formatoSoles(totalEfectivo);
+            document.getElementById('lblRecibo').innerText = formatoSoles(totalRecibo);
+
+            var diferencia = totalEfectivo - totalRecibo;
+            var panel = document.getElementById('panelFinal');
+            var texto = document.getElementById('textoFinal');
+            var monto = document.getElementById('montoFinal');
+
+            if (totalRecibo === 0 && totalEfectivo === 0) {
+                panel.className = "panel-resultado estado-esperando";
+                texto.innerText = "ESPERANDO..."; monto.innerText = "0.00";
+            } else if (totalRecibo === 0 && totalEfectivo > 0) {
+                panel.className = "panel-resultado estado-proceso";
+                texto.innerText = "DEPÓSITO / EN PROCESO"; monto.innerText = formatoSoles(totalEfectivo);
+            } else if (totalRecibo > 0 && totalEfectivo === 0) {
+                panel.className = "panel-resultado estado-cobrar";
+                texto.innerText = "POR COBRAR"; monto.innerText = formatoSoles(totalRecibo);
+            } else {
+                if (diferencia < 0) {
+                    panel.className = "panel-resultado estado-faltante";
+                    texto.innerText = "FALTANTE"; monto.innerText = formatoSoles(Math.abs(diferencia));
+                } else if (diferencia === 0) {
+                    panel.className = "panel-resultado estado-exacto";
+                    texto.innerText = "PAGO EXACTO"; monto.innerText = formatoSoles(0);
+                } else {
+                    panel.className = "panel-resultado estado-vuelto";
+                    texto.innerText = "VUELTO A ENTREGAR"; monto.innerText = formatoSoles(diferencia);
+                }
+            }
+        }
+
+        function limpiarCaja() {
+            clearAllData(); 
+            document.querySelectorAll('#app-caja input').forEach(i => { i.value = ''; });
+            calcularTodo();
+        }
+
+        // --- LÓGICA DEL MULTIPLICADOR INTACTA ---
         const denominacionesBilletes = [200, 100, 50, 20, 10];
         const denominacionesMonedas = [5.00, 2.00, 1.00, 0.50, 0.20, 0.10];
-
-        let cantidadesBilletes = {};
-        let cantidadesMonedas = {};
-        let bloquesPrecontados = [];
-
+        let cantidadesBilletes = {}; let cantidadesMonedas = {}; let bloquesPrecontados = [];
         denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
         denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
-
         const formatter = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 });
 
-        // RENDERIZAR BILLETES
         const containerBilletes = document.getElementById('containerBilletes');
         denominacionesBilletes.forEach(denom => {
             containerBilletes.innerHTML += `
                 <div class="item-card">
                     <div class="item-info">
                         <span class="item-denomination">S/ ${denom}</span>
-                        <span class="item-subtotal" id="sub-b-${denom}">S/ 0.00</span>
+                        <span class="item-subtotal" id="sub-b-${denom}">0.00</span>
                     </div>
                     <div class="stepper-control">
-                        <button class="btn-step" onclick="changeQty('billete', ${denom}, -1)">-</button>
-                        <input type="number" class="input-qty" inputmode="numeric" id="input-b-${denom}" placeholder="0" oninput="updateQty('billete', ${denom}, this.value)">
-                        <button class="btn-step" onclick="changeQty('billete', ${denom}, 1)">+</button>
+                        <button class="btn-step" onmousedown="gestionarStep(event, 'billete', ${denom}, -1)" ontouchstart="gestionarStep(event, 'billete', ${denom}, -1)">-</button>
+                        <input type="number" class="input-qty" id="input-b-${denom}" placeholder="0" oninput="updateQty('billete', ${denom}, this.value)">
+                        <button class="btn-step" onmousedown="gestionarStep(event, 'billete', ${denom}, 1)" ontouchstart="gestionarStep(event, 'billete', ${denom}, 1)">+</button>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
 
-        // RENDERIZAR MONEDAS
         const containerMonedas = document.getElementById('containerMonedas');
         denominacionesMonedas.forEach(denom => {
             containerMonedas.innerHTML += `
                 <div class="item-card">
                     <div class="item-info">
                         <span class="item-denomination">S/ ${denom.toFixed(2)}</span>
-                        <span class="item-subtotal" id="sub-m-${denom}">S/ 0.00</span>
+                        <span class="item-subtotal" id="sub-m-${denom}">0.00</span>
                     </div>
                     <div class="stepper-control">
-                        <button class="btn-step" onclick="changeQty('moneda', ${denom}, -1)">-</button>
-                        <input type="number" class="input-qty" inputmode="numeric" id="input-m-${denom}" placeholder="0" oninput="updateQty('moneda', ${denom}, this.value)">
-                        <button class="btn-step" onclick="changeQty('moneda', ${denom}, 1)">+</button>
+                        <button class="btn-step" onmousedown="gestionarStep(event, 'moneda', ${denom}, -1)" ontouchstart="gestionarStep(event, 'moneda', ${denom}, -1)">-</button>
+                        <input type="number" class="input-qty" id="input-m-${denom}" placeholder="0" oninput="updateQty('moneda', ${denom}, this.value)">
+                        <button class="btn-step" onmousedown="gestionarStep(event, 'moneda', ${denom}, 1)" ontouchstart="gestionarStep(event, 'moneda', ${denom}, 1)">+</button>
                     </div>
-                </div>
-            `;
+                </div>`;
         });
-
-        // FUNCIONES DE PESTAÑAS
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // FUNCIONES DE CANTIDADES
+        
         function changeQty(type, denom, delta) {
             const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
             let val = (parseInt(inputEl.value) || 0) + delta;
@@ -436,95 +685,104 @@
             if (val < 0) val = 0;
             if (type === 'billete') cantidadesBilletes[denom] = val;
             else cantidadesMonedas[denom] = val;
-            calculateAll();
+            calculateAllCounter();
         }
 
-        // FORMATO DE MILES EN TIEMPO REAL
         function formatCurrencyInput(input) {
             let cursorPosition = input.selectionStart;
             let originalLength = input.value.length;
-
             let cleanValue = input.value.replace(/[^0-9.]/g, '');
-
             let parts = cleanValue.split('.');
-            if (parts.length > 2) {
-                cleanValue = parts[0] + '.' + parts.slice(1).join('');
-                parts = cleanValue.split('.');
-            }
-
-            if (parts[0] !== '') {
-                parts[0] = parseInt(parts[0], 10).toLocaleString('en-US');
-            }
-
-            let formatted = parts.join('.');
-            input.value = formatted;
-
+            if (parts.length > 2) { cleanValue = parts[0] + '.' + parts.slice(1).join(''); parts = cleanValue.split('.'); }
+            if (parts[0] !== '') { parts[0] = parseInt(parts[0], 10).toLocaleString('en-US'); }
+            input.value = parts.join('.');
             let newLength = input.value.length;
             input.selectionStart = input.selectionEnd = cursorPosition + (newLength - originalLength);
         }
 
-        // FUNCIONES DE FAJOS
         function addPrecountedBlock() {
             const inputEl = document.getElementById('inputMontoBloque');
             const amt = parseFloat(inputEl.value.replace(/,/g, '')) || 0;
             if (amt > 0) {
                 bloquesPrecontados.push(amt);
                 inputEl.value = '';
-                renderBlocks();
-                calculateAll();
+                renderBlocks(); calculateAllCounter();
             }
         }
 
         function deleteBlock(index) {
             bloquesPrecontados.splice(index, 1);
-            renderBlocks();
-            calculateAll();
+            renderBlocks(); calculateAllCounter();
         }
 
         function renderBlocks() {
             const container = document.getElementById('listaBloques');
             container.innerHTML = '';
             for (let i = bloquesPrecontados.length - 1; i >= 0; i--) {
-                container.innerHTML += `
-                    <div class="block-item">
-                        <span class="block-value">Fajo #${i + 1}: &nbsp;&nbsp; ${formatter.format(bloquesPrecontados[i])}</span>
-                        <button class="btn-delete-block" onclick="deleteBlock(${i})">×</button>
-                    </div>
-                `;
+                container.innerHTML += `<div class="block-item"><span class="block-value">Fajo #${i + 1}: &nbsp;&nbsp; ${formatter.format(bloquesPrecontados[i]).replace(/S\/\s*/, '')}</span><button class="btn-delete-block" onclick="deleteBlock(${i})">×</button></div>`;
             }
         }
 
-        // CÁLCULO CENTRAL CONECTADO
-        function calculateAll() {
-            let tBilletes = 0, tMonedas = 0, tFajos = 0;
-
-            denominacionesBilletes.forEach(d => {
-                const sub = d * cantidadesBilletes[d];
-                tBilletes += sub;
-                document.getElementById(`sub-b-${d}`).innerText = formatter.format(sub);
-            });
-
-            denominacionesMonedas.forEach(d => {
-                const sub = d * cantidadesMonedas[d];
-                tMonedas += sub;
-                document.getElementById(`sub-m-${d}`).innerText = formatter.format(sub);
-            });
-
-            bloquesPrecontados.forEach(b => tFajos += b);
-            document.getElementById('txtSubtotalBloques').innerText = `Subtotal: ${formatter.format(tFajos)}`;
-
-            document.getElementById('txtGranTotal').innerText = formatter.format(tBilletes + tMonedas + tFajos);
-        }
-
-        // BORRADOR ESTÁTICO
         function clearAllData() {
             denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
             denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
             bloquesPrecontados = [];
-            document.querySelectorAll('.input-qty').forEach(i => i.value = '');
+            document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
             document.getElementById('inputMontoBloque').value = '';
-            renderBlocks();
-            calculateAll();
+            renderBlocks(); calculateAllCounter();
+        }
+
+        let cuadroVinculado = null; 
+
+        function calculateAllCounter() {
+            let tBilletes = 0, tMonedas = 0, tFajos = 0;
+            denominacionesBilletes.forEach(d => { 
+                const sub = d * cantidadesBilletes[d]; tBilletes += sub; 
+                document.getElementById(`sub-b-${d}`).innerText = formatter.format(sub).replace(/S\/\s*/, ''); 
+            });
+            denominacionesMonedas.forEach(d => { 
+                const sub = d * cantidadesMonedas[d]; tMonedas += sub; 
+                document.getElementById(`sub-m-${d}`).innerText = formatter.format(sub).replace(/S\/\s*/, ''); 
+            });
+            bloquesPrecontados.forEach(b => tFajos += b);
+            
+            document.getElementById('txtSubtotalBloques').innerText = `Subtotal: ${formatter.format(tFajos).replace(/S\/\s*/, '')}`;
+
+            let granTotalNumerico = tBilletes + tMonedas + tFajos;
+            
+            let totalFormateado = formatter.format(granTotalNumerico);
+            let soloNumero = totalFormateado.replace(/S\/\s*/, '');
+            document.getElementById('txtGranTotal').innerHTML = soloNumero;
+
+            if(granTotalNumerico > 0) {
+                if (!cuadroVinculado) {
+                    const opciones = ['b1', 'b2', 'b3', 'b4'];
+                    for (let id of opciones) {
+                        let cajaFisica = document.getElementById(id);
+                        if (cajaFisica.value.trim() === '') {
+                            cuadroVinculado = id;
+                            break;
+                        }
+                    }
+                    if (!cuadroVinculado) cuadroVinculado = 'b4';
+                }
+
+                let targetInput = document.getElementById(cuadroVinculado);
+                targetInput.value = granTotalNumerico.toFixed(2);
+                formatInput(targetInput);
+                targetInput.classList.add('active-sync');
+                targetInput.readOnly = true;
+
+            } else {
+                if (cuadroVinculado) {
+                    let targetInput = document.getElementById(cuadroVinculado);
+                    targetInput.value = '';
+                    targetInput.classList.remove('active-sync');
+                    targetInput.readOnly = false;
+                    cuadroVinculado = null;
+                }
+            }
+            calcularTodo(); 
         }
     </script>
 </body>
