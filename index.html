@@ -84,7 +84,7 @@
             align-items: center;
             box-shadow: 0 4px 8px rgba(0,0,0,0.25);
             border: 3px solid var(--bcp-orange);
-            touch-action: none;
+            touch-action: manipulation;
             transition: transform 0.1s ease, box-shadow 0.1s ease;
             user-select: none;
             flex-shrink: 0;
@@ -131,6 +131,7 @@
             text-align: center;
             box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
             transition: background-color 0.1s, transform 0.1s;
+            touch-action: manipulation;
         }
         .btn-limpiar-top:active { 
             background-color: #059669; 
@@ -167,6 +168,7 @@
             color: #000; 
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.05s;
+            touch-action: manipulation;
         }
         .total-recibo:active { transform: scale(0.99); }
 
@@ -175,6 +177,7 @@
             color: #ffffff; 
             cursor: pointer;
             transition: background-color 0.2s ease, transform 0.05s;
+            touch-action: manipulation;
         }
         .total-retiro:active { transform: scale(0.99); }
 
@@ -257,6 +260,7 @@
             padding: 0 20px; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: transform 0.1s;
+            touch-action: manipulation;
         }
         .btn-clear-compact:active { background-color: #B71C1C; transform: scale(0.96); }
 
@@ -316,6 +320,7 @@
             line-height: 0; 
             padding-bottom: 4px; 
             cursor: pointer; color: var(--text-dark); transition: background 0.1s;
+            touch-action: manipulation;
         }
         .btn-step:active { background-color: #E2E8F0; }
         
@@ -336,9 +341,9 @@
 
     <div id="app-caja" class="main-app-container active-app">
         <div class="caja-wrapper">
-            <!-- CABECERA CAJA CON BOTÓN GUARDAR Y LIMPIAR -->
+            <!-- CABECERA CAJA -->
             <div class="caja-header-row">
-                <button class="btn-limpiar-top" id="btnGuardarLimpiar" onmousedown="gestionarGuardarYLimpiar(event)" ontouchstart="gestionarGuardarYLimpiar(event)">💾 GUARDAR Y LIMPIAR</button>
+                <button class="btn-limpiar-top" id="btnGuardarLimpiar" onclick="gestionarGuardarYLimpiar(event)">💾 GUARDAR Y LIMPIAR</button>
                 <div class="profile-toggle" id="btn-toggle-caja" style="border-color: #10b981;">
                     <span class="toggle-icon">💵</span>
                 </div>
@@ -368,7 +373,7 @@
             </div>
 
             <!-- PANEL SECUNDARIO INTERACTIVO (RECIBO / RETIRO) -->
-            <div class="panel-total total-recibo" id="panelModoSecundario" onmousedown="gestionarCambioModo(event)" ontouchstart="gestionarCambioModo(event)">
+            <div class="panel-total total-recibo" id="panelModoSecundario" onclick="gestionarCambioModo(event)">
                 <span id="lblTituloModo">RECIBO</span>
                 <span id="lblRecibo">0.00</span>
             </div>
@@ -408,7 +413,7 @@
             <!-- CABECERA MULTIPLICADOR -->
             <div class="sticky-header">
                 <div class="header-left-controls">
-                    <button class="btn-clear-compact" onmousedown="gestionarLimpiarMultiplicador(event)" ontouchstart="gestionarLimpiarMultiplicador(event)">
+                    <button class="btn-clear-compact" onclick="gestionarLimpiarMultiplicador(event)">
                         <span>🧹</span> Limpiar
                     </button>
                     <div class="header-divider"></div>
@@ -422,8 +427,8 @@
             </div>
 
             <div class="tabs-container-sub">
-                <button class="sub-tab-btn active" onmousedown="gestionarPestanaMultiplicador(event, 'tab-billetes', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-billetes', this)">💵 Billetes</button>
-                <button class="sub-tab-btn" onmousedown="gestionarPestanaMultiplicador(event, 'tab-monedas', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-monedas', this)">🪙 Monedas</button>
+                <button class="sub-tab-btn active" onclick="gestionarPestanaMultiplicador(event, 'tab-billetes', this)">💵 Billetes</button>
+                <button class="sub-tab-btn" onclick="gestionarPestanaMultiplicador(event, 'tab-monedas', this)">🪙 Monedas</button>
             </div>
 
             <div id="tab-billetes" class="view-content active">
@@ -447,7 +452,7 @@
         let datosRetiro = { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' };
 
         function gestionarCambioModo(event) {
-            event.preventDefault();
+            if (event) event.preventDefault();
             guardarValoresPanelSecundario();
 
             const panelSecundario = document.getElementById('panelModoSecundario');
@@ -548,7 +553,7 @@
         }
 
         function gestionarLimpiarMultiplicador(event) {
-            event.preventDefault(); 
+            if (event) event.preventDefault(); 
             clearAllData(); 
             const tabActiva = document.querySelector('.sub-tab-btn.active');
             if (tabActiva) {
@@ -558,7 +563,7 @@
         }
 
         function gestionarPestanaMultiplicador(event, tabId, element) {
-            event.preventDefault(); 
+            if (event) event.preventDefault(); 
             document.querySelectorAll('#app-multiplicador .view-content').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -567,7 +572,7 @@
         }
 
         function gestionarStep(event, type, denom, delta) {
-            event.preventDefault(); 
+            if (event) event.preventDefault(); 
             changeQty(type, denom, delta);
         }
 
@@ -632,15 +637,18 @@
                 }
             };
 
-            el.addEventListener('mousedown', handleInteraccion, { passive: false });
-            el.addEventListener('touchstart', handleInteraccion, { passive: false });
+            el.addEventListener('click', handleInteraccion);
         }
 
         setupProfileToggle('btn-toggle-caja');
         setupProfileToggle('btn-toggle-multi');
 
         // --- CÁLCULOS INTEGRADOS (MODO RECIBO VS RETIRO) ---
-        const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+        const getVal = (id) => {
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            return parseFloat(el.value.replace(/,/g, '')) || 0;
+        };
 
         function formatInput(input) {
             let original = input.value;
@@ -666,11 +674,11 @@
 
         function calcularTodo() {
             var b1 = getVal('b1'); var b2 = getVal('b2'); var b3 = getVal('b3'); var b4 = getVal('b4');
-            var totalSuperior = b1 + b2 + b3 + b4;
+            var totalSuperior = Math.round((b1 + b2 + b3 + b4) * 100) / 100;
             
             var p1 = getVal('p1'); var p2 = getVal('p2'); var p3 = getVal('p3'); var p4 = getVal('p4'); 
             var p5 = getVal('p5'); var p6 = getVal('p6'); var p7 = getVal('p7'); var p8 = getVal('p8');
-            var totalInferior = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8;
+            var totalInferior = Math.round((p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8) * 100) / 100;
 
             document.getElementById('lblEfectivo').innerText = formatoSoles(totalSuperior);
             document.getElementById('lblRecibo').innerText = formatoSoles(totalInferior);
@@ -680,7 +688,7 @@
             var monto = document.getElementById('montoFinal');
 
             if (modoSecundario === 'recibo') {
-                var diferencia = totalSuperior - totalInferior;
+                var diferencia = Math.round((totalSuperior - totalInferior) * 100) / 100;
 
                 if (totalInferior === 0 && totalSuperior === 0) {
                     panel.className = "panel-resultado estado-esperando";
@@ -714,7 +722,7 @@
                     panel.className = "panel-resultado estado-proceso";
                     texto.innerText = "MONTO POR RETIRAR"; monto.innerText = formatoSoles(totalSuperior);
                 } else {
-                    var difRetiro = totalSuperior - totalInferior;
+                    var difRetiro = Math.round((totalSuperior - totalInferior) * 100) / 100;
                     if (difRetiro === 0) {
                         panel.className = "panel-resultado estado-exacto";
                         texto.innerText = "RETIRO EXACTO"; monto.innerText = formatoSoles(0);
@@ -759,9 +767,9 @@
                         <span class="item-subtotal" id="sub-b-${denom}">0.00</span>
                     </div>
                     <div class="stepper-control">
-                        <button class="btn-step" onmousedown="gestionarStep(event, 'billete', ${denom}, -1)" ontouchstart="gestionarStep(event, 'billete', ${denom}, -1)">-</button>
+                        <button class="btn-step" onclick="gestionarStep(event, 'billete', ${denom}, -1)">-</button>
                         <input type="number" class="input-qty" id="input-b-${denom}" placeholder="0" oninput="updateQty('billete', ${denom}, this.value)">
-                        <button class="btn-step" onmousedown="gestionarStep(event, 'billete', ${denom}, 1)" ontouchstart="gestionarStep(event, 'billete', ${denom}, 1)">+</button>
+                        <button class="btn-step" onclick="gestionarStep(event, 'billete', ${denom}, 1)">+</button>
                     </div>
                 </div>`;
         });
@@ -775,9 +783,9 @@
                         <span class="item-subtotal" id="sub-m-${denom}">0.00</span>
                     </div>
                     <div class="stepper-control">
-                        <button class="btn-step" onmousedown="gestionarStep(event, 'moneda', ${denom}, -1)" ontouchstart="gestionarStep(event, 'moneda', ${denom}, -1)">-</button>
+                        <button class="btn-step" onclick="gestionarStep(event, 'moneda', ${denom}, -1)">-</button>
                         <input type="number" class="input-qty" id="input-m-${denom}" placeholder="0" oninput="updateQty('moneda', ${denom}, this.value)">
-                        <button class="btn-step" onmousedown="gestionarStep(event, 'moneda', ${denom}, 1)" ontouchstart="gestionarStep(event, 'moneda', ${denom}, 1)">+</button>
+                        <button class="btn-step" onclick="gestionarStep(event, 'moneda', ${denom}, 1)">+</button>
                     </div>
                 </div>`;
         });
@@ -818,7 +826,7 @@
                 document.getElementById(`sub-m-${d}`).innerText = formatter.format(sub).replace(/S\/\s*/, ''); 
             });
 
-            let granTotalNumerico = tBilletes + tMonedas;
+            let granTotalNumerico = Math.round((tBilletes + tMonedas) * 100) / 100;
             let totalFormateado = formatter.format(granTotalNumerico);
             let soloNumero = totalFormateado.replace(/S\/\s*/, '');
             document.getElementById('txtGranTotal').innerHTML = soloNumero;
@@ -876,37 +884,43 @@
 
         // --- CONEXIÓN DIRECTA CON GOOGLE SHEETS (CAJA ULTRA) ---
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZAgV-ufapX42MxntvE2yrnAFShqOAbiVR5Tlc1ooTfihg0cDoNT097gwKz-4Z43bFrw/exec";
+        let guardandoEnProgreso = false;
 
         async function gestionarGuardarYLimpiar(event) {
-            event.preventDefault();
+            if (event) event.preventDefault();
+
+            // Bloqueo estricto para evitar envíos dobles o duplicaciones
+            if (guardandoEnProgreso) return;
 
             const btn = document.getElementById('btnGuardarLimpiar');
             const textoPanel = document.getElementById('textoFinal').innerText;
             
+            // Consolidación de todos los cuadros de efectivo
             const b1 = getVal('b1'), b2 = getVal('b2'), b3 = getVal('b3'), b4 = getVal('b4');
-            const totalEfectivo = b1 + b2 + b3 + b4;
+            const totalEfectivo = Math.round((b1 + b2 + b3 + b4) * 100) / 100;
 
+            // Consolidación de todos los cuadros secundarios (recibos o retiros)
             const p1 = getVal('p1'), p2 = getVal('p2'), p3 = getVal('p3'), p4 = getVal('p4');
             const p5 = getVal('p5'), p6 = getVal('p6'), p7 = getVal('p7'), p8 = getVal('p8');
-            const totalSecundario = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8;
+            const totalSecundario = Math.round((p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8) * 100) / 100;
 
             let operacion = null;
 
-            // Regla 1: DEPÓSITO
+            // 1. REGLA: DEPÓSITO EN EFECTIVO (Suma total de cuadros de efectivo)
             if (modoSecundario === 'recibo' && totalEfectivo > 0 && totalSecundario === 0) {
                 operacion = {
                     detalle: "DEPÓSITO",
                     monto: totalEfectivo
                 };
             }
-            // Regla 2: PAGO DE SERVICIOS (Cuadrado exacto)
-            else if (modoSecundario === 'recibo' && totalSecundario > 0 && totalEfectivo === totalSecundario) {
+            // 2. REGLA: PAGO DE SERVICIOS (Hay recibos y el efectivo entregado cubre el total)
+            else if (modoSecundario === 'recibo' && totalSecundario > 0 && totalEfectivo >= totalSecundario) {
                 operacion = {
                     detalle: "PAGO SERVICIO",
-                    monto: totalSecundario
+                    monto: totalSecundario // Entra a caja exactamente el monto cobrado
                 };
             }
-            // Regla 3: RETIRO EN EFECTIVO (Solo desglose o verificado exacto)
+            // 3. REGLA: RETIRO EN EFECTIVO (Entrega consolidada)
             else if (modoSecundario === 'retiro') {
                 if (totalEfectivo === 0 && totalSecundario > 0) {
                     operacion = {
@@ -921,20 +935,22 @@
                 }
             }
 
-            // Si no hay datos, actúa como limpiador estándar
+            // Si la caja está vacía, limpia y enfoca
             if (totalEfectivo === 0 && totalSecundario === 0) {
                 limpiarCaja();
                 enfocarSiguienteInputVisible('app-caja');
                 return;
             }
 
-            // Alerta si la operación no está cuadrada
+            // Validación si falta dinero o retiro descuadrado
             if (!operacion) {
-                alert("⚠️ Operación no cuadrada: " + textoPanel);
+                alert("⚠️ Operación incompleta o no cuadrada: " + textoPanel);
                 return;
             }
 
-            // Preparación del payload contable
+            // Activar semáforo para bloquear nuevos envíos
+            guardandoEnProgreso = true;
+
             const ahora = new Date();
             const payload = {
                 fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
@@ -943,7 +959,6 @@
                 monto: operacion.monto
             };
 
-            // Feedback visual en el botón
             const textoOriginal = btn.innerHTML;
             btn.innerHTML = "⏳ GUARDANDO...";
             btn.style.pointerEvents = "none";
@@ -963,6 +978,7 @@
             } finally {
                 btn.innerHTML = textoOriginal;
                 btn.style.pointerEvents = "auto";
+                guardandoEnProgreso = false;
             }
         }
     </script>
