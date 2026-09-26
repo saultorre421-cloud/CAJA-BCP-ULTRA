@@ -336,7 +336,7 @@
 
     <div id="app-caja" class="main-app-container active-app">
         <div class="caja-wrapper">
-            <!-- CABECERA CAJA CON BOTÓN GUARDAR Y REGISTRAR -->
+            <!-- CABECERA CAJA CON BOTÓN GUARDAR Y LIMPIAR -->
             <div class="caja-header-row">
                 <button class="btn-limpiar-top" id="btnGuardarLimpiar" onmousedown="gestionarGuardarYLimpiar(event)" ontouchstart="gestionarGuardarYLimpiar(event)">💾 GUARDAR Y LIMPIAR</button>
                 <div class="profile-toggle" id="btn-toggle-caja" style="border-color: #10b981;">
@@ -875,7 +875,7 @@
         }
 
         // --- CONEXIÓN DIRECTA CON GOOGLE SHEETS (CAJA ULTRA) ---
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHifMXRiB48sdGllP4w5qTnPgKffO8dJSgAIU8Hic7ncpQ56k9TJccB-pfbxpxEHFj/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZAgV-ufapX42MxntvE2yrnAFShqOAbiVR5Tlc1ooTfihg0cDoNT097gwKz-4Z43bFrw/exec";
 
         async function gestionarGuardarYLimpiar(event) {
             event.preventDefault();
