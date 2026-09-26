@@ -336,9 +336,9 @@
 
     <div id="app-caja" class="main-app-container active-app">
         <div class="caja-wrapper">
-            <!-- CABECERA CAJA -->
+            <!-- CABECERA CAJA CON BOTÓN GUARDAR Y REGISTRAR -->
             <div class="caja-header-row">
-                <button class="btn-limpiar-top" onmousedown="gestionarLimpiarCaja(event)" ontouchstart="gestionarLimpiarCaja(event)">🧹 LIMPIAR CAJA</button>
+                <button class="btn-limpiar-top" id="btnGuardarLimpiar" onmousedown="gestionarGuardarYLimpiar(event)" ontouchstart="gestionarGuardarYLimpiar(event)">💾 GUARDAR Y LIMPIAR</button>
                 <div class="profile-toggle" id="btn-toggle-caja" style="border-color: #10b981;">
                     <span class="toggle-icon">💵</span>
                 </div>
@@ -545,12 +545,6 @@
                 }
             }
             if(inputs.length > 0) inputs[0].focus();
-        }
-
-        function gestionarLimpiarCaja(event) {
-            event.preventDefault(); 
-            limpiarCaja(); 
-            enfocarSiguienteInputVisible('app-caja'); 
         }
 
         function gestionarLimpiarMultiplicador(event) {
@@ -878,6 +872,98 @@
                 }
             }
             calcularTodo(); 
+        }
+
+        // --- CONEXIÓN DIRECTA CON GOOGLE SHEETS (CAJA ULTRA) ---
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHifMXRiB48sdGllP4w5qTnPgKffO8dJSgAIU8Hic7ncpQ56k9TJccB-pfbxpxEHFj/exec";
+
+        async function gestionarGuardarYLimpiar(event) {
+            event.preventDefault();
+
+            const btn = document.getElementById('btnGuardarLimpiar');
+            const textoPanel = document.getElementById('textoFinal').innerText;
+            
+            const b1 = getVal('b1'), b2 = getVal('b2'), b3 = getVal('b3'), b4 = getVal('b4');
+            const totalEfectivo = b1 + b2 + b3 + b4;
+
+            const p1 = getVal('p1'), p2 = getVal('p2'), p3 = getVal('p3'), p4 = getVal('p4');
+            const p5 = getVal('p5'), p6 = getVal('p6'), p7 = getVal('p7'), p8 = getVal('p8');
+            const totalSecundario = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8;
+
+            let operacion = null;
+
+            // Regla 1: DEPÓSITO
+            if (modoSecundario === 'recibo' && totalEfectivo > 0 && totalSecundario === 0) {
+                operacion = {
+                    detalle: "DEPÓSITO",
+                    monto: totalEfectivo
+                };
+            }
+            // Regla 2: PAGO DE SERVICIOS (Cuadrado exacto)
+            else if (modoSecundario === 'recibo' && totalSecundario > 0 && totalEfectivo === totalSecundario) {
+                operacion = {
+                    detalle: "PAGO SERVICIO",
+                    monto: totalSecundario
+                };
+            }
+            // Regla 3: RETIRO EN EFECTIVO (Solo desglose o verificado exacto)
+            else if (modoSecundario === 'retiro') {
+                if (totalEfectivo === 0 && totalSecundario > 0) {
+                    operacion = {
+                        detalle: "RETIRO",
+                        monto: -totalSecundario
+                    };
+                } else if (totalEfectivo > 0 && totalSecundario === totalEfectivo) {
+                    operacion = {
+                        detalle: "RETIRO",
+                        monto: -totalSecundario
+                    };
+                }
+            }
+
+            // Si no hay datos, actúa como limpiador estándar
+            if (totalEfectivo === 0 && totalSecundario === 0) {
+                limpiarCaja();
+                enfocarSiguienteInputVisible('app-caja');
+                return;
+            }
+
+            // Alerta si la operación no está cuadrada
+            if (!operacion) {
+                alert("⚠️ Operación no cuadrada: " + textoPanel);
+                return;
+            }
+
+            // Preparación del payload contable
+            const ahora = new Date();
+            const payload = {
+                fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                hora: ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                detalle: operacion.detalle,
+                monto: operacion.monto
+            };
+
+            // Feedback visual en el botón
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = "⏳ GUARDANDO...";
+            btn.style.pointerEvents = "none";
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                limpiarCaja();
+                enfocarSiguienteInputVisible('app-caja');
+            } catch (error) {
+                alert("Error de conexión al registrar en Google Sheets.");
+            } finally {
+                btn.innerHTML = textoOriginal;
+                btn.style.pointerEvents = "auto";
+            }
         }
     </script>
 </body>
