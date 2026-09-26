@@ -18,6 +18,7 @@
             --border-color: #E2E8F0;
             --danger-color: #D32F2F;
             --app-bg: #f3f4f6;
+            --retiro-accent: #E11D48;
         }
 
         * {
@@ -31,7 +32,7 @@
         body { 
             background-color: var(--app-bg); 
             color: #0f172a;
-            padding-bottom: 25px; /* Reducido al eliminar la barra inferior */
+            padding-bottom: 25px;
             overflow-x: hidden;
         }
 
@@ -56,7 +57,7 @@
         }
 
         /* =========================================
-           DIVISORES Y CÍRCULO INTERACTIVO DE NAVEGACIÓN
+           DIVISORES Y BOTONES DE NAVEGACIÓN
            ========================================= */
         .header-left-controls {
             display: flex;
@@ -119,7 +120,7 @@
             max-width: 75%; 
             background-color: #10b981; 
             color: white; 
-            height: 56px; /* Altura sincronizada con el círculo */
+            height: 56px; 
             padding: 0 10px; 
             font-size: 17px; 
             font-weight: 800; 
@@ -140,6 +141,7 @@
             display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; 
             border-radius: 8px; font-size: 22px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            user-select: none;
         }
         
         .panel-total span:nth-child(2) {
@@ -148,8 +150,33 @@
             letter-spacing: -0.5px;
         }
 
-        .total-efectivo { background-color: #2563eb; color: white; } 
-        .total-recibo { background-color: #facc15; color: #000; } 
+        .total-efectivo { 
+            background-color: #2563eb; 
+            color: white; 
+            transition: background-color 0.2s;
+        } 
+        
+        .total-meta-retiro {
+            background-color: #0284c7;
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        .total-recibo { 
+            background-color: #facc15; 
+            color: #000; 
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.05s;
+        }
+        .total-recibo:active { transform: scale(0.99); }
+
+        .total-retiro { 
+            background-color: var(--retiro-accent); 
+            color: #ffffff; 
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.05s;
+        }
+        .total-retiro:active { transform: scale(0.99); }
 
         .caja { padding: 8px; border-radius: 8px; margin-bottom: 15px; border: 2px solid #e5e7eb; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
@@ -170,10 +197,16 @@
         .caja input:focus { outline: none; border-color: var(--bcp-blue); background-color: #f8fafc; }
         .caja input::placeholder { color: #94a3b8; font-size: 18px; font-weight: normal; }
 
+        /* MARCAS DE SINCRONIZACIÓN PERSISTENTES */
         .caja input.active-sync {
-            background-color: #E8EEF9; 
-            border: 2px dashed var(--bcp-blue); 
-            color: var(--bcp-blue);
+            background-color: #E8EEF9 !important; 
+            border: 2px dashed var(--bcp-blue) !important; 
+            color: var(--bcp-blue) !important;
+        }
+        .caja input.active-sync-retiro {
+            background-color: #FFE4E6 !important; 
+            border: 2px dashed var(--retiro-accent) !important; 
+            color: var(--retiro-accent) !important;
         }
 
         .panel-resultado { padding: 15px 12px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 10px; border: 3px solid; transition: all 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
@@ -183,6 +216,7 @@
         .estado-vuelto { background-color: #e0f2fe; border-color: #0284c7; color: #0369a1; }
         .estado-faltante { background-color: #fee2e2; border-color: #dc2626; color: #b91c1c; }
         .estado-exacto { background-color: #dcfce3; border-color: #16a34a; color: #15803d; }
+        .estado-retiro { background-color: #FFF1F2; border-color: var(--retiro-accent); color: #9F1239; }
         
         .monto-final { display: block; font-size: 48px; font-weight: 900; margin-top: 4px; line-height: 1; letter-spacing: -1px;}
 
@@ -217,10 +251,9 @@
             white-space: nowrap; 
         }
         
-        /* BOTÓN LIMPIAR MULTIPLICADOR (AMPLIADO A 56PX DE ALTO) */
         .btn-clear-compact {
             background-color: var(--danger-color); color: white; border: none; border-radius: 10px;
-            height: 56px; /* Altura exacta para simetría con el perfil */
+            height: 56px; 
             padding: 0 20px; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
             display: flex; align-items: center; justify-content: center; gap: 8px;
             transition: transform 0.1s;
@@ -230,7 +263,7 @@
         .tabs-container-sub { background: white; display: flex; border-bottom: 1px solid var(--border-color); position: sticky; top: 80px; z-index: 999;}
         
         .sub-tab-btn {
-            flex: 1; padding: 12px 2px; text-align: center; background: none; border: none; font-size: 15px;
+            flex: 1; padding: 12px 2px; text-align: center; background: none; border: none; font-size: 16px;
             font-weight: 700; color: var(--text-muted); cursor: pointer; border-bottom: 4px solid transparent;
             transition: all 0.2s ease;
             touch-action: manipulation;
@@ -295,26 +328,6 @@
         }
         .input-qty:focus { outline: none; border-color: var(--bcp-orange); background-color: white; }
 
-        .block-input-section { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); width: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .block-form { display: flex; gap: 8px; width: 100%; align-items: stretch; }
-        
-        .input-block-amount { 
-            flex: 1 1 0%; min-width: 0; height: 60px; border: 2px solid var(--border-color); 
-            border-radius: 10px; padding: 0 15px; 
-            font-size: 42px; 
-            font-weight: 900; 
-            color: var(--bcp-blue); background-color: #FAFAFA; 
-        }
-        .input-block-amount:focus { outline: none; border-color: var(--bcp-orange); background-color: white; }
-        .btn-add-block { flex-shrink: 0; background-color: var(--bcp-orange); color: white; border: none; border-radius: 10px; padding: 0 20px; font-size: 18px; font-weight: 800; cursor: pointer; transition: 0.1s; }
-        .btn-add-block:active { background-color: #E05D00; transform: scale(0.96); }
-        
-        .blocks-list-header { font-size: 14px; font-weight: 700; color: var(--text-muted); margin: 10px 0 8px 5px; display: flex; justify-content: space-between; }
-        
-        .block-item { background: white; padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid var(--bcp-orange); border-bottom: 1px solid var(--border-color); }
-        .block-value { font-size: 22px; font-weight: 800; } 
-        .btn-delete-block { background: none; border: none; color: var(--danger-color); font-size: 26px; padding: 0 10px; cursor: pointer; }
-
         input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
     </style>
@@ -323,7 +336,7 @@
 
     <div id="app-caja" class="main-app-container active-app">
         <div class="caja-wrapper">
-            <!-- CABECERA CAJA CON BLOQUEO DE TECLADO -->
+            <!-- CABECERA CAJA -->
             <div class="caja-header-row">
                 <button class="btn-limpiar-top" onmousedown="gestionarLimpiarCaja(event)" ontouchstart="gestionarLimpiarCaja(event)">🧹 LIMPIAR CAJA</button>
                 <div class="profile-toggle" id="btn-toggle-caja" style="border-color: #10b981;">
@@ -331,8 +344,9 @@
                 </div>
             </div>
 
-            <div class="panel-total total-efectivo">
-                <span>EFECTIVO</span>
+            <!-- PANEL SUPERIOR: EFECTIVO / MONTO POR RETIRAR -->
+            <div class="panel-total total-efectivo" id="panelSuperior">
+                <span id="lblTituloSuperior">EFECTIVO</span>
                 <span id="lblEfectivo">0.00</span>
             </div>
             
@@ -353,8 +367,9 @@
                 </div>
             </div>
 
-            <div class="panel-total total-recibo">
-                <span>RECIBO</span>
+            <!-- PANEL SECUNDARIO INTERACTIVO (RECIBO / RETIRO) -->
+            <div class="panel-total total-recibo" id="panelModoSecundario" onmousedown="gestionarCambioModo(event)" ontouchstart="gestionarCambioModo(event)">
+                <span id="lblTituloModo">RECIBO</span>
                 <span id="lblRecibo">0.00</span>
             </div>
             
@@ -390,7 +405,7 @@
     <div id="app-multiplicador" class="main-app-container">
         <div class="multiplicador-wrapper">
             
-            <!-- CABECERA MULTIPLICADOR CON BLOQUEO DE TECLADO -->
+            <!-- CABECERA MULTIPLICADOR -->
             <div class="sticky-header">
                 <div class="header-left-controls">
                     <button class="btn-clear-compact" onmousedown="gestionarLimpiarMultiplicador(event)" ontouchstart="gestionarLimpiarMultiplicador(event)">
@@ -409,7 +424,6 @@
             <div class="tabs-container-sub">
                 <button class="sub-tab-btn active" onmousedown="gestionarPestanaMultiplicador(event, 'tab-billetes', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-billetes', this)">💵 Billetes</button>
                 <button class="sub-tab-btn" onmousedown="gestionarPestanaMultiplicador(event, 'tab-monedas', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-monedas', this)">🪙 Monedas</button>
-                <button class="sub-tab-btn" onmousedown="gestionarPestanaMultiplicador(event, 'tab-bloques', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-bloques', this)">📦 Fajos</button>
             </div>
 
             <div id="tab-billetes" class="view-content active">
@@ -419,20 +433,6 @@
             <div id="tab-monedas" class="view-content">
                 <div id="containerMonedas"></div>
             </div>
-            
-            <div id="tab-bloques" class="view-content">
-                <div class="block-input-section">
-                    <div class="block-form">
-                        <input type="text" id="inputMontoBloque" class="input-block-amount" inputmode="decimal" placeholder="Monto" oninput="formatCurrencyInput(this)" onkeydown="if(event.key==='Enter') addPrecountedBlock()">
-                        <button class="btn-add-block" onmousedown="gestionarAnadirFajo(event)" ontouchstart="gestionarAnadirFajo(event)">+ Añadir</button>
-                    </div>
-                </div>
-                <div class="blocks-list-header">
-                    <span>Lista de Fajos</span>
-                    <span id="txtSubtotalBloques" style="font-size: 16px; font-weight: 800; color: var(--bcp-blue);">Subtotal: 0.00</span>
-                </div>
-                <div id="listaBloques"></div>
-            </div>
 
         </div>
     </div>
@@ -441,16 +441,103 @@
     <script>
         const formatoSoles = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         
-        // --- NAVEGACIÓN PRINCIPAL ACTUALIZADA (SIN BARRA INFERIOR) ---
+        // --- CONTROL DE MODO DUAL (RECIBO / RETIRO) E INDEPENDENCIA DE DATOS ---
+        let modoSecundario = 'recibo'; // 'recibo' o 'retiro'
+        let datosRecibo = { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' };
+        let datosRetiro = { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' };
+
+        function gestionarCambioModo(event) {
+            event.preventDefault();
+            guardarValoresPanelSecundario();
+
+            const panelSecundario = document.getElementById('panelModoSecundario');
+            const tituloSecundario = document.getElementById('lblTituloModo');
+            const panelSuperior = document.getElementById('panelSuperior');
+            const tituloSuperior = document.getElementById('lblTituloSuperior');
+
+            if (modoSecundario === 'recibo') {
+                modoSecundario = 'retiro';
+                panelSecundario.className = 'panel-total total-retiro';
+                tituloSecundario.innerText = 'RETIRO';
+
+                panelSuperior.className = 'panel-total total-meta-retiro';
+                tituloSuperior.innerText = 'MONTO POR RETIRAR';
+            } else {
+                modoSecundario = 'recibo';
+                panelSecundario.className = 'panel-total total-recibo';
+                tituloSecundario.innerText = 'RECIBO';
+
+                panelSuperior.className = 'panel-total total-efectivo';
+                tituloSuperior.innerText = 'EFECTIVO';
+            }
+
+            restaurarValoresPanelSecundario();
+            reaplicarEstiloSincronizacion();
+            calcularTodo();
+            enfocarSiguienteInputVisible('app-caja');
+        }
+
+        function guardarValoresPanelSecundario() {
+            const destino = (modoSecundario === 'recibo') ? datosRecibo : datosRetiro;
+            for (let i = 1; i <= 8; i++) {
+                destino['p' + i] = document.getElementById('p' + i).value;
+            }
+        }
+
+        function restaurarValoresPanelSecundario() {
+            const origen = (modoSecundario === 'recibo') ? datosRecibo : datosRetiro;
+            for (let i = 1; i <= 8; i++) {
+                let el = document.getElementById('p' + i);
+                el.value = origen['p' + i] || '';
+                formatInput(el);
+            }
+        }
+
+        // --- GESTIÓN PERSISTENTE DE SELECCIÓN Y MARCA DE MULTIPLICADOR ---
+        function reaplicarEstiloSincronizacion() {
+            document.querySelectorAll('#app-caja input').forEach(input => {
+                input.classList.remove('active-sync', 'active-sync-retiro');
+                input.readOnly = false;
+            });
+
+            if (cuadroVinculado) {
+                const el = document.getElementById(cuadroVinculado);
+                if (el) {
+                    const esSecundario = cuadroVinculado.startsWith('p');
+                    if (esSecundario && modoSecundario === 'recibo') {
+                        return;
+                    }
+
+                    if (cuadroVinculado.startsWith('p')) {
+                        el.classList.add('active-sync-retiro');
+                    } else {
+                        el.classList.add('active-sync');
+                    }
+                    el.readOnly = true;
+                }
+            }
+        }
+
+        // --- NAVEGACIÓN PRINCIPAL ---
         function switchMainApp(appId) {
             document.querySelectorAll('.main-app-container').forEach(screen => screen.classList.remove('active-app'));
             document.getElementById(appId).classList.add('active-app');
             window.scrollTo({ top: 0, behavior: 'instant' });
+
+            if (appId === 'app-caja') {
+                reaplicarEstiloSincronizacion();
+            }
         }
 
-        // --- MANEJO DEL FOCO INMEDIATO (MANTIENE EL TECLADO VIVO) ---
+        // --- MANEJO DEL FOCO Y TECLADO VIVO ---
         function enfocarSiguienteInputVisible(containerId) {
-            let inputs = document.querySelectorAll(`#${containerId} input:not([readonly])`);
+            let selector = `#${containerId} input:not([readonly])`;
+
+            if (containerId === 'app-caja' && modoSecundario === 'retiro') {
+                selector = `#swipeRecibo input:not([readonly])`;
+            }
+
+            let inputs = document.querySelectorAll(selector);
             for (let i = 0; i < inputs.length; i++) {
                 if (inputs[i].value === '' || inputs[i].value === '0') {
                     inputs[i].focus();
@@ -460,7 +547,6 @@
             if(inputs.length > 0) inputs[0].focus();
         }
 
-        // --- GESTORES CON "FOCUS LOCK" (Evitan que el teclado baje) ---
         function gestionarLimpiarCaja(event) {
             event.preventDefault(); 
             limpiarCaja(); 
@@ -472,7 +558,7 @@
             clearAllData(); 
             const tabActiva = document.querySelector('.sub-tab-btn.active');
             if (tabActiva) {
-                let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : (tabActiva.innerText.includes('Monedas') ? 'tab-monedas' : 'tab-bloques');
+                let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : 'tab-monedas';
                 enfocarSiguienteInputVisible(tabTarget);
             }
         }
@@ -491,13 +577,7 @@
             changeQty(type, denom, delta);
         }
 
-        function gestionarAnadirFajo(event) {
-            event.preventDefault();
-            addPrecountedBlock();
-            document.getElementById('inputMontoBloque').focus();
-        }
-
-        // --- GESTOS GLOBALES Y CÍRCULOS (SWIPE Y TOGGLE) ---
+        // --- GESTOS Y BOTONES TOGGLE ---
         let startX = 0;
         let startY = 0;
 
@@ -549,7 +629,7 @@
                     switchMainApp('app-multiplicador');
                     const tabActiva = document.querySelector('.sub-tab-btn.active');
                     if (isTyping && tabActiva) {
-                        let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : (tabActiva.innerText.includes('Monedas') ? 'tab-monedas' : 'tab-bloques');
+                        let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : 'tab-monedas';
                         enfocarSiguienteInputVisible(tabTarget);
                     }
                 } else {
@@ -565,8 +645,7 @@
         setupProfileToggle('btn-toggle-caja');
         setupProfileToggle('btn-toggle-multi');
 
-
-        // --- LÓGICA DE LA CAJA PRINCIPAL INTACTA ---
+        // --- CÁLCULOS INTEGRADOS (MODO RECIBO VS RETIRO) ---
         const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
 
         function formatInput(input) {
@@ -585,57 +664,94 @@
             input.value = partes.join('.');
         }
 
-        function handleInput(input) { formatInput(input); calcularTodo(); }
+        function handleInput(input) { 
+            formatInput(input); 
+            guardarValoresPanelSecundario();
+            calcularTodo(); 
+        }
 
         function calcularTodo() {
             var b1 = getVal('b1'); var b2 = getVal('b2'); var b3 = getVal('b3'); var b4 = getVal('b4');
-            var totalEfectivo = b1 + b2 + b3 + b4;
+            var totalSuperior = b1 + b2 + b3 + b4;
             
             var p1 = getVal('p1'); var p2 = getVal('p2'); var p3 = getVal('p3'); var p4 = getVal('p4'); 
             var p5 = getVal('p5'); var p6 = getVal('p6'); var p7 = getVal('p7'); var p8 = getVal('p8');
-            var totalRecibo = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8;
+            var totalInferior = p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8;
 
-            document.getElementById('lblEfectivo').innerText = formatoSoles(totalEfectivo);
-            document.getElementById('lblRecibo').innerText = formatoSoles(totalRecibo);
+            document.getElementById('lblEfectivo').innerText = formatoSoles(totalSuperior);
+            document.getElementById('lblRecibo').innerText = formatoSoles(totalInferior);
 
-            var diferencia = totalEfectivo - totalRecibo;
             var panel = document.getElementById('panelFinal');
             var texto = document.getElementById('textoFinal');
             var monto = document.getElementById('montoFinal');
 
-            if (totalRecibo === 0 && totalEfectivo === 0) {
-                panel.className = "panel-resultado estado-esperando";
-                texto.innerText = "ESPERANDO..."; monto.innerText = "0.00";
-            } else if (totalRecibo === 0 && totalEfectivo > 0) {
-                panel.className = "panel-resultado estado-proceso";
-                texto.innerText = "DEPÓSITO / EN PROCESO"; monto.innerText = formatoSoles(totalEfectivo);
-            } else if (totalRecibo > 0 && totalEfectivo === 0) {
-                panel.className = "panel-resultado estado-cobrar";
-                texto.innerText = "POR COBRAR"; monto.innerText = formatoSoles(totalRecibo);
-            } else {
-                if (diferencia < 0) {
-                    panel.className = "panel-resultado estado-faltante";
-                    texto.innerText = "FALTANTE"; monto.innerText = formatoSoles(Math.abs(diferencia));
-                } else if (diferencia === 0) {
-                    panel.className = "panel-resultado estado-exacto";
-                    texto.innerText = "PAGO EXACTO"; monto.innerText = formatoSoles(0);
+            if (modoSecundario === 'recibo') {
+                var diferencia = totalSuperior - totalInferior;
+
+                if (totalInferior === 0 && totalSuperior === 0) {
+                    panel.className = "panel-resultado estado-esperando";
+                    texto.innerText = "ESPERANDO..."; monto.innerText = "0.00";
+                } else if (totalInferior === 0 && totalSuperior > 0) {
+                    panel.className = "panel-resultado estado-proceso";
+                    texto.innerText = "DEPÓSITO / EN PROCESO"; monto.innerText = formatoSoles(totalSuperior);
+                } else if (totalInferior > 0 && totalSuperior === 0) {
+                    panel.className = "panel-resultado estado-cobrar";
+                    texto.innerText = "POR COBRAR"; monto.innerText = formatoSoles(totalInferior);
                 } else {
-                    panel.className = "panel-resultado estado-vuelto";
-                    texto.innerText = "VUELTO A ENTREGAR"; monto.innerText = formatoSoles(diferencia);
+                    if (diferencia < 0) {
+                        panel.className = "panel-resultado estado-faltante";
+                        texto.innerText = "FALTANTE"; monto.innerText = formatoSoles(Math.abs(diferencia));
+                    } else if (diferencia === 0) {
+                        panel.className = "panel-resultado estado-exacto";
+                        texto.innerText = "PAGO EXACTO"; monto.innerText = formatoSoles(0);
+                    } else {
+                        panel.className = "panel-resultado estado-vuelto";
+                        texto.innerText = "VUELTO A ENTREGAR"; monto.innerText = formatoSoles(diferencia);
+                    }
+                }
+            } else {
+                if (totalInferior === 0 && totalSuperior === 0) {
+                    panel.className = "panel-resultado estado-esperando";
+                    texto.innerText = "ESPERANDO..."; monto.innerText = "0.00";
+                } else if (totalInferior > 0 && totalSuperior === 0) {
+                    panel.className = "panel-resultado estado-retiro";
+                    texto.innerText = "RETIRO POR ENTREGAR"; monto.innerText = formatoSoles(totalInferior);
+                } else if (totalSuperior > 0 && totalInferior === 0) {
+                    panel.className = "panel-resultado estado-proceso";
+                    texto.innerText = "MONTO POR RETIRAR"; monto.innerText = formatoSoles(totalSuperior);
+                } else {
+                    var difRetiro = totalSuperior - totalInferior;
+                    if (difRetiro === 0) {
+                        panel.className = "panel-resultado estado-exacto";
+                        texto.innerText = "RETIRO EXACTO"; monto.innerText = formatoSoles(0);
+                    } else if (difRetiro > 0) {
+                        panel.className = "panel-resultado estado-faltante";
+                        texto.innerText = "FALTA COMPLETAR"; monto.innerText = formatoSoles(difRetiro);
+                    } else {
+                        panel.className = "panel-resultado estado-cobrar";
+                        texto.innerText = "RETIRO EXCEDIDO"; monto.innerText = formatoSoles(Math.abs(difRetiro));
+                    }
                 }
             }
         }
 
         function limpiarCaja() {
             clearAllData(); 
-            document.querySelectorAll('#app-caja input').forEach(i => { i.value = ''; });
+            document.querySelectorAll('#app-caja input').forEach(i => { 
+                i.value = ''; 
+                i.classList.remove('active-sync', 'active-sync-retiro');
+                i.readOnly = false;
+            });
+            datosRecibo = { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' };
+            datosRetiro = { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' };
+            cuadroVinculado = null;
             calcularTodo();
         }
 
-        // --- LÓGICA DEL MULTIPLICADOR INTACTA ---
+        // --- LÓGICA DEL MULTIPLICADOR CON SINCRONIZACIÓN PERSISTENTE ---
         const denominacionesBilletes = [200, 100, 50, 20, 10];
         const denominacionesMonedas = [5.00, 2.00, 1.00, 0.50, 0.20, 0.10];
-        let cantidadesBilletes = {}; let cantidadesMonedas = {}; let bloquesPrecontados = [];
+        let cantidadesBilletes = {}; let cantidadesMonedas = {};
         denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
         denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
         const formatter = new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 });
@@ -688,54 +804,17 @@
             calculateAllCounter();
         }
 
-        function formatCurrencyInput(input) {
-            let cursorPosition = input.selectionStart;
-            let originalLength = input.value.length;
-            let cleanValue = input.value.replace(/[^0-9.]/g, '');
-            let parts = cleanValue.split('.');
-            if (parts.length > 2) { cleanValue = parts[0] + '.' + parts.slice(1).join(''); parts = cleanValue.split('.'); }
-            if (parts[0] !== '') { parts[0] = parseInt(parts[0], 10).toLocaleString('en-US'); }
-            input.value = parts.join('.');
-            let newLength = input.value.length;
-            input.selectionStart = input.selectionEnd = cursorPosition + (newLength - originalLength);
-        }
-
-        function addPrecountedBlock() {
-            const inputEl = document.getElementById('inputMontoBloque');
-            const amt = parseFloat(inputEl.value.replace(/,/g, '')) || 0;
-            if (amt > 0) {
-                bloquesPrecontados.push(amt);
-                inputEl.value = '';
-                renderBlocks(); calculateAllCounter();
-            }
-        }
-
-        function deleteBlock(index) {
-            bloquesPrecontados.splice(index, 1);
-            renderBlocks(); calculateAllCounter();
-        }
-
-        function renderBlocks() {
-            const container = document.getElementById('listaBloques');
-            container.innerHTML = '';
-            for (let i = bloquesPrecontados.length - 1; i >= 0; i--) {
-                container.innerHTML += `<div class="block-item"><span class="block-value">Fajo #${i + 1}: &nbsp;&nbsp; ${formatter.format(bloquesPrecontados[i]).replace(/S\/\s*/, '')}</span><button class="btn-delete-block" onclick="deleteBlock(${i})">×</button></div>`;
-            }
-        }
-
         function clearAllData() {
             denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
             denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
-            bloquesPrecontados = [];
             document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
-            document.getElementById('inputMontoBloque').value = '';
-            renderBlocks(); calculateAllCounter();
+            calculateAllCounter();
         }
 
         let cuadroVinculado = null; 
 
         function calculateAllCounter() {
-            let tBilletes = 0, tMonedas = 0, tFajos = 0;
+            let tBilletes = 0, tMonedas = 0;
             denominacionesBilletes.forEach(d => { 
                 const sub = d * cantidadesBilletes[d]; tBilletes += sub; 
                 document.getElementById(`sub-b-${d}`).innerText = formatter.format(sub).replace(/S\/\s*/, ''); 
@@ -744,41 +823,57 @@
                 const sub = d * cantidadesMonedas[d]; tMonedas += sub; 
                 document.getElementById(`sub-m-${d}`).innerText = formatter.format(sub).replace(/S\/\s*/, ''); 
             });
-            bloquesPrecontados.forEach(b => tFajos += b);
-            
-            document.getElementById('txtSubtotalBloques').innerText = `Subtotal: ${formatter.format(tFajos).replace(/S\/\s*/, '')}`;
 
-            let granTotalNumerico = tBilletes + tMonedas + tFajos;
-            
+            let granTotalNumerico = tBilletes + tMonedas;
             let totalFormateado = formatter.format(granTotalNumerico);
             let soloNumero = totalFormateado.replace(/S\/\s*/, '');
             document.getElementById('txtGranTotal').innerHTML = soloNumero;
 
             if(granTotalNumerico > 0) {
-                if (!cuadroVinculado) {
-                    const opciones = ['b1', 'b2', 'b3', 'b4'];
-                    for (let id of opciones) {
+                const listaOpciones = (modoSecundario === 'retiro') 
+                    ? ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'] 
+                    : ['b1', 'b2', 'b3', 'b4'];
+
+                if (!cuadroVinculado || !listaOpciones.includes(cuadroVinculado)) {
+                    if (cuadroVinculado) {
+                        let prev = document.getElementById(cuadroVinculado);
+                        if (prev) {
+                            prev.classList.remove('active-sync', 'active-sync-retiro');
+                            prev.readOnly = false;
+                        }
+                    }
+                    cuadroVinculado = null;
+                    for (let id of listaOpciones) {
                         let cajaFisica = document.getElementById(id);
                         if (cajaFisica.value.trim() === '') {
                             cuadroVinculado = id;
                             break;
                         }
                     }
-                    if (!cuadroVinculado) cuadroVinculado = 'b4';
+                    if (!cuadroVinculado) cuadroVinculado = listaOpciones[listaOpciones.length - 1];
                 }
 
                 let targetInput = document.getElementById(cuadroVinculado);
                 targetInput.value = granTotalNumerico.toFixed(2);
                 formatInput(targetInput);
-                targetInput.classList.add('active-sync');
-                targetInput.readOnly = true;
+                
+                if (modoSecundario === 'retiro') {
+                    datosRetiro[cuadroVinculado] = targetInput.value;
+                }
+
+                reaplicarEstiloSincronizacion();
 
             } else {
                 if (cuadroVinculado) {
                     let targetInput = document.getElementById(cuadroVinculado);
-                    targetInput.value = '';
-                    targetInput.classList.remove('active-sync');
-                    targetInput.readOnly = false;
+                    if (targetInput) {
+                        targetInput.value = '';
+                        targetInput.classList.remove('active-sync', 'active-sync-retiro');
+                        targetInput.readOnly = false;
+                    }
+                    if (modoSecundario === 'retiro') {
+                        datosRetiro[cuadroVinculado] = '';
+                    }
                     cuadroVinculado = null;
                 }
             }
