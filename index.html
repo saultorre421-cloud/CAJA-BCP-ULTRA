@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>Sistema Ágil Integrado - Agente BCP</title>
     <style>
-        /* =========================================
-           VARIABLES Y ESTILOS GLOBALES
-           ========================================= */
         :root {
             --bcp-blue: #002A8D;
             --bcp-orange: #FF6A00;
@@ -19,31 +16,27 @@
             --danger-color: #D32F2F;
             --app-bg: #f1f5f9;
 
-            /* Multiplicador */
-            --bg-billetes: #dcfce7;
-            --border-billetes: #86efac;
-            --accent-billetes: #059669;
+            /* Multiplicador: Fondo y contraste */
+            --bg-neutral-tab: #e2e8f0;
+            --border-neutral-tab: #cbd5e1;
+            --accent-tab-active: #002A8D;
 
-            --bg-monedas: #fef08a;
-            --border-monedas: #fde047;
-            --accent-monedas: #d97706;
+            /* Color de destaque para subtotales en multiplicador */
+            --subtotal-color: #7A0C2E;
 
-            /* =========================================
-               SISTEMA DE COLORES UNIFICADO POR OPERACIÓN
-               ========================================= */
-            /* 1. MODO RECIBO / PAGO DE SERVICIOS (AMARILLO / ÁMBAR) */
+            /* 1. MODO RECIBO / PAGO DE SERVICIOS */
             --recibo-header: #eab308;
             --recibo-header-text: #000000;
             --recibo-caja-bg: #fef9c3;
             --recibo-caja-border: #facc15;
 
-            /* 2. MODO DEPÓSITO EN CUENTA (VERDE ESMERALDA / TEAL) */
+            /* 2. MODO DEPÓSITO EN CUENTA */
             --deposito-header: #0d9488;
             --deposito-header-text: #ffffff;
             --deposito-caja-bg: #ccfbf1;
             --deposito-caja-border: #2dd4bf;
 
-            /* 3. MODO RETIRO EN EFECTIVO (ROJO RUBÍ BCP) */
+            /* 3. MODO RETIRO EN EFECTIVO */
             --retiro-header: #e11d48;
             --retiro-header-text: #ffffff;
             --retiro-caja-bg: #ffe4e6;
@@ -58,22 +51,31 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body { 
+        /* BLINDAJE VERTICAL COMPLETO: CERO SCROLL ARRIBA/ABAJO */
+        html, body { 
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden !important; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overscroll-behavior: none !important;
+            touch-action: pan-x !important;
             background-color: var(--app-bg); 
-            color: #0f172a;
-            padding-bottom: 10px;
-            overflow-x: hidden;
+            color: #0f172a; 
+            font-variant-numeric: tabular-nums;
         }
 
-        /* =========================================
-           ESTRUCTURA DE APLICACIONES PRINCIPALES
-           ========================================= */
         .main-app-container {
             display: none;
             opacity: 0;
-            transition: opacity 0.25s ease-in-out;
             width: 100%;
-            animation: fadeInScreen 0.3s forwards;
+            height: 100%;
+            overflow-y: hidden;
+            animation: fadeInScreen 0.2s forwards;
         }
 
         .main-app-container.active-app {
@@ -81,39 +83,45 @@
         }
 
         @keyframes fadeInScreen {
-            from { opacity: 0; transform: translateY(5px); }
+            from { opacity: 0; transform: translateY(3px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* =========================================
-           CAJA PRINCIPAL: ESTRUCTURA Y TEXTOS
-           ========================================= */
         .caja-wrapper {
-            padding: 5px 10px 4px 10px;
+            padding: 2px 4px 4px 4px;
+            height: 100%;
+            overflow-y: hidden;
         }
 
-        /* Paneles interactivos de totales */
         .panel-total { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 5px 12px; 
+            padding: 4px 8px 4px 6px; 
             border-radius: 9px 9px 0 0; 
-            font-size: 17.5px; 
+            font-size: 15px; 
             font-weight: 900; 
             text-transform: uppercase; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
+            user-select: none; 
             transition: background-color 0.2s ease, color 0.2s ease;
+            gap: 6px;
         }
         
         .panel-title-area {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
+            flex-shrink: 1;
+            min-width: 0;
         }
 
-        /* Puntos de paginación */
+        .panel-title-area span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .header-dots {
             display: inline-flex;
             align-items: center;
@@ -121,12 +129,14 @@
             background: rgba(0, 0, 0, 0.12);
             padding: 2px 6px;
             border-radius: 10px;
+            flex-shrink: 0;
         }
         .h-dot {
-            width: 6px;
-            height: 6px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
             transition: all 0.2s ease;
         }
         .tema-recibo-header .h-dot {
@@ -141,12 +151,14 @@
         }
 
         .panel-total span:nth-child(2) {
-            font-size: 29px;
+            font-size: clamp(23px, 6.2vw, 29px);
             font-weight: 900;
             letter-spacing: -0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            text-align: right;
         }
 
-        /* Clases cromáticas unificadas para cabeceras */
         .tema-recibo-header { 
             background-color: var(--recibo-header) !important; 
             color: var(--recibo-header-text) !important; 
@@ -160,11 +172,10 @@
             color: var(--retiro-header-text) !important; 
         }
 
-        /* Contenedores con color de fondo envolvente */
         .caja-contenedor { 
-            padding: 4px 6px 5px 6px; 
+            padding: 4px 5px 5px 5px; 
             border-radius: 0 0 10px 10px; 
-            margin-bottom: 7px; 
+            margin-bottom: 5px; 
             border-bottom: 3px solid; 
             border-left: 2px solid; 
             border-right: 2px solid; 
@@ -189,11 +200,13 @@
         .contenedor-deslizable {
             display: flex; 
             overflow-x: auto; 
+            overflow-y: hidden; 
             scroll-snap-type: x mandatory; 
-            gap: 10px;
+            gap: 8px;
             scrollbar-width: none; 
             -ms-overflow-style: none;
             padding: 1px 0;
+            touch-action: pan-x;
         }
         .contenedor-deslizable::-webkit-scrollbar { display: none; }
         
@@ -205,31 +218,28 @@
         }
 
         .pagina-deslizable.pagina-secundaria {
-            background-image: repeating-linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0.65),
-                rgba(255, 255, 255, 0.65) 5px,
-                transparent 5px,
-                transparent 12px
-            );
-            border: 1px dashed rgba(0, 0, 0, 0.25);
-            padding: 2px 2px;
+            padding: 0;
+            background: transparent;
+            border: none;
         }
 
         .badge-pagina-dos {
             position: absolute;
-            top: -4px;
-            right: 4px;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
             background-color: #0f172a;
             color: #ffffff;
             font-size: 8px;
             font-weight: 900;
-            padding: 1px 5px;
+            padding: 1.5px 8px;
             border-radius: 3px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.8px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.3);
             pointer-events: none;
-            z-index: 10;
+            z-index: 5;
+            text-transform: uppercase;
+            line-height: 1;
         }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
@@ -237,7 +247,7 @@
         .caja-contenedor input { 
             width: 100%; 
             height: 46px; 
-            font-size: 30px; 
+            font-size: clamp(24px, 7vw, 30px); 
             font-weight: 900; 
             border: 2px solid #94a3b8; 
             border-radius: 7px; 
@@ -246,7 +256,7 @@
             color: #0f172a; 
             background-color: #ffffff; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-            transition: border-color 0.2s, background-color 0.2s, color 0.2s;
+            transition: border-color 0.15s, background-color 0.15s, color 0.15s;
         }
         .caja-contenedor input:focus { 
             outline: none; 
@@ -275,18 +285,15 @@
             color: var(--retiro-header) !important;
         }
 
-        /* =========================================
-           PANEL DE RESULTADO AMPLIADO
-           ========================================= */
         .panel-resultado { 
-            padding: 0 8px 6px 8px;
+            padding: 0 6px 5px 6px;
             border-radius: 10px; 
             text-align: center; 
             font-weight: bold; 
-            margin-bottom: 7px; 
+            margin-bottom: 5px;
             border: 3px solid; 
             transition: all 0.2s; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
             position: relative;
             overflow: hidden;
         }
@@ -300,14 +307,13 @@
             letter-spacing: 0.8px;
             text-transform: uppercase;
             margin-top: 0;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             background: rgba(0, 0, 0, 0.11);
             line-height: 1.2;
-            transition: background-color 0.2s, color 0.2s;
         }
 
         #textoFinal {
-            font-size: clamp(17px, 4.8vw, 22px);
+            font-size: clamp(16px, 4.6vw, 22px);
             font-weight: 900;
             letter-spacing: 0.8px;
             line-height: 1.1;
@@ -318,7 +324,7 @@
 
         .monto-final { 
             display: block; 
-            font-size: clamp(54px, 14vw, 70px); 
+            font-size: clamp(52px, 14vw, 70px); 
             font-weight: 900; 
             margin-top: 1px; 
             line-height: 0.95; 
@@ -334,14 +340,11 @@
         .estado-retiro { background-color: #FFF1F2; border-color: var(--retiro-header); color: #9F1239; }
         .estado-deposito { background-color: #ccfbf1; border-color: var(--deposito-header); color: #0f766e; }
 
-        /* =========================================
-           BOTONERA DE MODOS INTEGRADA (3 COLUMNAS)
-           ========================================= */
         .selector-modos-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 5px;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .btn-modo-operacion {
@@ -365,7 +368,6 @@
             transform: scale(0.97);
         }
 
-        /* 1. Botón Depósito (Izquierda) */
         #btn-modo-deposito {
             background-color: #e6fffa;
             color: #0d9488;
@@ -378,7 +380,6 @@
             box-shadow: 0 3px 8px rgba(13, 148, 136, 0.4);
         }
 
-        /* 2. Botón Servicio / Recibo (Centro) */
         #btn-modo-servicio {
             background-color: #fefce8;
             color: #a16207;
@@ -391,7 +392,6 @@
             box-shadow: 0 3px 8px rgba(234, 179, 8, 0.4);
         }
 
-        /* 3. Botón Retiro (Derecha) */
         #btn-modo-retiro {
             background-color: #fff1f2;
             color: #e11d48;
@@ -405,33 +405,51 @@
         }
 
         /* =========================================
-           MULTIPLICADOR: ESCALA DE ELEMENTOS
+           MULTIPLICADOR: FONDOS Y ESTRUCTURA
            ========================================= */
         .multiplicador-wrapper {
             background-color: var(--bg-light);
-            min-height: 100vh;
+            height: 100%;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .sticky-header-compact {
             position: sticky; 
             top: 0; 
             background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%); 
-            color: white;
+            color: white; 
             padding: 6px 12px; 
             display: flex; 
-            justify-content: center; 
-            align-items: center;
+            justify-content: space-between; 
+            align-items: center; 
             box-shadow: 0 3px 8px rgba(0,0,0,0.15); 
             z-index: 1000;
+            flex-shrink: 0;
         }
         
         .main-total-centered { 
-            font-size: clamp(40px, 10.5vw, 54px); 
+            font-size: clamp(36px, 9.5vw, 52px); 
             font-weight: 900; 
             line-height: 1; 
             letter-spacing: -1.2px; 
-            text-align: center;
-            width: 100%;
+            text-align: center; 
+            flex-grow: 1;
+        }
+
+        .btn-config-fotos {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 8px;
+            padding: 6px 8px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .tabs-container-sub { 
@@ -441,147 +459,361 @@
             position: sticky; 
             top: 52px; 
             z-index: 999;
+            flex-shrink: 0;
         }
         
         .sub-tab-btn {
             flex: 1; 
-            padding: 8px 2px; 
+            padding: 9px 4px; 
             text-align: center; 
             background: none; 
             border: none; 
-            font-size: 16px;
-            font-weight: 700; 
+            font-size: 15px; 
+            font-weight: 800; 
             color: var(--text-muted); 
             cursor: pointer; 
-            border-bottom: 4px solid transparent;
-            transition: all 0.2s ease;
+            border-bottom: 4px solid transparent; 
+            transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
             touch-action: manipulation;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
         
-        .sub-tab-btn#tab-btn-billetes.active {
-            color: #065f46;
-            background-color: #d1fae5;
-            border-bottom: 4px solid var(--accent-billetes);
+        .sub-tab-btn.active {
+            color: var(--bcp-blue);
+            background-color: #edf2f7;
+            border-bottom: 4px solid var(--bcp-blue);
             font-weight: 900;
         }
 
-        .sub-tab-btn#tab-btn-monedas.active {
-            color: #92400e;
-            background-color: #fef3c7;
-            border-bottom: 4px solid var(--accent-monedas);
+        .tab-badge-subtotal {
+            font-size: 12px;
             font-weight: 900;
+            color: var(--bcp-blue);
+            background: rgba(0, 42, 141, 0.09);
+            padding: 2px 8px;
+            border-radius: 10px;
         }
 
-        .view-content { display: none; padding: 8px 12px; max-width: 500px; margin: 0 auto; }
-        .view-content.active { display: block; animation: fadeInScreen 0.2s; }
+        .multiplicador-slider {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            width: 100%;
+            flex: 1;
+            touch-action: pan-x;
+            -webkit-overflow-scrolling: touch;
+        }
+        .multiplicador-slider::-webkit-scrollbar { display: none; }
+
+        .view-content { 
+            flex: 0 0 100%;
+            min-width: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            box-sizing: border-box;
+            max-width: 520px; 
+            margin: 0 auto; 
+            overflow-y: hidden;
+        }
 
         #tab-billetes {
-            background-color: var(--bg-billetes);
-            border-bottom: 3px solid var(--border-billetes);
-            border-left: 2px solid var(--border-billetes);
-            border-right: 2px solid var(--border-billetes);
+            background-color: var(--bg-neutral-tab);
+            border-bottom: 3px solid var(--border-neutral-tab);
+            border-left: 2px solid var(--border-neutral-tab);
+            border-right: 2px solid var(--border-neutral-tab);
             border-radius: 0 0 14px 14px;
+            padding: 6px 3px 6px 3px;
         }
 
         #tab-monedas {
-            background-color: var(--bg-monedas);
-            border-bottom: 3px solid var(--border-monedas);
-            border-left: 2px solid var(--border-monedas);
-            border-right: 2px solid var(--border-monedas);
+            background-color: var(--bg-neutral-tab);
+            border-bottom: 3px solid var(--border-neutral-tab);
+            border-left: 2px solid var(--border-neutral-tab);
+            border-right: 2px solid var(--border-neutral-tab);
             border-radius: 0 0 14px 14px;
+            padding: 5px 3px 5px 3px; 
         }
 
-        .item-card {
+        #containerBilletes .item-card {
             background: var(--card-bg); 
-            border-radius: 9px; 
-            padding: 10px 8px; 
-            margin-bottom: 7px;
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            height: 70px;
+            margin-bottom: 8px;
+            border-radius: 0 12px 12px 0;
+            padding: 0 4px 0 0;
+            gap: 6px;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 3px 7px rgba(15, 23, 42, 0.08);
+            overflow: hidden; 
         }
-        
-        .item-info { 
+
+        #containerBilletes .billete-container {
+            width: 136px;
+            height: 100%;
+            position: relative;
+            flex-shrink: 0;
+            background: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1.5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        #containerBilletes .btn-step {
+            width: 36px;
+            height: 50px;
+            border-radius: 7px;
+        }
+
+        #containerBilletes .input-qty {
+            width: 64px;
+            height: 50px;
+            font-size: 28px;
+            border-radius: 7px;
+        }
+
+        #containerMonedas .item-card {
+            background: var(--card-bg); 
             display: flex; 
-            flex-direction: column; 
-            width: 130px; 
-            justify-content: center; 
-            gap: 2px; 
+            align-items: center; 
+            justify-content: space-between; 
+            height: 68px; 
+            margin-bottom: 4px; 
+            border-radius: 11px;
+            padding: 0 4px 0 0;
+            gap: 6px;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+            overflow: hidden; 
         }
 
-        #tab-billetes .item-card {
-            padding: 10px 9px;
-            margin-bottom: 7px;
-        }
-        #tab-billetes .item-denomination { 
-            font-size: 33px; 
-            font-weight: 900; 
-            color: var(--bcp-blue); 
-            line-height: 1; 
-            letter-spacing: -0.5px; 
-        }
-        #tab-billetes .item-subtotal { 
-            font-size: 21px; 
-            color: #16A34A; 
-            font-weight: 800; 
-            line-height: 1; 
-        }
-        #tab-billetes .btn-step {
-            width: 44px; height: 44px; border-radius: 8px; font-size: 36px;
-        }
-        #tab-billetes .input-qty {
-            width: 86px; height: 48px; font-size: 36px; border-radius: 8px;
+        #containerMonedas .item-card:last-child {
+            margin-bottom: 0;
         }
 
-        #tab-monedas .item-card { 
-            padding: 8px 8px; 
-            margin-bottom: 6px; 
-        }
-        #tab-monedas .item-denomination { 
-            font-size: 28px; 
-            font-weight: 900; 
-            color: var(--bcp-blue); 
-            line-height: 1; 
-            letter-spacing: -0.5px; 
-        } 
-        #tab-monedas .item-subtotal { 
-            font-size: 18px; 
-            color: #16A34A; 
-            font-weight: 800; 
-            line-height: 1; 
-        }
-        #tab-monedas .btn-step { 
-            width: 40px; height: 40px; border-radius: 7px; font-size: 32px; 
-        }
-        #tab-monedas .input-qty { 
-            width: 80px; height: 44px; font-size: 32px; border-radius: 7px; 
+        #containerMonedas .moneda-real-frame {
+            width: 82px; 
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: #f8fafc;
+            border-radius: 9px 0 0 9px;
+            border-right: 1px solid #e2e8f0;
+            cursor: pointer;
         }
 
-        .stepper-control { display: flex; align-items: center; gap: 5px; }
+        #containerMonedas .btn-step {
+            width: 36px;
+            height: 48px;
+            border-radius: 6px;
+        }
+
+        #containerMonedas .input-qty {
+            width: 64px;
+            height: 48px;
+            font-size: 26px;
+            border-radius: 6px;
+        }
+
+        .billete-real-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .moneda-real-img {
+            border-radius: 50%;
+            object-fit: cover;
+            display: block;
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.75),
+                inset 0 -1px 2px rgba(0, 0, 0, 0.4),
+                0 3px 6px rgba(15, 23, 42, 0.22),
+                0 0 0 1px rgba(0, 0, 0, 0.12);
+        }
+
+        .moneda-100 { width: 66px; height: 66px; }
+        .moneda-500 { width: 64px; height: 64px; }
+        .moneda-020 { width: 61px; height: 61px; }
+        .moneda-200 { width: 59px; height: 59px; }
+        .moneda-050 { width: 58px; height: 58px; }
+        .moneda-010 { width: 53px; height: 53px; }
+
+        .fallback-badge {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .stepper-control { 
+            display: flex; 
+            align-items: center; 
+            gap: 3px; 
+            flex-shrink: 0; 
+            user-select: none;
+        }
         
         .btn-step {
             border: 1px solid var(--border-color);
             background-color: #F8FAFC; 
-            font-weight: 500; 
-            display: flex; align-items: center; justify-content: center;
-            line-height: 0; 
-            padding-bottom: 4px; 
-            cursor: pointer; color: var(--text-dark); transition: background 0.1s;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            color: #475569; 
+            user-select: none;
+            transition: background 0.1s, transform 0.08s ease, color 0.1s;
+            touch-action: manipulation;
+            padding: 0;
         }
-        .btn-step:active { background-color: #E2E8F0; }
+        .btn-step:active { 
+            background-color: #E2E8F0; 
+            color: var(--bcp-blue);
+            transform: scale(0.94); 
+        }
+        .btn-step svg {
+            pointer-events: none;
+            display: block;
+        }
         
         .input-qty {
             border: 2px solid var(--border-color);
             text-align: center; 
             font-weight: 900; 
-            color: var(--bcp-blue); background-color: #FAFAFA;
+            color: var(--bcp-blue); 
+            background-color: #FAFAFA;
         }
         .input-qty:focus { outline: none; border-color: var(--bcp-orange); background-color: white; }
 
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
+        .item-data-col {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            flex: 1;
+            min-width: 0;
+            height: 100%;
+            padding: 1px 8px 1px 2px;
+            text-align: right;
+            cursor: pointer;
+            user-select: none;
+            gap: 1px;
+        }
+
+        .subtotal-tag {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.8px;
+            color: #64748b;
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .subtotal-valor-box {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+            overflow: hidden;
+            line-height: 1;
+        }
+
+        .item-subtotal {
+            color: var(--subtotal-color);
+            font-family: "Arial Narrow", "Roboto Condensed", -apple-system, sans-serif;
+            font-weight: 900;
+            white-space: nowrap;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+            display: inline-block;
+            transform: scaleY(1.14);
+            transform-origin: right center;
+            line-height: 1;
+        }
+
+        #containerBilletes .item-subtotal {
+            font-size: clamp(27px, 7.2vw, 34px);
+            letter-spacing: -0.6px;
+        }
+
+        #containerMonedas .item-subtotal {
+            font-size: clamp(23px, 6.4vw, 29px);
+            letter-spacing: -0.6px;
+        }
+
+        .modal-config {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: 2000;
+            padding: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-config.active { display: flex; }
+        .modal-card {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .modal-header h3 { font-size: 16px; font-weight: 900; color: #002A8D; }
+        .btn-close-modal {
+            background: none; border: none; font-size: 20px; font-weight: 900; cursor: pointer; color: #64748b;
+        }
+        .fila-upload {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .fila-upload input[type="file"] { display: none; }
+        .btn-examinar {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 800;
+            color: #002A8D;
+        }
     </style>
 </head>
 <body>
@@ -591,13 +823,12 @@
         <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
             <div class="caja-wrapper">
                 
-                <!-- PANEL SUPERIOR: 4 VISIBLES + 4 AL DESLIZAR (8 TOTAL) -->
                 <div class="panel-total tema-recibo-header" id="panelSuperior">
                     <div class="panel-title-area">
                         <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
                         <div class="header-dots">
-                            <div class="h-dot active" id="dot-sup-1"></div>
-                            <div class="h-dot" id="dot-sup-2"></div>
+                            <div class="h-dot active" id="dot-sup-1" onclick="scrollPaginacionDirecta('swipeEfectivo', 1)"></div>
+                            <div class="h-dot" id="dot-sup-2" onclick="scrollPaginacionDirecta('swipeEfectivo', 2)"></div>
                         </div>
                     </div>
                     <span id="lblEfectivo">0.00</span>
@@ -605,7 +836,6 @@
                 
                 <div class="caja-contenedor tema-recibo-bg" id="cajaSuperiorContenedor">
                     <div class="contenedor-deslizable" id="swipeEfectivo" onscroll="handleScrollIndicators('swipeEfectivo', 'dot-sup-1', 'dot-sup-2')">
-                        <!-- Página 1 (4 casilleros) -->
                         <div class="pagina-deslizable">
                             <div class="grid-2">
                                 <input type="text" id="b1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
@@ -614,26 +844,24 @@
                                 <input type="text" id="b4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
                         </div>
-                        <!-- Página 2 (4 casilleros adicionales) -->
                         <div class="pagina-deslizable pagina-secundaria">
-                            <span class="badge-pagina-dos">PÁG. 2</span>
                             <div class="grid-2">
                                 <input type="text" id="b5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="b6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="b7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="b8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
+                            <span class="badge-pagina-dos">PÁG. 2</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- PANEL INFERIOR: 4 VISIBLES + 4 AL DESLIZAR (8 TOTAL) -->
                 <div class="panel-total tema-recibo-header" id="panelModoSecundario">
                     <div class="panel-title-area">
                         <span id="lblTituloModo">RECIBO POR PAGAR</span>
                         <div class="header-dots">
-                            <div class="h-dot active" id="dot-inf-1"></div>
-                            <div class="h-dot" id="dot-inf-2"></div>
+                            <div class="h-dot active" id="dot-inf-1" onclick="scrollPaginacionDirecta('swipeRecibo', 1)"></div>
+                            <div class="h-dot" id="dot-inf-2" onclick="scrollPaginacionDirecta('swipeRecibo', 2)"></div>
                         </div>
                     </div>
                     <span id="lblRecibo">0.00</span>
@@ -641,7 +869,6 @@
                 
                 <div class="caja-contenedor tema-recibo-bg" id="cajaInferiorContenedor">
                     <div class="contenedor-deslizable" id="swipeRecibo" onscroll="handleScrollIndicators('swipeRecibo', 'dot-inf-1', 'dot-inf-2')">
-                        <!-- Página 1 (4 casilleros) -->
                         <div class="pagina-deslizable">
                             <div class="grid-2">
                                 <input type="text" id="p1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
@@ -650,35 +877,32 @@
                                 <input type="text" id="p4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
                         </div>
-                        <!-- Página 2 (4 casilleros adicionales) -->
                         <div class="pagina-deslizable pagina-secundaria">
-                            <span class="badge-pagina-dos">PÁG. 2</span>
                             <div class="grid-2">
                                 <input type="text" id="p5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="p6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="p7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="p8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
+                            <span class="badge-pagina-dos">PÁG. 2</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- PANEL INFORMATIVO DE RESULTADO AMPLIADO -->
                 <div class="panel-resultado estado-esperando" id="panelFinal">
                     <div class="badge-operacion" id="badgeOperacion">PAGO DE SERVICIOS</div>
                     <div id="textoFinal">ESPERANDO MONTOS...</div>
                     <span class="monto-final" id="montoFinal">0.00</span>
                 </div>
 
-                <!-- SELECTOR PROFESIONAL DE MODOS EN ORDEN DIRECTO (3 COLUMNAS) -->
                 <div class="selector-modos-grid">
-                    <button type="button" class="btn-modo-operacion" id="btn-modo-deposito" onmousedown="seleccionarModoDirecto(event, 'deposito')" ontouchstart="seleccionarModoDirecto(event, 'deposito')">
+                    <button type="button" class="btn-modo-deposito btn-modo-operacion" id="btn-modo-deposito" onclick="seleccionarModoDirecto(event, 'deposito')">
                         DEPÓSITO
                     </button>
-                    <button type="button" class="btn-modo-operacion active-modo" id="btn-modo-servicio" onmousedown="seleccionarModoDirecto(event, 'recibo')" ontouchstart="seleccionarModoDirecto(event, 'recibo')">
+                    <button type="button" class="btn-modo-operacion active-modo" id="btn-modo-servicio" onclick="seleccionarModoDirecto(event, 'recibo')">
                         SERVICIO
                     </button>
-                    <button type="button" class="btn-modo-operacion" id="btn-modo-retiro" onmousedown="seleccionarModoDirecto(event, 'retiro')" ontouchstart="seleccionarModoDirecto(event, 'retiro')">
+                    <button type="button" class="btn-modo-operacion" id="btn-modo-retiro" onclick="seleccionarModoDirecto(event, 'retiro')">
                         RETIRO
                     </button>
                 </div>
@@ -692,34 +916,57 @@
         <form id="formMultiplicador" onsubmit="ejecutarAccionTecladoMulti(event)" action="javascript:void(0);">
             <div class="multiplicador-wrapper">
                 
-                <!-- CABECERA AZUL COMPACTA CON RESULTADO MAYOR -->
                 <div class="sticky-header-compact">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
+                    <button type="button" class="btn-config-fotos" onclick="abrirModalFotos()" title="Configurar fotos">⚙️</button>
                 </div>
 
-                <!-- TABS DE NAVEGACIÓN -->
                 <div class="tabs-container-sub">
-                    <button type="button" id="tab-btn-billetes" class="sub-tab-btn active" onmousedown="gestionarPestanaMultiplicador(event, 'tab-billetes', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-billetes', this)">💵 Billetes</button>
-                    <button type="button" id="tab-btn-monedas" class="sub-tab-btn" onmousedown="gestionarPestanaMultiplicador(event, 'tab-monedas', this)" ontouchstart="gestionarPestanaMultiplicador(event, 'tab-monedas', this)">🪙 Monedas</button>
+                    <button type="button" id="tab-btn-billetes" class="sub-tab-btn active" onclick="gestionarPestanaMultiplicador(event, 'tab-billetes')">
+                        <span>💵 Billetes</span>
+                        <span class="tab-badge-subtotal" id="badgeTotalBilletes">S/ 0</span>
+                    </button>
+                    <button type="button" id="tab-btn-monedas" class="sub-tab-btn" onclick="gestionarPestanaMultiplicador(event, 'tab-monedas')">
+                        <span>🪙 Monedas</span>
+                        <span class="tab-badge-subtotal" id="badgeTotalMonedas">S/ 0.00</span>
+                    </button>
                 </div>
 
-                <div id="tab-billetes" class="view-content active">
-                    <div id="containerBilletes"></div>
-                </div>
-                
-                <div id="tab-monedas" class="view-content">
-                    <div id="containerMonedas"></div>
+                <div class="multiplicador-slider" id="sliderMultiplicador" onscroll="handleScrollMultiplicador()">
+                    <div id="tab-billetes" class="view-content">
+                        <div id="containerBilletes"></div>
+                    </div>
+                    
+                    <div id="tab-monedas" class="view-content">
+                        <div id="containerMonedas"></div>
+                    </div>
                 </div>
 
             </div>
         </form>
     </div>
 
+    <!-- MODAL DE CARGA MANUAL DE FOTOS -->
+    <div class="modal-config" id="modalFotos">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Vincular Fotos Reales</h3>
+                <button type="button" class="btn-close-modal" onclick="cerrarModalFotos()">✕</button>
+            </div>
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">
+                Selecciona la foto de cada denominación desde tu galería. Se guardarán en el teléfono y no volverán a desaparecer.
+            </p>
+            <div id="listaSubidaBilletes"></div>
+            <div id="listaSubidaMonedas" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
     <script>
         const formatoSoles = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
         
         // CONEXIÓN DIRECTA CON GOOGLE SHEETS
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzcBGXazh3rhFx4TT4Dq0uM5qtbpvXKIZ_E0UJQR5zy4_GOdli9B8I4X4UcUlsP8lebjQ/exec";
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTQF7OYIFXI8JxY9F2xV92WmofgRkLt8JGLr-to_5MWlSgvkmH5fufY2_Ley74b7PemQ/exec";
 
         let modoOperacion = 'recibo'; 
         
@@ -736,6 +983,30 @@
         };
 
         let ultimoInputCajaActivo = null;
+        let cuadroVinculado = null; 
+
+        let esTransicionClickTab = false;
+        let timerFinTransicion = null;
+
+        const ICON_BAJAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
+        const ICON_SUBIR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>`;
+
+        function vibrarRapido() {
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                navigator.vibrate(12);
+            }
+        }
+
+        function mantenerPosicionEstatica() {
+            if (window.scrollY !== 0 || window.scrollX !== 0) {
+                window.scrollTo(0, 0);
+            }
+        }
+
+        window.addEventListener('scroll', mantenerPosicionEstatica, { passive: true });
+        document.addEventListener('focusin', () => {
+            window.scrollTo(0, 0);
+        });
 
         function registrarFocoCaja(input) {
             if (input && !input.readOnly) {
@@ -831,11 +1102,22 @@
             document.getElementById(dot2Id).classList.toggle('active', esPagina2);
         }
 
+        function scrollPaginacionDirecta(scrollContainerId, pageNum) {
+            const el = document.getElementById(scrollContainerId);
+            if (!el) return;
+            el.scrollTo({
+                left: pageNum === 1 ? 0 : el.clientWidth,
+                behavior: 'smooth'
+            });
+            vibrarRapido();
+        }
+
         function seleccionarModoDirecto(event, nuevoModo) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
+            vibrarRapido();
             if (modoOperacion === nuevoModo) {
                 enfocarSiguienteInputVisible('app-caja');
                 return;
@@ -862,9 +1144,7 @@
                 const el = document.getElementById(cuadroVinculado);
                 if (el) {
                     const esSecundario = cuadroVinculado.startsWith('p');
-                    if (esSecundario && modoOperacion === 'recibo') {
-                        return;
-                    }
+                    if (esSecundario && modoOperacion === 'recibo') return;
 
                     if (cuadroVinculado.startsWith('p')) {
                         if (modoOperacion === 'deposito') {
@@ -883,11 +1163,12 @@
         function switchMainApp(appId) {
             document.querySelectorAll('.main-app-container').forEach(screen => screen.classList.remove('active-app'));
             document.getElementById(appId).classList.add('active-app');
-            window.scrollTo({ top: 0, behavior: 'instant' });
+            window.scrollTo(0, 0);
 
             if (appId === 'app-caja') {
                 reaplicarEstiloSincronizacion();
             }
+            vibrarRapido();
         }
 
         function alternarPantallas() {
@@ -895,7 +1176,7 @@
             if (isCajaActive) {
                 switchMainApp('app-multiplicador');
                 const tabActiva = document.querySelector('.sub-tab-btn.active');
-                let tabTarget = (tabActiva && tabActiva.innerText.includes('Billetes')) ? 'tab-billetes' : 'tab-monedas';
+                let tabTarget = (tabActiva && tabActiva.id === 'tab-btn-billetes') ? 'tab-billetes' : 'tab-monedas';
                 enfocarSiguienteInputVisible(tabTarget);
             } else {
                 switchMainApp('app-caja');
@@ -908,7 +1189,7 @@
                 if (ultimoInputCajaActivo) {
                     const inputRecordado = document.getElementById(ultimoInputCajaActivo);
                     if (inputRecordado && !inputRecordado.readOnly) {
-                        inputRecordado.focus();
+                        inputRecordado.focus({ preventScroll: true });
                         return;
                     }
                 }
@@ -918,14 +1199,14 @@
                 let inputsPrioridad = document.querySelectorAll(selector);
                 for (let i = 0; i < inputsPrioridad.length; i++) {
                     if (inputsPrioridad[i].value === '' || inputsPrioridad[i].value === '0') {
-                        inputsPrioridad[i].focus();
+                        inputsPrioridad[i].focus({ preventScroll: true });
                         ultimoInputCajaActivo = inputsPrioridad[i].id;
                         return;
                     }
                 }
 
                 if (inputsPrioridad.length > 0) {
-                    inputsPrioridad[0].focus();
+                    inputsPrioridad[0].focus({ preventScroll: true });
                     ultimoInputCajaActivo = inputsPrioridad[0].id;
                     return;
                 }
@@ -934,11 +1215,11 @@
             let inputsGenerales = document.querySelectorAll(`#${containerId} input:not([readonly])`);
             for (let i = 0; i < inputsGenerales.length; i++) {
                 if (inputsGenerales[i].value === '' || inputsGenerales[i].value === '0') {
-                    inputsGenerales[i].focus();
+                    inputsGenerales[i].focus({ preventScroll: true });
                     return;
                 }
             }
-            if (inputsGenerales.length > 0) inputsGenerales[0].focus();
+            if (inputsGenerales.length > 0) inputsGenerales[0].focus({ preventScroll: true });
         }
 
         // =======================================================
@@ -1000,6 +1281,7 @@
             // Si no cumple las condiciones de balance, advierte
             if (!operacion) {
                 const textoPanel = document.getElementById('textoFinal').innerText;
+                vibrarRapido();
                 alert("⚠ Operación incompleta o no cuadrada: " + textoPanel);
                 return false;
             }
@@ -1016,6 +1298,7 @@
             // Notificación visual rápida sin bloquear
             const badge = document.getElementById('badgeOperacion');
             badge.innerText = "✓ GUARDANDO...";
+            vibrarRapido();
 
             // DESPACHO ASÍNCRONO EN SEGUNDO PLANO (Cero retraso en la pantalla)
             fetch(APPS_SCRIPT_URL, {
@@ -1042,9 +1325,10 @@
             clearAllData(); 
             const tabActiva = document.querySelector('.sub-tab-btn.active');
             if (tabActiva) {
-                let tabTarget = tabActiva.innerText.includes('Billetes') ? 'tab-billetes' : 'tab-monedas';
+                let tabTarget = (tabActiva.id === 'tab-btn-billetes') ? 'tab-billetes' : 'tab-monedas';
                 enfocarSiguienteInputVisible(tabTarget);
             }
+            vibrarRapido();
         }
 
         function ejecutarAccionTecladoMulti(e) {
@@ -1056,58 +1340,69 @@
             return false;
         }
 
-        function gestionarPestanaMultiplicador(event, tabId, element) {
-            if (event) event.preventDefault(); 
-            document.querySelectorAll('#app-multiplicador .view-content').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-            enfocarSiguienteInputVisible(tabId);
+        function gestionarPestanaMultiplicador(event, tabId) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const slider = document.getElementById('sliderMultiplicador');
+            if (!slider) return;
+
+            vibrarRapido();
+            esTransicionClickTab = true;
+            clearTimeout(timerFinTransicion);
+
+            const esBilletes = (tabId === 'tab-billetes');
+            const btnBilletes = document.getElementById('tab-btn-billetes');
+            const btnMonedas = document.getElementById('tab-btn-monedas');
+
+            btnBilletes.classList.toggle('active', esBilletes);
+            btnMonedas.classList.toggle('active', !esBilletes);
+
+            const targetPos = esBilletes ? 0 : slider.clientWidth;
+
+            slider.scrollTo({
+                left: targetPos,
+                behavior: 'smooth'
+            });
+
+            timerFinTransicion = setTimeout(() => {
+                esTransicionClickTab = false;
+            }, 260);
+        }
+
+        function handleScrollMultiplicador() {
+            if (esTransicionClickTab) return;
+
+            const slider = document.getElementById('sliderMultiplicador');
+            if (!slider) return;
+
+            const mitad = slider.clientWidth / 2;
+            const esMonedas = slider.scrollLeft > mitad;
+
+            const btnBilletes = document.getElementById('tab-btn-billetes');
+            const btnMonedas = document.getElementById('tab-btn-monedas');
+
+            btnBilletes.classList.toggle('active', !esMonedas);
+            btnMonedas.classList.toggle('active', esMonedas);
         }
 
         function gestionarStep(event, type, denom, delta) {
-            if (event) event.preventDefault(); 
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            vibrarRapido();
             changeQty(type, denom, delta);
+
+            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
+            if (inputEl) {
+                inputEl.focus({ preventScroll: true });
+            }
         }
 
-        let startX = 0;
-        let startY = 0;
-
-        document.addEventListener('touchstart', (e) => {
-            if(e.target.closest('.contenedor-deslizable')) return;
-            if(e.target.closest('.sub-tab-btn')) return; 
-            if(e.target.closest('.selector-modos-grid')) return;
-            if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        }, {passive: true});
-
-        document.addEventListener('touchend', (e) => {
-            if(startX === 0) return;
-            let endX = e.changedTouches[0].clientX;
-            let endY = e.changedTouches[0].clientY;
-            let diffX = endX - startX;
-            let diffY = endY - startY;
-
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                let appCajaActiva = document.getElementById('app-caja').classList.contains('active-app');
-                
-                if (diffX < -60 && appCajaActiva) {
-                    switchMainApp('app-multiplicador');
-                } else if (diffX > 60 && !appCajaActiva) {
-                    switchMainApp('app-caja');
-                    enfocarSiguienteInputVisible('app-caja');
-                }
-            }
-            startX = 0;
-            startY = 0;
-        }, {passive: true});
-
-        // Conversión a céntimos enteros (Evita bugs de coma flotante)
         const getValCentimos = (id) => {
-            const el = document.getElementById(id);
-            if (!el) return 0;
-            const raw = el.value.replace(/,/g, '').trim();
+            const raw = document.getElementById(id).value.replace(/,/g, '').trim();
             const num = parseFloat(raw);
             return isNaN(num) ? 0 : Math.round(num * 100);
         };
@@ -1137,6 +1432,27 @@
 
         function insertarDobleCero(input) {
             if (!input || input.readOnly) return;
+
+            if (input.classList.contains('input-qty') || input.id.startsWith('input-b-') || input.id.startsWith('input-m-')) {
+                let actual = input.value.replace(/[^0-9]/g, '');
+                if (actual === '' || actual === '0') {
+                    actual = '0';
+                    input.value = '';
+                } else {
+                    actual = actual + '00';
+                    input.value = actual;
+                }
+
+                const esBillete = input.id.startsWith('input-b-');
+                const tipo = esBillete ? 'billete' : 'moneda';
+                const denomStr = input.id.replace(esBillete ? 'input-b-' : 'input-m-', '');
+                const denom = parseFloat(denomStr);
+
+                updateQty(tipo, denom, input.value);
+                vibrarRapido();
+                return;
+            }
+
             let val = input.value.replace(/,/g, '').trim();
 
             if (val === '' || val === '0') {
@@ -1155,9 +1471,9 @@
             registrarFocoCaja(input);
             guardarValoresModoActual();
             calcularTodo();
+            vibrarRapido();
         }
 
-        // MOTOR DE CÁLCULO
         function calcularTodo() {
             var centimosSuperior = 0;
             for (let i = 1; i <= 8; i++) centimosSuperior += getValCentimos('b' + i);
@@ -1294,46 +1610,184 @@
             document.getElementById('dot-inf-2').classList.remove('active');
 
             calcularTodo();
+            vibrarRapido();
         }
 
         const denominacionesBilletes = [200, 100, 50, 20, 10];
         const denominacionesMonedas = [5.00, 2.00, 1.00, 0.50, 0.20, 0.10];
-        let cantidadesBilletes = {}; let cantidadesMonedas = {};
+        let cantidadesBilletes = {}; 
+        let cantidadesMonedas = {};
         denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
         denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
 
-        const containerBilletes = document.getElementById('containerBilletes');
-        denominacionesBilletes.forEach(denom => {
-            containerBilletes.innerHTML += `
-                <div class="item-card">
-                    <div class="item-info">
-                        <span class="item-denomination">S/ ${denom}</span>
-                        <span class="item-subtotal" id="sub-b-${denom}">0.00</span>
-                    </div>
-                    <div class="stepper-control">
-                        <button type="button" class="btn-step" onmousedown="gestionarStep(event, 'billete', ${denom}, -1)" ontouchstart="gestionarStep(event, 'billete', ${denom}, -1)">-</button>
-                        <input type="text" inputmode="numeric" class="input-qty" id="input-b-${denom}" placeholder="0" enterkeyhint="done" oninput="updateQty('billete', ${denom}, this.value)">
-                        <button type="button" class="btn-step" onmousedown="gestionarStep(event, 'billete', ${denom}, 1)" ontouchstart="gestionarStep(event, 'billete', ${denom}, 1)">+</button>
-                    </div>
-                </div>`;
-        });
+        const coloresBilletes = {
+            200: '#581c87',
+            100: '#0284c7',
+            50:  '#78350f',
+            20:  '#ea580c',
+            10:  '#059669'
+        };
 
-        const containerMonedas = document.getElementById('containerMonedas');
-        denominacionesMonedas.forEach(denom => {
-            containerMonedas.innerHTML += `
-                <div class="item-card">
-                    <div class="item-info">
-                        <span class="item-denomination">S/ ${denom.toFixed(2)}</span>
-                        <span class="item-subtotal" id="sub-m-${denom}">0.00</span>
-                    </div>
-                    <div class="stepper-control">
-                        <button type="button" class="btn-step" onmousedown="gestionarStep(event, 'moneda', ${denom}, -1)" ontouchstart="gestionarStep(event, 'moneda', ${denom}, -1)">-</button>
-                        <input type="text" inputmode="numeric" class="input-qty" id="input-m-${denom}" placeholder="0" enterkeyhint="done" oninput="updateQty('moneda', ${denom}, this.value)">
-                        <button type="button" class="btn-step" onmousedown="gestionarStep(event, 'moneda', ${denom}, 1)" ontouchstart="gestionarStep(event, 'moneda', ${denom}, 1)">+</button>
-                    </div>
-                </div>`;
-        });
-        
+        const configMonedas = {
+            5.00: { css: 'moneda-500', color: '#b45309' },
+            2.00: { css: 'moneda-200', color: '#b45309' },
+            1.00: { css: 'moneda-100', color: '#475569' },
+            0.50: { css: 'moneda-050', color: '#475569' },
+            0.20: { css: 'moneda-020', color: '#a16207' },
+            0.10: { css: 'moneda-010', color: '#a16207' }
+        };
+
+        function obtenerSrcFoto(tipo, denom) {
+            const guardada = localStorage.getItem(`foto_${tipo}_${denom}`);
+            if (guardada) return guardada;
+            if (tipo === 'billete') return `img/billete-${denom}.jpg`;
+            const nombreMoneda = denom === 5 ? '5' : denom === 2 ? '2' : denom === 1 ? '1' : denom === 0.5 ? '050' : denom === 0.2 ? '020' : '010';
+            return `img/moneda-${nombreMoneda}.jpg`;
+        }
+
+        function manejarErrorFoto(imgElement, tipo, denom) {
+            imgElement.style.display = 'none';
+            const contenedor = imgElement.parentElement;
+            const badge = document.createElement('div');
+            badge.className = 'fallback-badge';
+            
+            if (tipo === 'billete') {
+                badge.style.backgroundColor = coloresBilletes[denom];
+                badge.innerText = `S/ ${denom}`;
+            } else {
+                badge.style.backgroundColor = configMonedas[denom].color;
+                badge.style.borderRadius = '50%';
+                badge.classList.add(configMonedas[denom].css);
+                badge.innerText = denom >= 1 ? `S/ ${denom.toFixed(0)}` : `${(denom * 100).toFixed(0)}¢`;
+                badge.style.fontSize = '13px';
+            }
+            contenedor.appendChild(badge);
+        }
+
+        function renderizarListasVisuales() {
+            const containerBilletes = document.getElementById('containerBilletes');
+            containerBilletes.innerHTML = '';
+            denominacionesBilletes.forEach(denom => {
+                const src = obtenerSrcFoto('billete', denom);
+                containerBilletes.innerHTML += `
+                    <div class="item-card">
+                        <div class="billete-container" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('billete', ${denom})" title="Doble toque para reiniciar">
+                            <img src="${src}" class="billete-real-img" alt="S/ ${denom}" loading="eager" onerror="manejarErrorFoto(this, 'billete', ${denom})">
+                        </div>
+                        <div class="stepper-control">
+                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'billete', ${denom}, -1)" title="Bajar">${ICON_BAJAR}</button>
+                            <input type="text" inputmode="numeric" class="input-qty" id="input-b-${denom}" placeholder="0" enterkeyhint="done" oninput="updateQty('billete', ${denom}, this.value)">
+                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'billete', ${denom}, 1)" title="Subir">${ICON_SUBIR}</button>
+                        </div>
+                        <div class="item-data-col" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('billete', ${denom})" title="Doble toque para reiniciar">
+                            <span class="subtotal-tag">SUBTOTAL</span>
+                            <div class="subtotal-valor-box">
+                                <span class="item-subtotal" id="sub-b-${denom}">0</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+
+            const containerMonedas = document.getElementById('containerMonedas');
+            containerMonedas.innerHTML = '';
+            denominacionesMonedas.forEach(denom => {
+                const src = obtenerSrcFoto('moneda', denom);
+                const conf = configMonedas[denom];
+                containerMonedas.innerHTML += `
+                    <div class="item-card">
+                        <div class="moneda-real-frame" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('moneda', ${denom})" title="Doble toque para reiniciar">
+                            <img src="${src}" class="moneda-real-img ${conf.css}" alt="S/ ${denom.toFixed(2)}" loading="eager" onerror="manejarErrorFoto(this, 'moneda', ${denom})">
+                        </div>
+                        <div class="stepper-control">
+                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'moneda', ${denom}, -1)" title="Bajar">${ICON_BAJAR}</button>
+                            <input type="text" inputmode="numeric" class="input-qty" id="input-m-${denom}" placeholder="0" enterkeyhint="done" oninput="updateQty('moneda', ${denom}, this.value)">
+                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'moneda', ${denom}, 1)" title="Subir">${ICON_SUBIR}</button>
+                        </div>
+                        <div class="item-data-col" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('moneda', ${denom})" title="Doble toque para reiniciar">
+                            <span class="subtotal-tag">SUBTOTAL</span>
+                            <div class="subtotal-valor-box">
+                                <span class="item-subtotal" id="sub-m-${denom}">0.00</span>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function abrirModalFotos() {
+            const listB = document.getElementById('listaSubidaBilletes');
+            const listM = document.getElementById('listaSubidaMonedas');
+            listB.innerHTML = '<div style="font-weight:900; color:var(--bcp-blue); margin-bottom:4px;">💵 BILLETES</div>';
+            listM.innerHTML = '<div style="font-weight:900; color:var(--bcp-blue); margin-bottom:4px;">🪙 MONEDAS</div>';
+
+            denominacionesBilletes.forEach(d => {
+                const yaTiene = !!localStorage.getItem(`foto_billete_${d}`);
+                listB.innerHTML += `
+                    <div class="fila-upload">
+                        <span>Billete S/ ${d} ${yaTiene ? '✓' : ''}</span>
+                        <label class="btn-examinar">
+                            ${yaTiene ? 'Cambiar' : 'Elegir'}
+                            <input type="file" accept="image/*" onchange="guardarFotoEnStorage(event, 'billete', ${d})">
+                        </label>
+                    </div>`;
+            });
+
+            denominacionesMonedas.forEach(d => {
+                const yaTiene = !!localStorage.getItem(`foto_moneda_${d}`);
+                listM.innerHTML += `
+                    <div class="fila-upload">
+                        <span>Moneda S/ ${d.toFixed(2)} ${yaTiene ? '✓' : ''}</span>
+                        <label class="btn-examinar">
+                            ${yaTiene ? 'Cambiar' : 'Elegir'}
+                            <input type="file" accept="image/*" onchange="guardarFotoEnStorage(event, 'moneda', ${d})">
+                        </label>
+                    </div>`;
+            });
+
+            document.getElementById('modalFotos').classList.add('active');
+        }
+
+        function cerrarModalFotos() {
+            document.getElementById('modalFotos').classList.remove('active');
+        }
+
+        function guardarFotoEnStorage(event, tipo, denom) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let maxW = (tipo === 'billete') ? 340 : 160;
+                    let scale = maxW / img.width;
+                    canvas.width = maxW;
+                    canvas.height = img.height * scale;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    const optimizada = canvas.toDataURL('image/jpeg', 0.85);
+                    try {
+                        localStorage.setItem(`foto_${tipo}_${denom}`, optimizada);
+                        renderizarListasVisuales();
+                        abrirModalFotos();
+                    } catch(err) {
+                        alert('Memoria llena en el navegador móvil.');
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function reiniciarDenominacion(type, denom) {
+            vibrarRapido();
+            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
+            inputEl.value = '';
+            updateQty(type, denom, 0);
+            if (inputEl) inputEl.focus({ preventScroll: true });
+        }
+
         function changeQty(type, denom, delta) {
             const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
             let val = (parseInt(inputEl.value) || 0) + delta;
@@ -1357,14 +1811,12 @@
             calculateAllCounter();
         }
 
-        let cuadroVinculado = null; 
-
         function calculateAllCounter() {
             let centimosBilletes = 0, centimosMonedas = 0;
             denominacionesBilletes.forEach(d => { 
                 const subCentimos = Math.round(d * 100) * (cantidadesBilletes[d] || 0); 
                 centimosBilletes += subCentimos; 
-                document.getElementById(`sub-b-${d}`).innerText = formatoSoles(subCentimos / 100); 
+                document.getElementById(`sub-b-${d}`).innerText = formatoEntero(subCentimos / 100); 
             });
             denominacionesMonedas.forEach(d => { 
                 const subCentimos = Math.round(d * 100) * (cantidadesMonedas[d] || 0); 
@@ -1372,10 +1824,15 @@
                 document.getElementById(`sub-m-${d}`).innerText = formatoSoles(subCentimos / 100); 
             });
 
+            let totalBilletesVal = centimosBilletes / 100;
+            let totalMonedasVal = centimosMonedas / 100;
             let granTotalNumerico = (centimosBilletes + centimosMonedas) / 100;
-            document.getElementById('txtGranTotal').innerText = formatoSoles(granTotalNumerico);
 
-            if(granTotalNumerico > 0) {
+            document.getElementById('txtGranTotal').innerText = formatoSoles(granTotalNumerico);
+            document.getElementById('badgeTotalBilletes').innerText = `S/ ${formatoEntero(totalBilletesVal)}`;
+            document.getElementById('badgeTotalMonedas').innerText = `S/ ${formatoSoles(totalMonedasVal)}`;
+
+            if (granTotalNumerico > 0) {
                 const listaOpciones = (modoOperacion === 'retiro' || modoOperacion === 'deposito') 
                     ? ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'] 
                     : ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8'];
@@ -1434,9 +1891,6 @@
             calcularTodo(); 
         }
 
-        // =======================================================
-        // INTEGRACIÓN DE TECLADO NATIVO (-, ,, ENTER)
-        // =======================================================
         function procesarTeclasEspeciales(e) {
             if (e.key === '-' || e.key === 'Minus' || e.code === 'NumpadSubtract' || e.code === 'Minus') {
                 e.preventDefault();
@@ -1458,7 +1912,7 @@
             const esEnterOAccion = (
                 e.key === 'Enter' || 
                 e.keyCode === 13 || 
-                e.which === 13 ||
+                e.which === 13 || 
                 e.code === 'Enter' || 
                 e.code === 'NumpadEnter' || 
                 e.key === 'ArrowRight'
@@ -1494,6 +1948,8 @@
                 }
             }
         }, true);
+
+        renderizarListasVisuales();
     </script>
 </body>
 </html>
