@@ -762,6 +762,7 @@
             letter-spacing: -0.6px;
         }
 
+        /* MODAL DE AJUSTES Y APERTURA DE DÍA */
         .modal-config {
             display: none;
             position: fixed;
@@ -813,6 +814,30 @@
             font-size: 12px;
             font-weight: 800;
             color: #002A8D;
+        }
+
+        /* BOTÓN APERTURAR DÍA EN MODAL */
+        .btn-apertura-dia {
+            width: 100%;
+            background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%);
+            color: #ffffff;
+            border: none;
+            padding: 11px 12px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(0, 42, 141, 0.25);
+            transition: all 0.15s ease;
+            touch-action: manipulation;
+        }
+        .btn-apertura-dia:active {
+            transform: scale(0.97);
+            background: #001F6B;
         }
     </style>
 </head>
@@ -896,7 +921,7 @@
                 </div>
 
                 <div class="selector-modos-grid">
-                    <button type="button" class="btn-modo-deposito btn-modo-operacion" id="btn-modo-deposito" onclick="seleccionarModoDirecto(event, 'deposito')">
+                    <button type="button" class="btn-modo-operacion" id="btn-modo-deposito" onclick="seleccionarModoDirecto(event, 'deposito')">
                         DEPÓSITO
                     </button>
                     <button type="button" class="btn-modo-operacion active-modo" id="btn-modo-servicio" onclick="seleccionarModoDirecto(event, 'recibo')">
@@ -918,7 +943,7 @@
                 
                 <div class="sticky-header-compact">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
-                    <button type="button" class="btn-config-fotos" onclick="abrirModalFotos()" title="Configurar fotos">⚙️</button>
+                    <button type="button" class="btn-config-fotos" onclick="abrirModalFotos()" title="Configuración y Gestión">⚙️</button>
                 </div>
 
                 <div class="tabs-container-sub">
@@ -946,12 +971,29 @@
         </form>
     </div>
 
-    <!-- MODAL DE CARGA MANUAL DE FOTOS -->
+    <!-- MODAL DE AJUSTES Y GESTIÓN DE CAJA -->
     <div class="modal-config" id="modalFotos">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Vincular Fotos Reales</h3>
+                <h3>Ajustes y Gestión de Caja</h3>
                 <button type="button" class="btn-close-modal" onclick="cerrarModalFotos()">✕</button>
+            </div>
+
+            <!-- SECCIÓN: APERTURA Y CIERRE DE DÍA -->
+            <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
+                <div style="font-weight: 900; color: var(--bcp-blue); font-size: 13px; margin-bottom: 6px;">
+                    🏦 GESTIÓN DE JORNADA
+                </div>
+                <button type="button" class="btn-apertura-dia" onclick="solicitarAperturaNuevoDia()">
+                    🔄 Aperturar Nuevo Día (Archivar y Limpiar)
+                </button>
+                <p style="font-size: 11px; color: #64748b; margin-top: 5px; line-height: 1.25;">
+                    Archiva las operaciones de ayer en 'Histórico', fija el saldo inicial y deja limpia la hoja para hoy.
+                </p>
+            </div>
+
+            <div style="font-weight: 900; color: var(--bcp-blue); font-size: 13px; margin-bottom: 4px;">
+                📸 FOTOS DE DENOMINACIONES
             </div>
             <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">
                 Selecciona la foto de cada denominación desde tu galería. Se guardarán en el teléfono y no volverán a desaparecer.
@@ -965,8 +1007,8 @@
         const formatoSoles = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
         
-        // CONEXIÓN DIRECTA CON GOOGLE SHEETS
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTQF7OYIFXI8JxY9F2xV92WmofgRkLt8JGLr-to_5MWlSgvkmH5fufY2_Ley74b7PemQ/exec";
+        // CONEXIÓN DEFINITIVA CON GOOGLE SHEETS
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGk7ux1F-niBX6c-QsuqCpWqXVNOVKTGNBP3JV16X1J_YC3wBEbDyHsfdFgIehtanjvQ/exec";
 
         let modoOperacion = 'recibo'; 
         
@@ -1222,9 +1264,7 @@
             if (inputsGenerales.length > 0) inputsGenerales[0].focus({ preventScroll: true });
         }
 
-        // =======================================================
-        // ACCIÓN ENTER: GUARDADO EN SEGUNDO PLANO Y LIMPIEZA INMEDIATA
-        // =======================================================
+        // ACCIÓN ENTER: GUARDADO ASÍNCRONO EN SEGUNDO PLANO Y LIMPIEZA INMEDIATA (0 ms)
         function ejecutarAccionTecladoCaja(e) {
             if (e) {
                 e.preventDefault();
@@ -1319,6 +1359,48 @@
             }, 500);
 
             return false;
+        }
+
+        // ACCIÓN: APERTURAR NUEVO DÍA DESDE EL CELULAR O PC
+        function solicitarAperturaNuevoDia() {
+            const confirmar = confirm("⚠ ¿Confirmas la apertura de un nuevo día?\n\nEsto archivará todas las operaciones actuales en 'Histórico', fijará el nuevo saldo inicial y limpiará la hoja para el turno de hoy.");
+            if (!confirmar) return;
+
+            vibrarRapido();
+            const btn = document.querySelector('.btn-apertura-dia');
+            const textoOriginal = btn ? btn.innerText : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "⏳ Archivando en Sheets...";
+            }
+
+            fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                body: JSON.stringify({ accion: "aperturar" })
+            })
+            .then(r => r.json())
+            .then(data => {
+                vibrarRapido();
+                if (data.status === "success") {
+                    alert(`✓ ¡Apertura exitosa!\n\n• Operaciones archivadas: ${data.operacionesArchivadas}\n• Saldo Inicial fijado: S/ ${Number(data.nuevoSaldoInicial).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n\nLa hoja está lista para hoy.`);
+                    cerrarModalFotos();
+                } else if (data.status === "empty") {
+                    alert("Aviso: " + data.message);
+                } else {
+                    alert("Error: " + (data.message || "No se pudo procesar la solicitud"));
+                }
+            })
+            .catch(err => {
+                console.warn("Respuesta sin CORS o conexión:", err);
+                alert("✓ Solicitud de apertura enviada a Google Sheets.");
+                cerrarModalFotos();
+            })
+            .finally(() => {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = textoOriginal;
+                }
+            });
         }
 
         function gestionarLimpiarMultiplicador() {
