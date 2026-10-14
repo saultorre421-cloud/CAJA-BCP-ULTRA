@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Sistema Ágil Integrado - Agente BCP</title>
+    <title>Cierre Ágil Integrado - Agente BCP</title>
     <style>
         :root {
             --bcp-blue: #002A8D;
+            --bcp-blue-dark: #001B5E;
             --bcp-orange: #FF6A00;
             --bg-light: #F4F6F9;
             --card-bg: #FFFFFF;
             --text-dark: #1A1A1A;
             --text-muted: #666666;
             --border-color: #E2E8F0;
-            --danger-color: #D32F2F;
+            --danger-color: #DC2626;
             --app-bg: #f1f5f9;
 
             /* Multiplicador: Fondo y contraste */
@@ -24,23 +25,11 @@
             /* Color de destaque para subtotales en multiplicador */
             --subtotal-color: #7A0C2E;
 
-            /* 1. MODO RECIBO / PAGO DE SERVICIOS */
-            --recibo-header: #eab308;
-            --recibo-header-text: #000000;
-            --recibo-caja-bg: #fef9c3;
-            --recibo-caja-border: #facc15;
-
-            /* 2. MODO DEPÓSITO EN CUENTA */
-            --deposito-header: #0d9488;
-            --deposito-header-text: #ffffff;
-            --deposito-caja-bg: #ccfbf1;
-            --deposito-caja-border: #2dd4bf;
-
-            /* 3. MODO RETIRO EN EFECTIVO */
-            --retiro-header: #e11d48;
-            --retiro-header-text: #ffffff;
-            --retiro-caja-bg: #ffe4e6;
-            --retiro-caja-border: #fb7185;
+            /* Tema Cierre Principal */
+            --cierre-header-1: #002A8D;
+            --cierre-header-2: #001B5E;
+            --cierre-caja-bg: #e2e8f0;
+            --cierre-caja-border: #94a3b8;
         }
 
         * {
@@ -49,6 +38,7 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* BLINDAJE VERTICAL COMPLETO: CERO SCROLL ARRIBA/ABAJO */
@@ -75,7 +65,7 @@
             width: 100%;
             height: 100%;
             overflow-y: hidden;
-            animation: fadeInScreen 0.2s forwards;
+            animation: fadeInScreen 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .main-app-container.active-app {
@@ -90,215 +80,273 @@
         .caja-wrapper {
             padding: 2px 4px 4px 4px;
             height: 100%;
+            max-width: 520px;
+            margin: 0 auto;
             overflow-y: hidden;
         }
 
+        /* =========================================
+           PANEL DE CABECERA PRINCIPAL (CON AJUSTES)
+           ========================================= */
         .panel-total { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 4px 8px 4px 6px; 
+            padding: 5px 6px 5px 8px; 
             border-radius: 9px 9px 0 0; 
-            font-size: 15px; 
+            font-size: 14px; 
             font-weight: 900; 
             text-transform: uppercase; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
-            user-select: none; 
-            transition: background-color 0.2s ease, color 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
+            user-select: none;
+            background: linear-gradient(135deg, var(--cierre-header-1) 0%, var(--cierre-header-2) 100%);
+            color: #ffffff;
             gap: 6px;
         }
         
         .panel-title-area {
             display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-shrink: 1;
+            flex-direction: column;
+            justify-content: center;
             min-width: 0;
+            flex-shrink: 1;
         }
 
-        .panel-title-area span {
+        .title-main-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .title-main-row span {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            letter-spacing: 0.3px;
+            font-size: 14px;
         }
 
-        .header-dots {
+        .base-pill-indicator {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            background: rgba(0, 0, 0, 0.12);
-            padding: 2px 6px;
-            border-radius: 10px;
-            flex-shrink: 0;
-        }
-        .h-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .tema-recibo-header .h-dot {
-            background-color: rgba(0, 0, 0, 0.25);
-        }
-        .h-dot.active {
-            background-color: #ffffff !important;
-            transform: scale(1.3);
-        }
-        .tema-recibo-header .h-dot.active {
-            background-color: #000000 !important;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #fde047;
+            letter-spacing: 0.2px;
+            margin-top: 1px;
         }
 
-        .panel-total span:nth-child(2) {
-            font-size: clamp(23px, 6.2vw, 29px);
+        .header-right-area {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .total-es-valor {
+            font-size: clamp(22px, 6vw, 28px);
             font-weight: 900;
             letter-spacing: -0.5px;
             white-space: nowrap;
-            flex-shrink: 0;
             text-align: right;
+            color: #ffffff;
         }
 
-        .tema-recibo-header { 
-            background-color: var(--recibo-header) !important; 
-            color: var(--recibo-header-text) !important; 
+        .btn-config-cierre {
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.32);
+            color: white;
+            border-radius: 7px;
+            width: 34px;
+            height: 34px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform 0.12s ease, background 0.12s ease;
         }
-        .tema-deposito-header { 
-            background-color: var(--deposito-header) !important; 
-            color: var(--deposito-header-text) !important; 
-        }
-        .tema-retiro-header { 
-            background-color: var(--retiro-header) !important; 
-            color: var(--retiro-header-text) !important; 
+        .btn-config-cierre:active {
+            transform: scale(0.92);
+            background: rgba(255, 255, 255, 0.28);
         }
 
+        /* =========================================
+           CONTENEDOR OPERATIVO DE CIERRE
+           ========================================= */
         .caja-contenedor { 
-            padding: 4px 5px 5px 5px; 
+            padding: 5px; 
             border-radius: 0 0 10px 10px; 
             margin-bottom: 5px; 
-            border-bottom: 3px solid; 
-            border-left: 2px solid; 
-            border-right: 2px solid; 
+            background-color: var(--cierre-caja-bg);
+            border-bottom: 3px solid var(--cierre-caja-border); 
+            border-left: 2px solid var(--cierre-caja-border); 
+            border-right: 2px solid var(--cierre-caja-border); 
             box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-            position: relative;
         }
 
-        .caja-contenedor.tema-recibo-bg {
-            background-color: var(--recibo-caja-bg);
-            border-color: var(--recibo-caja-border);
-        }
-        .caja-contenedor.tema-deposito-bg {
-            background-color: var(--deposito-caja-bg);
-            border-color: var(--deposito-caja-border);
-        }
-        .caja-contenedor.tema-retiro-bg {
-            background-color: var(--retiro-caja-bg);
-            border-color: var(--retiro-caja-border);
+        .grid-cierre-top {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-bottom: 5px;
         }
 
-        .contenedor-deslizable {
-            display: flex; 
-            overflow-x: auto; 
-            overflow-y: hidden; 
-            scroll-snap-type: x mandatory; 
-            gap: 8px;
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
-            padding: 1px 0;
-            touch-action: pan-x;
-        }
-        .contenedor-deslizable::-webkit-scrollbar { display: none; }
-        
-        .pagina-deslizable { 
-            flex: 0 0 100%; 
-            scroll-snap-align: start; 
-            border-radius: 6px;
-            position: relative;
+        .campo-box {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 3px 6px 4px 6px;
+            border: 2px solid #94a3b8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 64px;
+            transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
         }
 
-        .pagina-deslizable.pagina-secundaria {
-            padding: 0;
-            background: transparent;
-            border: none;
+        .campo-box.box-efectivo {
+            background: #fefce8;
+            border: 2px dashed #ca8a04;
+            cursor: pointer;
+            user-select: none;
+        }
+        .campo-box.box-efectivo:active {
+            transform: scale(0.98);
         }
 
-        .badge-pagina-dos {
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #0f172a;
-            color: #ffffff;
-            font-size: 8px;
+        .campo-box.box-sistema:focus-within {
+            border-color: var(--bcp-orange);
+            box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.25);
+        }
+
+        .campo-label {
+            font-size: 10px;
             font-weight: 900;
-            padding: 1.5px 8px;
-            border-radius: 3px;
-            letter-spacing: 0.8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            pointer-events: none;
-            z-index: 5;
+            letter-spacing: 0.6px;
             text-transform: uppercase;
-            line-height: 1;
+            color: #475569;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .box-efectivo .campo-label {
+            color: #854d0e;
         }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-
-        .caja-contenedor input { 
-            width: 100%; 
-            height: 46px; 
-            font-size: clamp(24px, 7vw, 30px); 
-            font-weight: 900; 
-            border: 2px solid #94a3b8; 
-            border-radius: 7px; 
-            box-sizing: border-box; 
-            text-align: center; 
-            color: #0f172a; 
-            background-color: #ffffff; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-            transition: border-color 0.15s, background-color 0.15s, color 0.15s;
-        }
-        .caja-contenedor input:focus { 
-            outline: none; 
-            border-color: var(--bcp-orange); 
-            background-color: #ffffff; 
-        }
-        .caja-contenedor input::placeholder { 
-            color: #94a3b8; 
-            font-size: 16px; 
-            font-weight: normal; 
+        .efectivo-readonly-val {
+            font-size: clamp(22px, 6.4vw, 28px);
+            font-weight: 900;
+            color: #854d0e;
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
         }
 
-        .caja-contenedor input.active-sync {
-            background-color: #fefce8 !important; 
-            border: 2px dashed #ca8a04 !important; 
-            color: #854d0e !important;
+        .input-sistema-cierre {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: clamp(22px, 6.4vw, 28px);
+            font-weight: 900;
+            color: #0f172a;
+            text-align: center;
+            outline: none;
+            line-height: 1.1;
+            letter-spacing: -0.5px;
         }
-        .caja-contenedor input.active-sync-deposito {
-            background-color: #f0fdfa !important; 
-            border: 2px dashed #0d9488 !important; 
-            color: #0f766e !important;
-        }
-        .caja-contenedor input.active-sync-retiro {
-            background-color: #fff1f2 !important; 
-            border: 2px dashed var(--retiro-header) !important; 
-            color: var(--retiro-header) !important;
+        .input-sistema-cierre::placeholder {
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 18px;
         }
 
+        /* TARJETA DE FAJOS 1000 EN PANTALLA PRINCIPAL */
+        .fajo-card {
+            background: var(--card-bg); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            height: 62px;
+            border-radius: 8px;
+            padding: 0 4px 0 0;
+            gap: 6px;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
+            overflow: hidden;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+        .fajo-card.fila-activa {
+            border-color: var(--bcp-blue);
+            box-shadow: 0 2px 8px rgba(0, 42, 141, 0.14);
+        }
+        .fajo-card.fila-negativa {
+            border-color: var(--danger-color) !important;
+            background-color: #fef2f2 !important;
+        }
+
+        .fajo-visual-box {
+            width: 118px;
+            height: 100%;
+            flex-shrink: 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1.5px solid rgba(0,0,0,0.1);
+            user-select: none;
+        }
+
+        .fajo-card .btn-step {
+            width: 35px;
+            height: 46px;
+            border-radius: 7px;
+        }
+        .fajo-card .input-qty {
+            width: 60px;
+            height: 46px;
+            font-size: 25px;
+            border-radius: 7px;
+        }
+        .fajo-card .item-subtotal {
+            font-size: clamp(24px, 6.6vw, 30px);
+            letter-spacing: -0.6px;
+        }
+
+        /* ===============================================================
+           PANEL DE RESULTADO PRINCIPAL: 100% CENTRADO Y SEÑALIZACIÓN VIVA
+           =============================================================== */
         .panel-resultado { 
-            padding: 0 6px 5px 6px;
+            padding: 0 6px 6px 6px;
             border-radius: 10px; 
             text-align: center; 
             font-weight: bold; 
             margin-bottom: 5px;
             border: 3px solid; 
-            transition: all 0.2s; 
+            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease; 
             box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
             position: relative;
             overflow: hidden;
+            isolation: isolate;
+        }
+
+        .panel-resultado::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -130%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent);
+            transform: skewX(-25deg);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
         }
 
         .badge-operacion {
+            position: relative;
+            z-index: 2;
             display: inline-block;
             padding: 2px 14px;
             border-radius: 0 0 8px 8px;
@@ -310,103 +358,235 @@
             margin-bottom: 2px;
             background: rgba(0, 0, 0, 0.11);
             line-height: 1.2;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         #textoFinal {
-            font-size: clamp(16px, 4.6vw, 22px);
+            position: relative;
+            z-index: 2;
+            font-size: clamp(16px, 4.6vw, 21px);
             font-weight: 900;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.7px;
             line-height: 1.1;
             text-transform: uppercase;
             margin-top: 2px;
             margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-align: center;
+        }
+
+        .sig-wing {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: clamp(16px, 4.2vw, 20px);
+            height: clamp(16px, 4.2vw, 20px);
+            flex-shrink: 0;
+        }
+
+        .sig-wing svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
         }
 
         .monto-final { 
+            position: relative;
+            z-index: 2;
             display: block; 
-            font-size: clamp(52px, 14vw, 70px); 
+            width: 100%;
+            text-align: center;
+            font-size: clamp(50px, 13.5vw, 68px); 
             font-weight: 900; 
             margin-top: 1px; 
             line-height: 0.95; 
             letter-spacing: -2px;
+            will-change: transform;
         }
 
-        .estado-esperando { background-color: #f8fafc; border-color: #cbd5e1; color: #475569; }
-        .estado-proceso { background-color: #f3e8ff; border-color: #9333ea; color: #7e22ce; }
-        .estado-cobrar { background-color: #ffedd5; border-color: #ea580c; color: #c2410c; }
-        .estado-vuelto { background-color: #e0f2fe; border-color: #0284c7; color: #0369a1; }
-        .estado-faltante { background-color: #fee2e2; border-color: #dc2626; color: #b91c1c; }
-        .estado-exacto { background-color: #dcfce7; border-color: #16a34a; color: #15803d; }
-        .estado-retiro { background-color: #FFF1F2; border-color: var(--retiro-header); color: #9F1239; }
-        .estado-deposito { background-color: #ccfbf1; border-color: var(--deposito-header); color: #0f766e; }
+        .monto-pop {
+            animation: montoPopAnim 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
 
+        @keyframes montoPopAnim {
+            0% { transform: scale(0.96); }
+            60% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        /* ESTADOS OPERATIVOS DEL PANEL DE RESULTADOS DE CIERRE */
+        .estado-esperando { 
+            background-color: #f8fafc; 
+            border-color: #cbd5e1; 
+            color: #475569; 
+        }
+        .estado-esperando .sig-wing {
+            opacity: 0.55;
+        }
+
+        .estado-exacto { 
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 55%, #86efac 100%); 
+            border-color: #16a34a; 
+            color: #14532d; 
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.30);
+            animation: exactoGlow 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .estado-exacto::before {
+            opacity: 1;
+            animation: shimmerSweep 1.8s infinite;
+        }
+        .estado-exacto .badge-operacion {
+            background: #15803d;
+            color: #ffffff;
+        }
+        .estado-exacto .sig-wing {
+            color: #15803d;
+            animation: checkBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .estado-faltante { 
+            background: repeating-linear-gradient(
+                45deg,
+                #fee2e2,
+                #fee2e2 12px,
+                #fecaca 12px,
+                #fecaca 24px
+            );
+            background-size: 34px 34px;
+            border-color: #dc2626 !important; 
+            color: #991b1b !important; 
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.28), 0 5px 16px rgba(220, 38, 38, 0.38) !important;
+            animation: faltanteJolt 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both, stripeFlowFast 1s linear infinite, dangerBorderPulse 0.65s infinite alternate;
+        }
+        .estado-faltante .badge-operacion {
+            background: #dc2626 !important;
+            color: #ffffff !important;
+        }
+        .estado-faltante .sig-wing {
+            color: #dc2626;
+            animation: warningScalePulse 0.45s infinite alternate;
+        }
+
+        .estado-sobrante {
+            background: repeating-linear-gradient(
+                -45deg,
+                #fff7ed,
+                #fff7ed 12px,
+                #ffedd5 12px,
+                #fed7aa 24px
+            );
+            background-size: 34px 34px;
+            border-color: #ea580c !important;
+            color: #9a3412 !important;
+            box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.25), 0 4px 15px rgba(234, 88, 12, 0.32) !important;
+            animation: stripeFlowFast 1.2s linear infinite, entregarBorderPulse 0.75s infinite alternate;
+        }
+        .estado-sobrante .badge-operacion {
+            background: #c2410c !important;
+            color: #ffffff !important;
+        }
+        .estado-sobrante .sig-wing {
+            color: #ea580c;
+            animation: arrowUpEntregar 0.55s ease-in-out infinite alternate;
+        }
+
+        @keyframes shimmerSweep {
+            0% { left: -130%; }
+            60%, 100% { left: 160%; }
+        }
+        @keyframes exactoGlow {
+            0% { transform: scale(0.985); }
+            60% { transform: scale(1.01); }
+            100% { transform: scale(1); }
+        }
+        @keyframes checkBounce {
+            0% { transform: scale(0.4); }
+            75% { transform: scale(1.22); }
+            100% { transform: scale(1); }
+        }
+        @keyframes faltanteJolt {
+            0%, 100% { transform: translateY(0); }
+            25%, 75% { transform: translateY(-4px); }
+            50% { transform: translateY(4px); }
+        }
+        @keyframes dangerBorderPulse {
+            from { border-color: #dc2626; }
+            to { border-color: #991b1b; }
+        }
+        @keyframes entregarBorderPulse {
+            from { border-color: #f97316; }
+            to { border-color: #c2410c; }
+        }
+        @keyframes arrowUpEntregar {
+            from { transform: translateY(2.5px) scale(0.95); }
+            to { transform: translateY(-2.5px) scale(1.12); }
+        }
+        @keyframes stripeFlowFast {
+            from { background-position: 0 0; }
+            to { background-position: 34px 0; }
+        }
+        @keyframes warningScalePulse {
+            from { transform: scale(0.92); }
+            to { transform: scale(1.22); }
+        }
+
+        /* =========================================
+           BOTONES INFERIORES DE ACCESO RÁPIDO A EFECTIVO
+           ========================================= */
         .selector-modos-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 5px;
             margin-bottom: 2px;
         }
 
         .btn-modo-operacion {
-            height: 46px;
-            border-radius: 7px;
+            height: 44px;
+            border-radius: 8px;
             font-size: 13px;
             font-weight: 900;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             text-transform: uppercase;
             cursor: pointer;
-            border: 2px solid transparent;
+            border: 2px solid #cbd5e1;
+            background: #ffffff;
+            color: var(--bcp-blue);
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 10px;
             transition: all 0.15s ease-in-out;
             user-select: none;
             touch-action: manipulation;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
 
         .btn-modo-operacion:active {
             transform: scale(0.97);
+            background-color: #eff6ff;
+            border-color: var(--bcp-blue);
         }
 
-        #btn-modo-deposito {
-            background-color: #e6fffa;
-            color: #0d9488;
-            border-color: #99f6e4;
+        .pill-resumen-btn {
+            background: rgba(0, 42, 141, 0.1);
+            color: var(--bcp-blue);
+            padding: 2px 7px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 900;
         }
-        #btn-modo-deposito.active-modo {
-            background-color: var(--deposito-header) !important;
-            color: #ffffff !important;
-            border-color: #0f766e !important;
-            box-shadow: 0 3px 8px rgba(13, 148, 136, 0.4);
-        }
-
-        #btn-modo-servicio {
-            background-color: #fefce8;
-            color: #a16207;
-            border-color: #fef08a;
-        }
-        #btn-modo-servicio.active-modo {
-            background-color: var(--recibo-header) !important;
-            color: #000000 !important;
-            border-color: #ca8a04 !important;
-            box-shadow: 0 3px 8px rgba(234, 179, 8, 0.4);
+        .pill-resumen-btn.con-datos {
+            background: var(--bcp-blue);
+            color: #ffffff;
         }
 
-        #btn-modo-retiro {
-            background-color: #fff1f2;
-            color: #e11d48;
-            border-color: #fecdd3;
-        }
-        #btn-modo-retiro.active-modo {
-            background-color: var(--retiro-header) !important;
-            color: #ffffff !important;
-            border-color: #be123c !important;
-            box-shadow: 0 3px 8px rgba(225, 29, 72, 0.4);
-        }
-
-        /* =========================================
-           MULTIPLICADOR: FONDOS Y ESTRUCTURA
-           ========================================= */
+        /* =========================================================
+           MODO BILLETES Y MONEDAS (100% LIMPIO Y DESLIZABLE)
+           ========================================================= */
         .multiplicador-wrapper {
             background-color: var(--bg-light);
             height: 100%;
@@ -422,11 +602,13 @@
             color: white; 
             padding: 6px 12px; 
             display: flex; 
-            justify-content: space-between; 
+            justify-content: center; 
             align-items: center; 
             box-shadow: 0 3px 8px rgba(0,0,0,0.15); 
             z-index: 1000;
             flex-shrink: 0;
+            cursor: pointer;
+            user-select: none;
         }
         
         .main-total-centered { 
@@ -436,20 +618,6 @@
             letter-spacing: -1.2px; 
             text-align: center; 
             flex-grow: 1;
-        }
-
-        .btn-config-fotos {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            border-radius: 8px;
-            padding: 6px 8px;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
         }
 
         .tabs-container-sub { 
@@ -464,7 +632,7 @@
         
         .sub-tab-btn {
             flex: 1; 
-            padding: 9px 4px; 
+            padding: 8px 4px; 
             text-align: center; 
             background: none; 
             border: none; 
@@ -490,12 +658,21 @@
         }
 
         .tab-badge-subtotal {
-            font-size: 12px;
+            font-size: 13.5px;
             font-weight: 900;
             color: var(--bcp-blue);
-            background: rgba(0, 42, 141, 0.09);
-            padding: 2px 8px;
+            background: rgba(0, 42, 141, 0.10);
+            border: 1px solid rgba(0, 42, 141, 0.18);
+            padding: 2px 9px;
             border-radius: 10px;
+            transition: all 0.18s ease;
+        }
+
+        .tab-badge-subtotal.badge-con-monto {
+            background: var(--bcp-blue);
+            color: #ffffff;
+            border-color: var(--bcp-blue);
+            box-shadow: 0 2px 5px rgba(0, 42, 141, 0.25);
         }
 
         .multiplicador-slider {
@@ -541,6 +718,7 @@
             padding: 5px 3px 5px 3px; 
         }
 
+        /* BILLETES */
         #containerBilletes .item-card {
             background: var(--card-bg); 
             display: flex; 
@@ -553,7 +731,21 @@
             gap: 6px;
             border: 1.5px solid #cbd5e1;
             box-shadow: 0 3px 7px rgba(15, 23, 42, 0.08);
-            overflow: hidden; 
+            overflow: hidden;
+            transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        #containerBilletes .item-card.fila-activa,
+        #containerMonedas .item-card.fila-activa {
+            border-color: #94a3b8;
+            background-color: #ffffff;
+            box-shadow: 0 3px 9px rgba(0, 42, 141, 0.12);
+        }
+
+        #containerBilletes .item-card.fila-negativa,
+        #containerMonedas .item-card.fila-negativa {
+            border-color: var(--danger-color) !important;
+            background-color: #fef2f2 !important;
         }
 
         #containerBilletes .billete-container {
@@ -574,16 +766,17 @@
         #containerBilletes .btn-step {
             width: 36px;
             height: 50px;
-            border-radius: 7px;
+            border-radius: 8px;
         }
 
         #containerBilletes .input-qty {
             width: 64px;
             height: 50px;
             font-size: 28px;
-            border-radius: 7px;
+            border-radius: 8px;
         }
 
+        /* MONEDAS: CALIBRADAS Y ESTÁTICAS */
         #containerMonedas .item-card {
             background: var(--card-bg); 
             display: flex; 
@@ -596,7 +789,8 @@
             gap: 6px;
             border: 1.5px solid #cbd5e1;
             box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
-            overflow: hidden; 
+            overflow: hidden;
+            transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         #containerMonedas .item-card:last-child {
@@ -619,14 +813,14 @@
         #containerMonedas .btn-step {
             width: 36px;
             height: 48px;
-            border-radius: 6px;
+            border-radius: 7px;
         }
 
         #containerMonedas .input-qty {
             width: 64px;
             height: 48px;
             font-size: 26px;
-            border-radius: 6px;
+            border-radius: 7px;
         }
 
         .billete-real-img {
@@ -647,6 +841,7 @@
                 0 0 0 1px rgba(0, 0, 0, 0.12);
         }
 
+        /* ESCALA MAXIMIZADA BCRP CONSERVADA AL 100% */
         .moneda-100 { width: 66px; height: 66px; }
         .moneda-500 { width: 64px; height: 64px; }
         .moneda-020 { width: 61px; height: 61px; }
@@ -664,8 +859,12 @@
             font-size: 18px;
             color: #ffffff;
             letter-spacing: -0.5px;
+            overflow: hidden;
         }
 
+        /* =========================================================
+           STEPPERS CON DELTAS DINÁMICOS DE DOBLE ALA
+           ========================================================= */
         .stepper-control { 
             display: flex; 
             align-items: center; 
@@ -675,26 +874,49 @@
         }
         
         .btn-step {
-            border: 1px solid var(--border-color);
-            background-color: #F8FAFC; 
+            border: 1.5px solid #cbd5e1;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
-            color: #475569; 
             user-select: none;
-            transition: background 0.1s, transform 0.08s ease, color 0.1s;
+            transition: background 0.12s ease, transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
             touch-action: manipulation;
             padding: 0;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
         }
-        .btn-step:active { 
-            background-color: #E2E8F0; 
+
+        .btn-step-down {
+            color: #475569;
+        }
+
+        .btn-step-up {
             color: var(--bcp-blue);
-            transform: scale(0.94); 
+            border-color: #bac8dc;
+            background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
         }
+
+        .btn-step-down:active { 
+            background: #e2e8f0; 
+            color: #0f172a;
+            border-color: #94a3b8;
+            transform: translateY(1.5px) scale(0.93); 
+        }
+
+        .btn-step-up:active { 
+            background: #dbeafe; 
+            color: var(--bcp-orange);
+            border-color: var(--bcp-blue);
+            transform: translateY(-1.5px) scale(0.93); 
+        }
+
         .btn-step svg {
+            width: 21px;
+            height: 21px;
             pointer-events: none;
             display: block;
+            overflow: visible;
         }
         
         .input-qty {
@@ -703,32 +925,53 @@
             font-weight: 900; 
             color: var(--bcp-blue); 
             background-color: #FAFAFA;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
         }
         .input-qty:focus { outline: none; border-color: var(--bcp-orange); background-color: white; }
 
+        .fila-activa .input-qty {
+            background-color: #ffffff;
+            border-color: var(--bcp-blue);
+        }
+        .fila-negativa .input-qty {
+            color: var(--danger-color) !important;
+            border-color: var(--danger-color) !important;
+            background-color: #ffffff;
+        }
+
+        /* =========================================================
+           COLUMNA DE SUBTOTAL: ETIQUETA ARRIBA Y NÚMERO CONDENSADO
+           ========================================================= */
         .item-data-col {
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-end;
             flex: 1;
             min-width: 0;
             height: 100%;
-            padding: 1px 8px 1px 2px;
+            padding: 6px 9px 4px 2px;
             text-align: right;
             cursor: pointer;
             user-select: none;
-            gap: 1px;
         }
 
         .subtotal-tag {
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: 900;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.9px;
             color: #64748b;
             text-transform: uppercase;
             line-height: 1;
-            margin-bottom: 2px;
+            margin-bottom: auto;
+            transition: color 0.15s ease;
+        }
+
+        .fila-activa .subtotal-tag {
+            color: var(--bcp-blue);
+        }
+        .fila-negativa .subtotal-tag {
+            color: var(--danger-color);
         }
 
         .subtotal-valor-box {
@@ -736,20 +979,30 @@
             align-items: center;
             justify-content: flex-end;
             width: 100%;
-            overflow: hidden;
-            line-height: 1;
+            flex: 1;
+            padding-top: 1px;
+            padding-bottom: 2px;
+            overflow: visible;
         }
 
         .item-subtotal {
-            color: var(--subtotal-color);
+            color: #94a3b8;
             font-family: "Arial Narrow", "Roboto Condensed", -apple-system, sans-serif;
             font-weight: 900;
             white-space: nowrap;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
             display: inline-block;
-            transform: scaleY(1.14);
+            transform: scaleY(1.12);
             transform-origin: right center;
-            line-height: 1;
+            line-height: 1.05;
+            transition: color 0.15s ease, transform 0.15s ease;
+        }
+
+        .fila-activa .item-subtotal {
+            color: var(--subtotal-color);
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+        }
+        .fila-negativa .item-subtotal {
+            color: var(--danger-color) !important;
         }
 
         #containerBilletes .item-subtotal {
@@ -762,7 +1015,9 @@
             letter-spacing: -0.6px;
         }
 
-        /* MODAL DE AJUSTES Y APERTURA DE DÍA */
+        /* =========================================================
+           MODAL DE AJUSTES (CAPITAL BASE + VINCULACIÓN DE FOTOS)
+           ========================================================= */
         .modal-config {
             display: none;
             position: fixed;
@@ -776,12 +1031,13 @@
         .modal-config.active { display: flex; }
         .modal-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 14px;
             width: 100%;
             max-width: 420px;
-            max-height: 85vh;
+            max-height: 86vh;
             overflow-y: auto;
             padding: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
         }
         .modal-header {
             display: flex;
@@ -791,10 +1047,70 @@
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
         }
-        .modal-header h3 { font-size: 16px; font-weight: 900; color: #002A8D; }
+        .modal-header h3 { font-size: 16px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; }
         .btn-close-modal {
-            background: none; border: none; font-size: 20px; font-weight: 900; cursor: pointer; color: #64748b;
+            background: #f1f5f9;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            color: #475569;
         }
+
+        .bloque-base-config {
+            background: #f8fafc;
+            border: 2px solid var(--bcp-blue);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 14px;
+        }
+        .bloque-base-config label {
+            display: block;
+            font-size: 11px;
+            font-weight: 900;
+            color: var(--bcp-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .base-input-group {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .input-base-modal {
+            flex: 1;
+            height: 42px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: 900;
+            text-align: center;
+            color: #0f172a;
+            outline: none;
+        }
+        .input-base-modal:focus {
+            border-color: var(--bcp-orange);
+        }
+        .btn-save-base {
+            height: 42px;
+            padding: 0 14px;
+            background: var(--bcp-orange);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+        .btn-save-base:active {
+            transform: scale(0.96);
+        }
+
         .fila-upload {
             display: flex;
             align-items: center;
@@ -815,120 +1131,101 @@
             font-weight: 800;
             color: #002A8D;
         }
-
-        /* BOTÓN APERTURAR DÍA EN MODAL */
-        .btn-apertura-dia {
-            width: 100%;
-            background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%);
-            color: #ffffff;
-            border: none;
-            padding: 11px 12px;
-            border-radius: 8px;
-            font-size: 13.5px;
-            font-weight: 900;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            box-shadow: 0 2px 6px rgba(0, 42, 141, 0.25);
-            transition: all 0.15s ease;
-            touch-action: manipulation;
-        }
-        .btn-apertura-dia:active {
-            transform: scale(0.97);
-            background: #001F6B;
-        }
     </style>
 </head>
 <body>
 
-    <!-- APLICACIÓN CAJA -->
-    <div id="app-caja" class="main-app-container active-app">
-        <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
+    <!-- =========================================================
+         PANTALLA PRINCIPAL: CIERRE DE CAJA BCP
+         ========================================================= -->
+    <div id="app-cierre" class="main-app-container active-app">
+        <form id="formCierre" onsubmit="ejecutarGuardadoConEnter(event)" action="javascript:void(0);">
             <div class="caja-wrapper">
                 
-                <div class="panel-total tema-recibo-header" id="panelSuperior">
+                <!-- CABECERA CON CAPITAL BASE Y BOTÓN DE AJUSTES EN LA ESQUINA -->
+                <div class="panel-total" id="panelSuperiorCierre">
                     <div class="panel-title-area">
-                        <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
-                        <div class="header-dots">
-                            <div class="h-dot active" id="dot-sup-1" onclick="scrollPaginacionDirecta('swipeEfectivo', 1)"></div>
-                            <div class="h-dot" id="dot-sup-2" onclick="scrollPaginacionDirecta('swipeEfectivo', 2)"></div>
+                        <div class="title-main-row">
+                            <span>CIERRE DE CAJA · E + S</span>
+                        </div>
+                        <div class="base-pill-indicator">
+                            REMESA BASE: S/ <span id="lblBaseActiva">26,729.00</span>
                         </div>
                     </div>
-                    <span id="lblEfectivo">0.00</span>
+                    <div class="header-right-area">
+                        <span class="total-es-valor" id="lblSumaTotal">0.00</span>
+                        <button type="button" class="btn-config-cierre" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="abrirModalAjustes()" title="Ajustes de Remesa y Fotos">⚙️</button>
+                    </div>
                 </div>
                 
-                <div class="caja-contenedor tema-recibo-bg" id="cajaSuperiorContenedor">
-                    <div class="contenedor-deslizable" id="swipeEfectivo" onscroll="handleScrollIndicators('swipeEfectivo', 'dot-sup-1', 'dot-sup-2')">
-                        <div class="pagina-deslizable">
-                            <div class="grid-2">
-                                <input type="text" id="b1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b2" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                <!-- CONTENEDOR DE ENTRADAS: EFECTIVO + SISTEMA + FAJOS 1000 -->
+                <div class="caja-contenedor">
+                    <div class="grid-cierre-top">
+                        <!-- Cuadro Efectivo (Tocar lleva a Billetes y Monedas) -->
+                        <div class="campo-box box-efectivo" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="irAModoEfectivo('tab-billetes')" title="Toca o presiona (-) para ir a Billetes y Monedas">
+                            <div class="campo-label">
+                                <span>EFECTIVO TOTAL</span>
+                                <span>⇄</span>
                             </div>
+                            <div class="efectivo-readonly-val" id="lblEfectivoFisico">0.00</div>
                         </div>
-                        <div class="pagina-deslizable pagina-secundaria">
-                            <div class="grid-2">
-                                <input type="text" id="b5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+
+                        <!-- Cuadro Saldo Sistema -->
+                        <div class="campo-box box-sistema">
+                            <div class="campo-label">
+                                <span>SALDO SISTEMA</span>
+                                <span>BCP</span>
                             </div>
-                            <span class="badge-pagina-dos">PÁG. 2</span>
+                            <input type="text" id="input-sistema" class="input-sistema-cierre" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCierre(this)" oninput="handleInputSistema(this)" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta Dinámica para Fajos de S/ 1,000 -->
+                    <div class="fajo-card" id="card-f1000">
+                        <div class="fajo-visual-box" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarFajo()" title="Doble toque para reiniciar fajo">
+                            <svg viewBox="0 0 118 62" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <linearGradient id="gFajo" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#002A8D"/>
+                                        <stop offset="100%" stop-color="#0f172a"/>
+                                    </linearGradient>
+                                </defs>
+                                <rect width="118" height="62" fill="url(#gFajo)"/>
+                                <rect x="3" y="3" width="112" height="56" rx="3" fill="none" stroke="#FF6A00" stroke-opacity="0.55" stroke-width="1.2"/>
+                                <text x="8" y="16" fill="#fdba74" font-family="sans-serif" font-size="8" font-weight="900" letter-spacing="0.6">📦 FAJO ESPECIAL</text>
+                                <text x="8" y="46" fill="#ffffff" font-family="sans-serif" font-size="22" font-weight="900" letter-spacing="-0.8">S/ 1,000</text>
+                            </svg>
+                        </div>
+                        <div class="stepper-control">
+                            <button type="button" class="btn-step btn-step-down" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStepFajo(event, -1)" title="Bajar" id="btnFajoDown"></button>
+                            <input type="text" inputmode="numeric" class="input-qty" id="f1000" placeholder="0" enterkeyhint="send" onfocus="registrarFocoCierre(this)" oninput="updateFajo(this.value)">
+                            <button type="button" class="btn-step btn-step-up" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStepFajo(event, 1)" title="Subir" id="btnFajoUp"></button>
+                        </div>
+                        <div class="item-data-col" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarFajo()" title="Doble toque para reiniciar">
+                            <span class="subtotal-tag">SUBTOTAL</span>
+                            <div class="subtotal-valor-box">
+                                <span class="item-subtotal" id="sub-f1000">0</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="panel-total tema-recibo-header" id="panelModoSecundario">
-                    <div class="panel-title-area">
-                        <span id="lblTituloModo">RECIBO POR PAGAR</span>
-                        <div class="header-dots">
-                            <div class="h-dot active" id="dot-inf-1" onclick="scrollPaginacionDirecta('swipeRecibo', 1)"></div>
-                            <div class="h-dot" id="dot-inf-2" onclick="scrollPaginacionDirecta('swipeRecibo', 2)"></div>
-                        </div>
-                    </div>
-                    <span id="lblRecibo">0.00</span>
-                </div>
-                
-                <div class="caja-contenedor tema-recibo-bg" id="cajaInferiorContenedor">
-                    <div class="contenedor-deslizable" id="swipeRecibo" onscroll="handleScrollIndicators('swipeRecibo', 'dot-inf-1', 'dot-inf-2')">
-                        <div class="pagina-deslizable">
-                            <div class="grid-2">
-                                <input type="text" id="p1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p2" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                            </div>
-                        </div>
-                        <div class="pagina-deslizable pagina-secundaria">
-                            <div class="grid-2">
-                                <input type="text" id="p5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                            </div>
-                            <span class="badge-pagina-dos">PÁG. 2</span>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- PANEL DE RESULTADO / SEMÁFORO EXPRESIVO DE CIERRE -->
                 <div class="panel-resultado estado-esperando" id="panelFinal">
-                    <div class="badge-operacion" id="badgeOperacion">PAGO DE SERVICIOS</div>
-                    <div id="textoFinal">ESPERANDO MONTOS...</div>
+                    <div class="badge-operacion" id="badgeOperacion">CUADRE DE CIERRE · ENTER PARA GUARDAR</div>
+                    <div id="textoFinal">ESPERANDO CONTEO...</div>
                     <span class="monto-final" id="montoFinal">0.00</span>
                 </div>
 
+                <!-- ACCESOS RÁPIDOS A BILLETES Y MONEDAS SIN PERDER EL FOCO -->
                 <div class="selector-modos-grid">
-                    <button type="button" class="btn-modo-operacion" id="btn-modo-deposito" onclick="seleccionarModoDirecto(event, 'deposito')">
-                        DEPÓSITO
+                    <button type="button" class="btn-modo-operacion" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="irAModoEfectivo('tab-billetes')">
+                        <span>💵 BILLETES</span>
+                        <span class="pill-resumen-btn" id="pillResumenBilletes">S/ 0</span>
                     </button>
-                    <button type="button" class="btn-modo-operacion active-modo" id="btn-modo-servicio" onclick="seleccionarModoDirecto(event, 'recibo')">
-                        SERVICIO
-                    </button>
-                    <button type="button" class="btn-modo-operacion" id="btn-modo-retiro" onclick="seleccionarModoDirecto(event, 'retiro')">
-                        RETIRO
+                    <button type="button" class="btn-modo-operacion" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="irAModoEfectivo('tab-monedas')">
+                        <span>🪙 MONEDAS</span>
+                        <span class="pill-resumen-btn" id="pillResumenMonedas">S/ 0.00</span>
                     </button>
                 </div>
 
@@ -936,22 +1233,24 @@
         </form>
     </div>
 
-    <!-- APLICACIÓN MULTIPLICADOR -->
+    <!-- =========================================================
+         MODO BILLETES Y MONEDAS (100% LIMPIO Y DESLIZABLE)
+         ========================================================= -->
     <div id="app-multiplicador" class="main-app-container">
-        <form id="formMultiplicador" onsubmit="ejecutarAccionTecladoMulti(event)" action="javascript:void(0);">
+        <form id="formMultiplicador" onsubmit="ejecutarGuardadoConEnter(event)" action="javascript:void(0);">
             <div class="multiplicador-wrapper">
                 
-                <div class="sticky-header-compact">
+                <!-- CABECERA 100% LIMPIA (SIN ICONO DE AJUSTES) -->
+                <div class="sticky-header-compact" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="alternarPantallas()" title="Toca o presiona (-) para volver al Cierre">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
-                    <button type="button" class="btn-config-fotos" onclick="abrirModalFotos()" title="Configuración y Gestión">⚙️</button>
                 </div>
 
                 <div class="tabs-container-sub">
-                    <button type="button" id="tab-btn-billetes" class="sub-tab-btn active" onclick="gestionarPestanaMultiplicador(event, 'tab-billetes')">
+                    <button type="button" id="tab-btn-billetes" class="sub-tab-btn active" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarPestanaMultiplicador(event, 'tab-billetes')">
                         <span>💵 Billetes</span>
                         <span class="tab-badge-subtotal" id="badgeTotalBilletes">S/ 0</span>
                     </button>
-                    <button type="button" id="tab-btn-monedas" class="sub-tab-btn" onclick="gestionarPestanaMultiplicador(event, 'tab-monedas')">
+                    <button type="button" id="tab-btn-monedas" class="sub-tab-btn" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarPestanaMultiplicador(event, 'tab-monedas')">
                         <span>🪙 Monedas</span>
                         <span class="tab-badge-subtotal" id="badgeTotalMonedas">S/ 0.00</span>
                     </button>
@@ -971,32 +1270,27 @@
         </form>
     </div>
 
-    <!-- MODAL DE AJUSTES Y GESTIÓN DE CAJA -->
-    <div class="modal-config" id="modalFotos">
+    <!-- =========================================================
+         MODAL DE AJUSTES: CAPITAL BASE + FOTOS REALES
+         ========================================================= -->
+    <div class="modal-config" id="modalAjustes">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Ajustes y Gestión de Caja</h3>
-                <button type="button" class="btn-close-modal" onclick="cerrarModalFotos()">✕</button>
+                <h3>⚙️ Ajustes del Cierre</h3>
+                <button type="button" class="btn-close-modal" onclick="cerrarModalAjustes()">✕</button>
             </div>
 
-            <!-- SECCIÓN: APERTURA Y CIERRE DE DÍA -->
-            <div style="margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color);">
-                <div style="font-weight: 900; color: var(--bcp-blue); font-size: 13px; margin-bottom: 6px;">
-                    🏦 GESTIÓN DE JORNADA
+            <!-- EDICIÓN EXCLUSIVA DE CAPITAL BASE / REMESA -->
+            <div class="bloque-base-config">
+                <label for="input-base-config">💰 Capital Base / Remesa Asignada (S/)</label>
+                <div class="base-input-group">
+                    <input type="text" id="input-base-config" class="input-base-modal" inputmode="decimal" oninput="formatInput(this)" placeholder="26,729.00">
+                    <button type="button" class="btn-save-base" id="btnGuardarBase" onclick="guardarCapitalBase()">Guardar</button>
                 </div>
-                <button type="button" class="btn-apertura-dia" onclick="solicitarAperturaNuevoDia()">
-                    🔄 Aperturar Nuevo Día (Archivar y Limpiar)
-                </button>
-                <p style="font-size: 11px; color: #64748b; margin-top: 5px; line-height: 1.25;">
-                    Archiva las operaciones de ayer en 'Histórico', fija el saldo inicial y deja limpia la hoja para hoy.
-                </p>
             </div>
 
-            <div style="font-weight: 900; color: var(--bcp-blue); font-size: 13px; margin-bottom: 4px;">
-                📸 FOTOS DE DENOMINACIONES
-            </div>
-            <p style="font-size: 11px; color: #64748b; margin-bottom: 10px;">
-                Selecciona la foto de cada denominación desde tu galería. Se guardarán en el teléfono y no volverán a desaparecer.
+            <p style="font-size: 11px; color: #64748b; margin-bottom: 10px; font-weight: 600;">
+                Vincular fotos reales de Billetes y Monedas (se guardan en la memoria del teléfono):
             </p>
             <div id="listaSubidaBilletes"></div>
             <div id="listaSubidaMonedas" style="margin-top: 10px;"></div>
@@ -1004,254 +1298,207 @@
     </div>
 
     <script>
-        const formatoSoles = (num) => num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        // URL CONECTADA DE GOOGLE APPS SCRIPT
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyk1XMXrpOBVc6hz_IqYtpRVeZrU-3qFkTymv76kJLfYf8MQaozYQv9bx9Cp1YEdL_a/exec";
+
+        const formatoSoles = (num) => Math.abs(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
-        
-        // CONEXIÓN DEFINITIVA CON GOOGLE SHEETS
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyGk7ux1F-niBX6c-QsuqCpWqXVNOVKTGNBP3JV16X1J_YC3wBEbDyHsfdFgIehtanjvQ/exec";
 
-        let modoOperacion = 'recibo'; 
-        
-        let datosSuperior = {
-            recibo: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' },
-            retiro: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' },
-            deposito: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' }
-        };
-
-        let datosInferior = {
-            recibo: { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' },
-            retiro: { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' },
-            deposito: { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' }
-        };
-
-        let ultimoInputCajaActivo = null;
-        let cuadroVinculado = null; 
-
+        // Capital Base persistente en localStorage (Por defecto: 26729.00)
+        let capitalBaseActual = parseFloat(localStorage.getItem('bcp_capital_base')) || 26729.00;
+        let cantF1000 = 0;
+        let ultimoInputCierreActivo = 'input-sistema';
+        let ultimoEstadoResultado = '';
         let esTransicionClickTab = false;
         let timerFinTransicion = null;
+        let timerBadgeSync = null;
 
-        const ICON_BAJAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>`;
-        const ICON_SUBIR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>`;
+        /* ===============================================================
+           ICONOS DINÁMICOS DE DOBLE ALA PARA STEPPERS
+           =============================================================== */
+        const ICON_BAJAR = `
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.8 6.2L12 11.2L17.2 6.2" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
+            <path d="M12 19.5L18.6 12.6L16.2 10.8L12 15L7.8 10.8L5.4 12.6L12 19.5Z" fill="currentColor"/>
+        </svg>`;
 
-        function vibrarRapido() {
-            if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                navigator.vibrate(12);
+        const ICON_SUBIR = `
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4.5L18.6 11.4L16.2 13.2L12 9L7.8 13.2L5.4 11.4L12 4.5Z" fill="currentColor"/>
+            <path d="M6.8 17.8L12 12.8L17.2 17.8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.65"/>
+        </svg>`;
+
+        document.getElementById('btnFajoDown').innerHTML = ICON_BAJAR;
+        document.getElementById('btnFajoUp').innerHTML = ICON_SUBIR;
+
+        /* ===============================================================
+           SEÑALES SIMÉTRICAS DE ALTA PRECISIÓN PARA EL SEMÁFORO DE CIERRE
+           =============================================================== */
+        const SIGNALS = {
+            esperando: {
+                L: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`,
+                R: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`
+            },
+            exacto: {
+                L: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+                R: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`
+            },
+            faltante: {
+                L: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>`,
+                R: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.9" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg>`
+            },
+            sobrante: {
+                L: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V7"/><path d="m6 13 6-6 6 6"/><line x1="4" y1="3" x2="20" y2="3"/></svg>`,
+                R: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21V7"/><path d="m6 13 6-6 6 6"/><line x1="4" y1="3" x2="20" y2="3"/></svg>`
+            }
+        };
+
+        function setResultadoExpresivo(iconoKey, mensajeTexto, valorFormateado) {
+            const textoEl = document.getElementById('textoFinal');
+            const montoEl = document.getElementById('montoFinal');
+            const sig = SIGNALS[iconoKey] || SIGNALS.esperando;
+
+            textoEl.innerHTML = `<span class="sig-wing wing-left">${sig.L}</span><span>${mensajeTexto}</span><span class="sig-wing wing-right">${sig.R}</span>`;
+
+            if (montoEl.innerText !== valorFormateado) {
+                montoEl.innerText = valorFormateado;
+                montoEl.classList.remove('monto-pop');
+                void montoEl.offsetWidth;
+                montoEl.classList.add('monto-pop');
             }
         }
 
+        function vibrarRapido(patron = 12) {
+            if (typeof navigator !== 'undefined' && navigator.vibrate) {
+                navigator.vibrate(patron);
+            }
+        }
+
+        // BLINDAJE DE POSICIÓN ESTÁTICA (CERO SCROLL VERTICAL)
         function mantenerPosicionEstatica() {
             if (window.scrollY !== 0 || window.scrollX !== 0) {
                 window.scrollTo(0, 0);
             }
         }
-
         window.addEventListener('scroll', mantenerPosicionEstatica, { passive: true });
         document.addEventListener('focusin', () => {
             window.scrollTo(0, 0);
         });
 
-        function registrarFocoCaja(input) {
+        function registrarFocoCierre(input) {
             if (input && !input.readOnly) {
-                ultimoInputCajaActivo = input.id;
+                ultimoInputCierreActivo = input.id;
             }
         }
 
-        function guardarValoresModoActual() {
-            for (let i = 1; i <= 8; i++) {
-                datosSuperior[modoOperacion]['b' + i] = document.getElementById('b' + i).value;
-                datosInferior[modoOperacion]['p' + i] = document.getElementById('p' + i).value;
+        function formatInput(input) {
+            let original = input.value;
+            if (original === "") return;
+            let esNegativo = original.trim().startsWith('-');
+            let numerico = original.replace(/[^0-9.]/g, '');
+            let partes = numerico.split('.');
+            if (partes.length > 2) {
+                numerico = partes[0] + '.' + partes.slice(1).join('');
+                partes = numerico.split('.');
             }
-        }
-
-        function restaurarValoresModoActual() {
-            for (let i = 1; i <= 8; i++) {
-                let elB = document.getElementById('b' + i);
-                elB.value = datosSuperior[modoOperacion]['b' + i] || '';
-                formatInput(elB);
-
-                let elP = document.getElementById('p' + i);
-                elP.value = datosInferior[modoOperacion]['p' + i] || '';
-                formatInput(elP);
+            if (partes[0].length > 0) {
+                let entero = parseInt(partes[0], 10);
+                partes[0] = isNaN(entero) ? "" : entero.toLocaleString('en-US');
             }
-        }
-
-        function actualizarEstiloVisualModo() {
-            const panelSecundario = document.getElementById('panelModoSecundario');
-            const tituloSecundario = document.getElementById('lblTituloModo');
-            const panelSuperior = document.getElementById('panelSuperior');
-            const tituloSuperior = document.getElementById('lblTituloSuperior');
-
-            const cajaSup = document.getElementById('cajaSuperiorContenedor');
-            const cajaInf = document.getElementById('cajaInferiorContenedor');
-            const badge = document.getElementById('badgeOperacion');
-
-            panelSuperior.className = 'panel-total';
-            panelSecundario.className = 'panel-total';
-            cajaSup.className = 'caja-contenedor';
-            cajaInf.className = 'caja-contenedor';
-
-            const btnDep = document.getElementById('btn-modo-deposito');
-            const btnSer = document.getElementById('btn-modo-servicio');
-            const btnRet = document.getElementById('btn-modo-retiro');
-
-            btnDep.classList.remove('active-modo');
-            btnSer.classList.remove('active-modo');
-            btnRet.classList.remove('active-modo');
-
-            if (modoOperacion === 'recibo') {
-                panelSuperior.classList.add('tema-recibo-header');
-                tituloSuperior.innerText = 'EFECTIVO RECIBIDO';
-                cajaSup.classList.add('tema-recibo-bg');
-
-                panelSecundario.classList.add('tema-recibo-header');
-                tituloSecundario.innerText = 'RECIBO POR PAGAR';
-                cajaInf.classList.add('tema-recibo-bg');
-
-                badge.innerText = 'PAGO DE SERVICIOS / RECIBO';
-                btnSer.classList.add('active-modo');
-
-            } else if (modoOperacion === 'retiro') {
-                panelSuperior.classList.add('tema-retiro-header');
-                tituloSuperior.innerText = 'MONTO POR RETIRAR';
-                cajaSup.classList.add('tema-retiro-bg');
-
-                panelSecundario.classList.add('tema-retiro-header');
-                tituloSecundario.innerText = 'EFECTIVO RETIRADO';
-                cajaInf.classList.add('tema-retiro-bg');
-
-                badge.innerText = 'RETIRO EN EFECTIVO';
-                btnRet.classList.add('active-modo');
-
-            } else if (modoOperacion === 'deposito') {
-                panelSuperior.classList.add('tema-deposito-header');
-                tituloSuperior.innerText = 'MONTO A DEPOSITAR';
-                cajaSup.classList.add('tema-deposito-bg');
-
-                panelSecundario.classList.add('tema-deposito-header');
-                tituloSecundario.innerText = 'EFECTIVO RECIBIDO';
-                cajaInf.classList.add('tema-deposito-bg');
-
-                badge.innerText = 'DEPÓSITO EN CUENTA';
-                btnDep.classList.add('active-modo');
+            if (partes[1] !== undefined && partes[1].length > 2) {
+                partes[1] = partes[1].substring(0, 2);
             }
+            let resultado = partes.join('.');
+            input.value = (esNegativo && resultado !== "") ? '-' + resultado : resultado;
         }
 
-        function handleScrollIndicators(scrollId, dot1Id, dot2Id) {
-            const el = document.getElementById(scrollId);
-            if (!el) return;
-            const esPagina2 = el.scrollLeft > (el.clientWidth / 2);
-            document.getElementById(dot1Id).classList.toggle('active', !esPagina2);
-            document.getElementById(dot2Id).classList.toggle('active', esPagina2);
+        function handleInputSistema(input) {
+            formatInput(input);
+            registrarFocoCierre(input);
+            calcularCuadreTotal();
         }
 
-        function scrollPaginacionDirecta(scrollContainerId, pageNum) {
-            const el = document.getElementById(scrollContainerId);
-            if (!el) return;
-            el.scrollTo({
-                left: pageNum === 1 ? 0 : el.clientWidth,
-                behavior: 'smooth'
-            });
-            vibrarRapido();
-        }
-
-        function seleccionarModoDirecto(event, nuevoModo) {
+        /* =========================================================
+           CONTROL DE FAJOS DE S/ 1,000
+           ========================================================= */
+        function gestionarStepFajo(event, delta) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
             vibrarRapido();
-            if (modoOperacion === nuevoModo) {
-                enfocarSiguienteInputVisible('app-caja');
-                return;
-            }
-
-            guardarValoresModoActual();
-            modoOperacion = nuevoModo;
-            ultimoInputCajaActivo = null;
-
-            actualizarEstiloVisualModo();
-            restaurarValoresModoActual();
-            reaplicarEstiloSincronizacion();
-            calcularTodo();
-            enfocarSiguienteInputVisible('app-caja');
+            const inputEl = document.getElementById('f1000');
+            let val = (parseInt(inputEl.value) || 0) + delta;
+            inputEl.value = val === 0 ? '' : val;
+            updateFajo(val);
+            enfocarInputActivoActual();
         }
 
-        function reaplicarEstiloSincronizacion() {
-            document.querySelectorAll('#app-caja input').forEach(input => {
-                input.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
-                input.readOnly = false;
-            });
-
-            if (cuadroVinculado) {
-                const el = document.getElementById(cuadroVinculado);
-                if (el) {
-                    const esSecundario = cuadroVinculado.startsWith('p');
-                    if (esSecundario && modoOperacion === 'recibo') return;
-
-                    if (cuadroVinculado.startsWith('p')) {
-                        if (modoOperacion === 'deposito') {
-                            el.classList.add('active-sync-deposito');
-                        } else {
-                            el.classList.add('active-sync-retiro');
-                        }
-                    } else {
-                        el.classList.add('active-sync');
-                    }
-                    el.readOnly = true;
-                }
-            }
+        function updateFajo(value) {
+            let val = parseInt(value) || 0;
+            cantF1000 = val;
+            calcularCuadreTotal();
         }
 
+        function reiniciarFajo() {
+            vibrarRapido();
+            const inputEl = document.getElementById('f1000');
+            inputEl.value = '';
+            cantF1000 = 0;
+            calcularCuadreTotal();
+            enfocarInputActivoActual();
+        }
+
+        /* =========================================================
+           NAVEGACIÓN ENTRE PANTALLA DE CIERRE Y MODO BILLETES/MONEDAS
+           ========================================================= */
         function switchMainApp(appId) {
             document.querySelectorAll('.main-app-container').forEach(screen => screen.classList.remove('active-app'));
             document.getElementById(appId).classList.add('active-app');
             window.scrollTo(0, 0);
-
-            if (appId === 'app-caja') {
-                reaplicarEstiloSincronizacion();
-            }
             vibrarRapido();
         }
 
+        function irAModoEfectivo(targetTabId) {
+            switchMainApp('app-multiplicador');
+            gestionarPestanaMultiplicador(null, targetTabId || 'tab-billetes');
+            enfocarSiguienteInputVisible(targetTabId || 'tab-billetes');
+        }
+
         function alternarPantallas() {
-            const isCajaActive = document.getElementById('app-caja').classList.contains('active-app');
-            if (isCajaActive) {
+            const isCierreActive = document.getElementById('app-cierre').classList.contains('active-app');
+            if (isCierreActive) {
                 switchMainApp('app-multiplicador');
                 const tabActiva = document.querySelector('.sub-tab-btn.active');
                 let tabTarget = (tabActiva && tabActiva.id === 'tab-btn-billetes') ? 'tab-billetes' : 'tab-monedas';
                 enfocarSiguienteInputVisible(tabTarget);
             } else {
-                switchMainApp('app-caja');
-                enfocarSiguienteInputVisible('app-caja');
+                switchMainApp('app-cierre');
+                enfocarSiguienteInputVisible('app-cierre');
+            }
+        }
+
+        function enfocarInputActivoActual() {
+            const isCierreActive = document.getElementById('app-cierre').classList.contains('active-app');
+            if (isCierreActive) {
+                enfocarSiguienteInputVisible('app-cierre');
+            } else {
+                const tabActiva = document.querySelector('.sub-tab-btn.active');
+                let tabTarget = (tabActiva && tabActiva.id === 'tab-btn-billetes') ? 'tab-billetes' : 'tab-monedas';
+                enfocarSiguienteInputVisible(tabTarget);
             }
         }
 
         function enfocarSiguienteInputVisible(containerId) {
-            if (containerId === 'app-caja') {
-                if (ultimoInputCajaActivo) {
-                    const inputRecordado = document.getElementById(ultimoInputCajaActivo);
-                    if (inputRecordado && !inputRecordado.readOnly) {
-                        inputRecordado.focus({ preventScroll: true });
-                        return;
-                    }
-                }
-
-                let selector = (modoOperacion === 'recibo') ? `#swipeRecibo input:not([readonly])` : `#swipeEfectivo input:not([readonly])`;
-
-                let inputsPrioridad = document.querySelectorAll(selector);
-                for (let i = 0; i < inputsPrioridad.length; i++) {
-                    if (inputsPrioridad[i].value === '' || inputsPrioridad[i].value === '0') {
-                        inputsPrioridad[i].focus({ preventScroll: true });
-                        ultimoInputCajaActivo = inputsPrioridad[i].id;
-                        return;
-                    }
-                }
-
-                if (inputsPrioridad.length > 0) {
-                    inputsPrioridad[0].focus({ preventScroll: true });
-                    ultimoInputCajaActivo = inputsPrioridad[0].id;
+            if (containerId === 'app-cierre') {
+                const recordado = document.getElementById(ultimoInputCierreActivo);
+                if (recordado) {
+                    recordado.focus({ preventScroll: true });
                     return;
                 }
+                const sis = document.getElementById('input-sistema');
+                if (sis) sis.focus({ preventScroll: true });
+                return;
             }
 
             let inputsGenerales = document.querySelectorAll(`#${containerId} input:not([readonly])`);
@@ -1262,164 +1509,6 @@
                 }
             }
             if (inputsGenerales.length > 0) inputsGenerales[0].focus({ preventScroll: true });
-        }
-
-        // ACCIÓN ENTER: GUARDADO ASÍNCRONO EN SEGUNDO PLANO Y LIMPIEZA INMEDIATA (0 ms)
-        function ejecutarAccionTecladoCaja(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            let centimosSup = 0;
-            for (let i = 1; i <= 8; i++) centimosSup += getValCentimos('b' + i);
-            let centimosInf = 0;
-            for (let i = 1; i <= 8; i++) centimosInf += getValCentimos('p' + i);
-
-            // Si la caja está totalmente en blanco, solo limpia y enfoca
-            if (centimosSup === 0 && centimosInf === 0) {
-                limpiarCaja();
-                enfocarSiguienteInputVisible('app-caja');
-                return false;
-            }
-
-            let operacion = null;
-
-            // 1. MODO SERVICIO / RECIBO
-            if (modoOperacion === 'recibo') {
-                if (centimosInf > 0 && centimosSup >= centimosInf) {
-                    operacion = {
-                        detalle: "PAGO SERVICIO",
-                        monto: centimosInf / 100
-                    };
-                }
-            }
-            // 2. MODO DEPÓSITO EN CUENTA
-            else if (modoOperacion === 'deposito') {
-                if (centimosSup > 0 && (centimosInf === 0 || centimosInf >= centimosSup)) {
-                    operacion = {
-                        detalle: "DEPÓSITO",
-                        monto: centimosSup / 100
-                    };
-                }
-            }
-            // 3. MODO RETIRO EN EFECTIVO (Resta en caja en Google Sheets)
-            else if (modoOperacion === 'retiro') {
-                if (centimosSup > 0 && (centimosInf === 0 || centimosInf === centimosSup)) {
-                    operacion = {
-                        detalle: "RETIRO",
-                        monto: -(centimosSup / 100)
-                    };
-                } else if (centimosInf > 0 && centimosSup === 0) {
-                    operacion = {
-                        detalle: "RETIRO",
-                        monto: -(centimosInf / 100)
-                    };
-                }
-            }
-
-            // Si no cumple las condiciones de balance, advierte
-            if (!operacion) {
-                const textoPanel = document.getElementById('textoFinal').innerText;
-                vibrarRapido();
-                alert("⚠ Operación incompleta o no cuadrada: " + textoPanel);
-                return false;
-            }
-
-            // Preparar el paquete de datos
-            const ahora = new Date();
-            const payload = {
-                fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-                hora: ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
-                detalle: operacion.detalle,
-                monto: operacion.monto
-            };
-
-            // Notificación visual rápida sin bloquear
-            const badge = document.getElementById('badgeOperacion');
-            badge.innerText = "✓ GUARDANDO...";
-            vibrarRapido();
-
-            // DESPACHO ASÍNCRONO EN SEGUNDO PLANO (Cero retraso en la pantalla)
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).catch(err => {
-                console.error("Error al sincronizar con Sheets:", err);
-            });
-
-            // LIMPIEZA INMEDIATA Y RETORNO DEL FOCO AL TECLADO (0 ms)
-            limpiarCaja();
-            enfocarSiguienteInputVisible('app-caja');
-
-            setTimeout(() => {
-                actualizarEstiloVisualModo();
-            }, 500);
-
-            return false;
-        }
-
-        // ACCIÓN: APERTURAR NUEVO DÍA DESDE EL CELULAR O PC
-        function solicitarAperturaNuevoDia() {
-            const confirmar = confirm("⚠ ¿Confirmas la apertura de un nuevo día?\n\nEsto archivará todas las operaciones actuales en 'Histórico', fijará el nuevo saldo inicial y limpiará la hoja para el turno de hoy.");
-            if (!confirmar) return;
-
-            vibrarRapido();
-            const btn = document.querySelector('.btn-apertura-dia');
-            const textoOriginal = btn ? btn.innerText : '';
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "⏳ Archivando en Sheets...";
-            }
-
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST',
-                body: JSON.stringify({ accion: "aperturar" })
-            })
-            .then(r => r.json())
-            .then(data => {
-                vibrarRapido();
-                if (data.status === "success") {
-                    alert(`✓ ¡Apertura exitosa!\n\n• Operaciones archivadas: ${data.operacionesArchivadas}\n• Saldo Inicial fijado: S/ ${Number(data.nuevoSaldoInicial).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}\n\nLa hoja está lista para hoy.`);
-                    cerrarModalFotos();
-                } else if (data.status === "empty") {
-                    alert("Aviso: " + data.message);
-                } else {
-                    alert("Error: " + (data.message || "No se pudo procesar la solicitud"));
-                }
-            })
-            .catch(err => {
-                console.warn("Respuesta sin CORS o conexión:", err);
-                alert("✓ Solicitud de apertura enviada a Google Sheets.");
-                cerrarModalFotos();
-            })
-            .finally(() => {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = textoOriginal;
-                }
-            });
-        }
-
-        function gestionarLimpiarMultiplicador() {
-            clearAllData(); 
-            const tabActiva = document.querySelector('.sub-tab-btn.active');
-            if (tabActiva) {
-                let tabTarget = (tabActiva.id === 'tab-btn-billetes') ? 'tab-billetes' : 'tab-monedas';
-                enfocarSiguienteInputVisible(tabTarget);
-            }
-            vibrarRapido();
-        }
-
-        function ejecutarAccionTecladoMulti(e) {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            gestionarLimpiarMultiplicador();
-            return false;
         }
 
         function gestionarPestanaMultiplicador(event, tabId) {
@@ -1448,6 +1537,8 @@
                 behavior: 'smooth'
             });
 
+            enfocarSiguienteInputVisible(tabId);
+
             timerFinTransicion = setTimeout(() => {
                 esTransicionClickTab = false;
             }, 260);
@@ -1465,236 +1556,18 @@
             const btnBilletes = document.getElementById('tab-btn-billetes');
             const btnMonedas = document.getElementById('tab-btn-monedas');
 
+            const cambio = btnMonedas.classList.contains('active') !== esMonedas;
             btnBilletes.classList.toggle('active', !esMonedas);
             btnMonedas.classList.toggle('active', esMonedas);
-        }
 
-        function gestionarStep(event, type, denom, delta) {
-            if (event) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-            vibrarRapido();
-            changeQty(type, denom, delta);
-
-            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
-            if (inputEl) {
-                inputEl.focus({ preventScroll: true });
+            if (cambio) {
+                enfocarSiguienteInputVisible(esMonedas ? 'tab-monedas' : 'tab-billetes');
             }
         }
 
-        const getValCentimos = (id) => {
-            const raw = document.getElementById(id).value.replace(/,/g, '').trim();
-            const num = parseFloat(raw);
-            return isNaN(num) ? 0 : Math.round(num * 100);
-        };
-
-        function formatInput(input) {
-            let original = input.value;
-            if (original === "") return;
-            let numerico = original.replace(/[^0-9.]/g, '');
-            let partes = numerico.split('.');
-            if (partes.length > 2) { numerico = partes[0] + '.' + partes.slice(1).join(''); partes = numerico.split('.'); }
-            if (partes[0].length > 0) {
-                let entero = parseInt(partes[0], 10);
-                partes[0] = isNaN(entero) ? "" : entero.toLocaleString('en-US');
-            }
-            if (partes[1] && partes[1].length > 2) {
-                partes[1] = partes[1].substring(0, 2);
-            }
-            input.value = partes.join('.');
-        }
-
-        function handleInput(input) { 
-            formatInput(input); 
-            registrarFocoCaja(input);
-            guardarValoresModoActual();
-            calcularTodo(); 
-        }
-
-        function insertarDobleCero(input) {
-            if (!input || input.readOnly) return;
-
-            if (input.classList.contains('input-qty') || input.id.startsWith('input-b-') || input.id.startsWith('input-m-')) {
-                let actual = input.value.replace(/[^0-9]/g, '');
-                if (actual === '' || actual === '0') {
-                    actual = '0';
-                    input.value = '';
-                } else {
-                    actual = actual + '00';
-                    input.value = actual;
-                }
-
-                const esBillete = input.id.startsWith('input-b-');
-                const tipo = esBillete ? 'billete' : 'moneda';
-                const denomStr = input.id.replace(esBillete ? 'input-b-' : 'input-m-', '');
-                const denom = parseFloat(denomStr);
-
-                updateQty(tipo, denom, input.value);
-                vibrarRapido();
-                return;
-            }
-
-            let val = input.value.replace(/,/g, '').trim();
-
-            if (val === '' || val === '0') {
-                val = '00';
-            } else if (!val.includes('.')) {
-                val = val + '00';
-            } else {
-                let partes = val.split('.');
-                if (partes[1].length === 0) partes[1] = '00';
-                else if (partes[1].length === 1) partes[1] = partes[1] + '0';
-                val = partes[0] + '.' + partes[1].substring(0, 2);
-            }
-
-            input.value = val;
-            formatInput(input);
-            registrarFocoCaja(input);
-            guardarValoresModoActual();
-            calcularTodo();
-            vibrarRapido();
-        }
-
-        function calcularTodo() {
-            var centimosSuperior = 0;
-            for (let i = 1; i <= 8; i++) centimosSuperior += getValCentimos('b' + i);
-            
-            var centimosInferior = 0;
-            for (let i = 1; i <= 8; i++) centimosInferior += getValCentimos('p' + i);
-
-            var totalSuperior = centimosSuperior / 100;
-            var totalInferior = centimosInferior / 100;
-
-            document.getElementById('lblEfectivo').innerText = formatoSoles(totalSuperior);
-            document.getElementById('lblRecibo').innerText = formatoSoles(totalInferior);
-
-            var panel = document.getElementById('panelFinal');
-            var texto = document.getElementById('textoFinal');
-            var monto = document.getElementById('montoFinal');
-
-            if (modoOperacion === 'recibo') {
-                var difCentimos = centimosSuperior - centimosInferior;
-
-                if (centimosInferior === 0 && centimosSuperior === 0) {
-                    panel.className = "panel-resultado estado-esperando";
-                    texto.innerText = "ESPERANDO MONTOS..."; 
-                    monto.innerText = "0.00";
-                } else if (centimosInferior === 0 && centimosSuperior > 0) {
-                    panel.className = "panel-resultado estado-proceso";
-                    texto.innerText = "EFECTIVO RECIBIDO"; 
-                    monto.innerText = formatoSoles(totalSuperior);
-                } else if (centimosInferior > 0 && centimosSuperior === 0) {
-                    panel.className = "panel-resultado estado-cobrar";
-                    texto.innerText = "FALTA QUE TE PAGUE"; 
-                    monto.innerText = formatoSoles(totalInferior);
-                } else {
-                    if (difCentimos === 0) {
-                        panel.className = "panel-resultado estado-exacto";
-                        texto.innerText = "PAGO EXACTO CONFORME"; 
-                        monto.innerText = formatoSoles(0);
-                    } else if (difCentimos < 0) {
-                        panel.className = "panel-resultado estado-faltante";
-                        texto.innerText = "FALTA QUE TE PAGUE"; 
-                        monto.innerText = formatoSoles(Math.abs(difCentimos) / 100);
-                    } else {
-                        panel.className = "panel-resultado estado-vuelto";
-                        texto.innerText = "VUELTO PARA EL CLIENTE"; 
-                        monto.innerText = formatoSoles(difCentimos / 100);
-                    }
-                }
-            } else if (modoOperacion === 'retiro') {
-                if (centimosInferior === 0 && centimosSuperior === 0) {
-                    panel.className = "panel-resultado estado-esperando";
-                    texto.innerText = "ESPERANDO RETIRO..."; 
-                    monto.innerText = "0.00";
-                } else if (centimosInferior > 0 && centimosSuperior === 0) {
-                    panel.className = "panel-resultado estado-retiro";
-                    texto.innerText = "DINERO CONTADO EN MANO"; 
-                    monto.innerText = formatoSoles(totalInferior);
-                } else if (centimosSuperior > 0 && centimosInferior === 0) {
-                    panel.className = "panel-resultado estado-proceso";
-                    texto.innerText = "MONTO POR ENTREGAR"; 
-                    monto.innerText = formatoSoles(totalSuperior);
-                } else {
-                    var difRetiroCentimos = centimosSuperior - centimosInferior;
-                    if (difRetiroCentimos === 0) {
-                        panel.className = "panel-resultado estado-exacto";
-                        texto.innerText = "MONTO EXACTO A ENTREGAR"; 
-                        monto.innerText = formatoSoles(0);
-                    } else if (difRetiroCentimos > 0) {
-                        panel.className = "panel-resultado estado-faltante";
-                        texto.innerText = "FALTA ENTREGAR AL CLIENTE"; 
-                        monto.innerText = formatoSoles(difRetiroCentimos / 100);
-                    } else {
-                        panel.className = "panel-resultado estado-cobrar";
-                        texto.innerText = "¡CUIDADO! DAS DE MÁS"; 
-                        monto.innerText = formatoSoles(Math.abs(difRetiroCentimos) / 100);
-                    }
-                }
-            } else {
-                if (centimosInferior === 0 && centimosSuperior === 0) {
-                    panel.className = "panel-resultado estado-esperando";
-                    texto.innerText = "ESPERANDO DEPÓSITO..."; 
-                    monto.innerText = "0.00";
-                } else if (centimosSuperior > 0 && centimosInferior === 0) {
-                    panel.className = "panel-resultado estado-exacto";
-                    texto.innerText = "DEPÓSITO DIRECTO (SIN VUELTO)"; 
-                    monto.innerText = formatoSoles(totalSuperior);
-                } else if (centimosSuperior === 0 && centimosInferior > 0) {
-                    panel.className = "panel-resultado estado-deposito";
-                    texto.innerText = "DINERO CONTADO EN MANO"; 
-                    monto.innerText = formatoSoles(totalInferior);
-                } else {
-                    var balanceDepositoCentimos = centimosInferior - centimosSuperior;
-
-                    if (balanceDepositoCentimos === 0) {
-                        panel.className = "panel-resultado estado-exacto";
-                        texto.innerText = "DEPÓSITO EXACTO CONFORME"; 
-                        monto.innerText = formatoSoles(0);
-                    } else if (balanceDepositoCentimos > 0) {
-                        panel.className = "panel-resultado estado-vuelto";
-                        texto.innerText = "VUELTO PARA EL CLIENTE"; 
-                        monto.innerText = formatoSoles(balanceDepositoCentimos / 100);
-                    } else {
-                        panel.className = "panel-resultado estado-faltante";
-                        texto.innerText = "FALTA QUE TE PAGUE"; 
-                        monto.innerText = formatoSoles(Math.abs(balanceDepositoCentimos) / 100);
-                    }
-                }
-            }
-        }
-
-        function limpiarCaja() {
-            clearAllData(); 
-            document.querySelectorAll('#app-caja input').forEach(i => { 
-                i.value = ''; 
-                i.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
-                i.readOnly = false;
-            });
-
-            ['recibo', 'retiro', 'deposito'].forEach(m => {
-                for (let i = 1; i <= 8; i++) {
-                    datosSuperior[m]['b' + i] = '';
-                    datosInferior[m]['p' + i] = '';
-                }
-            });
-
-            cuadroVinculado = null; 
-            ultimoInputCajaActivo = null;
-            
-            document.getElementById('swipeEfectivo').scrollTo({ left: 0, behavior: 'instant' });
-            document.getElementById('swipeRecibo').scrollTo({ left: 0, behavior: 'instant' });
-            
-            document.getElementById('dot-sup-1').classList.add('active');
-            document.getElementById('dot-sup-2').classList.remove('active');
-            document.getElementById('dot-inf-1').classList.add('active');
-            document.getElementById('dot-inf-2').classList.remove('active');
-
-            calcularTodo();
-            vibrarRapido();
-        }
-
+        /* =========================================================
+           RENDERIZADO VISUAL BCRP (BILLETES Y MONEDAS)
+           ========================================================= */
         const denominacionesBilletes = [200, 100, 50, 20, 10];
         const denominacionesMonedas = [5.00, 2.00, 1.00, 0.50, 0.20, 0.10];
         let cantidadesBilletes = {}; 
@@ -1703,11 +1576,11 @@
         denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
 
         const coloresBilletes = {
-            200: '#581c87',
-            100: '#0284c7',
-            50:  '#78350f',
-            20:  '#ea580c',
-            10:  '#059669'
+            200: { c1: '#4c1d95', c2: '#7c3aed', acc: '#ddd6fe' },
+            100: { c1: '#0c4a6e', c2: '#0284c7', acc: '#bae6fd' },
+            50:  { c1: '#7c2d12', c2: '#c2410c', acc: '#fed7aa' },
+            20:  { c1: '#78350f', c2: '#d97706', acc: '#fde68a' },
+            10:  { c1: '#064e3b', c2: '#059669', acc: '#a7f3d0' }
         };
 
         const configMonedas = {
@@ -1718,6 +1591,49 @@
             0.20: { css: 'moneda-020', color: '#a16207' },
             0.10: { css: 'moneda-010', color: '#a16207' }
         };
+
+        function crearSvgBilleteFallback(denom) {
+            const t = coloresBilletes[denom] || coloresBilletes[100];
+            return `<svg viewBox="0 0 136 70" width="100%" height="100%" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="gB${denom}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${t.c1}"/>
+                        <stop offset="100%" stop-color="${t.c2}"/>
+                    </linearGradient>
+                </defs>
+                <rect width="136" height="70" fill="url(#gB${denom})"/>
+                <rect x="4" y="4" width="128" height="62" rx="3" fill="none" stroke="${t.acc}" stroke-opacity="0.35" stroke-width="1"/>
+                <rect x="34" y="0" width="3" height="70" fill="${t.acc}" fill-opacity="0.3"/>
+                <circle cx="110" cy="35" r="20" fill="rgba(255,255,255,0.08)"/>
+                <text x="10" y="16" fill="${t.acc}" font-family="sans-serif" font-size="7.5" font-weight="900" letter-spacing="0.8">BCRP · PERÚ</text>
+                <text x="10" y="49" fill="#ffffff" font-family="sans-serif" font-size="27" font-weight="900" letter-spacing="-1">S/ ${denom}</text>
+            </svg>`;
+        }
+
+        function crearSvgMonedaFallback(denom) {
+            const esBimetal = (denom === 5 || denom === 2);
+            const esPlata = (denom === 1 || denom === 0.5);
+            const txt = denom >= 1 ? `S/ ${denom.toFixed(0)}` : `${(denom * 100).toFixed(0)}¢`;
+            if (esBimetal) {
+                return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="31" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+                    <circle cx="32" cy="32" r="21" fill="#d97706" stroke="#78350f" stroke-width="1"/>
+                    <text x="32" y="37" text-anchor="middle" fill="#ffffff" font-family="sans-serif" font-size="16" font-weight="900">${txt}</text>
+                </svg>`;
+            } else if (esPlata) {
+                return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="31" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                    <circle cx="32" cy="32" r="25" fill="none" stroke="#64748b" stroke-width="1" stroke-dasharray="3 2"/>
+                    <text x="32" y="37" text-anchor="middle" fill="#0f172a" font-family="sans-serif" font-size="16" font-weight="900">${txt}</text>
+                </svg>`;
+            } else {
+                return `<svg viewBox="0 0 64 64" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="32" cy="32" r="31" fill="#eab308" stroke="#854d0e" stroke-width="1.5"/>
+                    <circle cx="32" cy="32" r="25" fill="none" stroke="#713f12" stroke-width="1" stroke-opacity="0.4"/>
+                    <text x="32" y="37" text-anchor="middle" fill="#422006" font-family="sans-serif" font-size="16" font-weight="900">${txt}</text>
+                </svg>`;
+            }
+        }
 
         function obtenerSrcFoto(tipo, denom) {
             const guardada = localStorage.getItem(`foto_${tipo}_${denom}`);
@@ -1734,14 +1650,11 @@
             badge.className = 'fallback-badge';
             
             if (tipo === 'billete') {
-                badge.style.backgroundColor = coloresBilletes[denom];
-                badge.innerText = `S/ ${denom}`;
+                badge.innerHTML = crearSvgBilleteFallback(denom);
             } else {
-                badge.style.backgroundColor = configMonedas[denom].color;
                 badge.style.borderRadius = '50%';
                 badge.classList.add(configMonedas[denom].css);
-                badge.innerText = denom >= 1 ? `S/ ${denom.toFixed(0)}` : `${(denom * 100).toFixed(0)}¢`;
-                badge.style.fontSize = '13px';
+                badge.innerHTML = crearSvgMonedaFallback(denom);
             }
             contenedor.appendChild(badge);
         }
@@ -1752,14 +1665,14 @@
             denominacionesBilletes.forEach(denom => {
                 const src = obtenerSrcFoto('billete', denom);
                 containerBilletes.innerHTML += `
-                    <div class="item-card">
+                    <div class="item-card" id="card-b-${denom}">
                         <div class="billete-container" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('billete', ${denom})" title="Doble toque para reiniciar">
                             <img src="${src}" class="billete-real-img" alt="S/ ${denom}" loading="eager" onerror="manejarErrorFoto(this, 'billete', ${denom})">
                         </div>
                         <div class="stepper-control">
-                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'billete', ${denom}, -1)" title="Bajar">${ICON_BAJAR}</button>
-                            <input type="text" inputmode="numeric" class="input-qty" id="input-b-${denom}" placeholder="0" enterkeyhint="done" oninput="updateQty('billete', ${denom}, this.value)">
-                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'billete', ${denom}, 1)" title="Subir">${ICON_SUBIR}</button>
+                            <button type="button" class="btn-step btn-step-down" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'billete', ${denom}, -1)" title="Bajar">${ICON_BAJAR}</button>
+                            <input type="text" inputmode="numeric" class="input-qty" id="input-b-${denom}" placeholder="0" enterkeyhint="send" oninput="updateQty('billete', ${denom}, this.value)">
+                            <button type="button" class="btn-step btn-step-up" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'billete', ${denom}, 1)" title="Subir">${ICON_SUBIR}</button>
                         </div>
                         <div class="item-data-col" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('billete', ${denom})" title="Doble toque para reiniciar">
                             <span class="subtotal-tag">SUBTOTAL</span>
@@ -1776,14 +1689,14 @@
                 const src = obtenerSrcFoto('moneda', denom);
                 const conf = configMonedas[denom];
                 containerMonedas.innerHTML += `
-                    <div class="item-card">
+                    <div class="item-card" id="card-m-${denom}">
                         <div class="moneda-real-frame" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('moneda', ${denom})" title="Doble toque para reiniciar">
                             <img src="${src}" class="moneda-real-img ${conf.css}" alt="S/ ${denom.toFixed(2)}" loading="eager" onerror="manejarErrorFoto(this, 'moneda', ${denom})">
                         </div>
                         <div class="stepper-control">
-                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'moneda', ${denom}, -1)" title="Bajar">${ICON_BAJAR}</button>
-                            <input type="text" inputmode="numeric" class="input-qty" id="input-m-${denom}" placeholder="0" enterkeyhint="done" oninput="updateQty('moneda', ${denom}, this.value)">
-                            <button type="button" class="btn-step" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'moneda', ${denom}, 1)" title="Subir">${ICON_SUBIR}</button>
+                            <button type="button" class="btn-step btn-step-down" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'moneda', ${denom}, -1)" title="Bajar">${ICON_BAJAR}</button>
+                            <input type="text" inputmode="numeric" class="input-qty" id="input-m-${denom}" placeholder="0" enterkeyhint="send" oninput="updateQty('moneda', ${denom}, this.value)">
+                            <button type="button" class="btn-step btn-step-up" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="gestionarStep(event, 'moneda', ${denom}, 1)" title="Subir">${ICON_SUBIR}</button>
                         </div>
                         <div class="item-data-col" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarDenominacion('moneda', ${denom})" title="Doble toque para reiniciar">
                             <span class="subtotal-tag">SUBTOTAL</span>
@@ -1795,7 +1708,369 @@
             });
         }
 
-        function abrirModalFotos() {
+        function gestionarStep(event, type, denom, delta) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            vibrarRapido();
+            changeQty(type, denom, delta);
+
+            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
+            if (inputEl) {
+                inputEl.focus({ preventScroll: true });
+            }
+        }
+
+        function reiniciarDenominacion(type, denom) {
+            vibrarRapido();
+            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
+            inputEl.value = '';
+            updateQty(type, denom, 0);
+            if (inputEl) inputEl.focus({ preventScroll: true });
+        }
+
+        function changeQty(type, denom, delta) {
+            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
+            let val = (parseInt(inputEl.value) || 0) + delta;
+            inputEl.value = val === 0 ? '' : val;
+            updateQty(type, denom, val);
+        }
+
+        function updateQty(type, denom, value) {
+            let val = parseInt(value) || 0;
+            if (type === 'billete') cantidadesBilletes[denom] = val;
+            else cantidadesMonedas[denom] = val;
+            calcularCuadreTotal();
+        }
+
+        /* =========================================================
+           CÁLCULO INTEGRAL DEL CUADRE DE CIERRE Y MULTIPLICADOR
+           ========================================================= */
+        function calcularCuadreTotal() {
+            let centimosBilletes = 0;
+            let centimosMonedas = 0;
+
+            denominacionesBilletes.forEach(d => { 
+                const cant = cantidadesBilletes[d] || 0;
+                const subCentimos = Math.round(d * 100) * cant; 
+                centimosBilletes += subCentimos; 
+
+                const subEl = document.getElementById(`sub-b-${d}`);
+                const cardEl = document.getElementById(`card-b-${d}`);
+
+                if (subEl) subEl.innerText = formatoEntero(subCentimos / 100);
+                if (cardEl) {
+                    cardEl.classList.toggle('fila-activa', cant > 0);
+                    cardEl.classList.toggle('fila-negativa', cant < 0);
+                }
+            });
+
+            denominacionesMonedas.forEach(d => { 
+                const cant = cantidadesMonedas[d] || 0;
+                const subCentimos = Math.round(d * 100) * cant; 
+                centimosMonedas += subCentimos; 
+
+                const subEl = document.getElementById(`sub-m-${d}`);
+                const cardEl = document.getElementById(`card-m-${d}`);
+
+                if (subEl) {
+                    const strVal = formatoSoles(subCentimos / 100);
+                    subEl.innerText = subCentimos < 0 ? '-' + strVal : strVal;
+                }
+                if (cardEl) {
+                    cardEl.classList.toggle('fila-activa', cant > 0);
+                    cardEl.classList.toggle('fila-negativa', cant < 0);
+                }
+            });
+
+            // Fajos de S/ 1,000
+            const centimosFajo = cantF1000 * 100000;
+            const subFajoEl = document.getElementById('sub-f1000');
+            const cardFajoEl = document.getElementById('card-f1000');
+            if (subFajoEl) subFajoEl.innerText = formatoEntero(centimosFajo / 100);
+            if (cardFajoEl) {
+                cardFajoEl.classList.toggle('fila-activa', cantF1000 > 0);
+                cardFajoEl.classList.toggle('fila-negativa', cantF1000 < 0);
+            }
+
+            const totalBilletesVal = centimosBilletes / 100;
+            const totalMonedasVal = centimosMonedas / 100;
+            const totalBilletesYMonedas = (centimosBilletes + centimosMonedas) / 100;
+            const centimosEfectivoTotal = centimosBilletes + centimosMonedas + centimosFajo;
+            const totalEfectivoFisico = centimosEfectivoTotal / 100;
+
+            // Actualizar cabecera y badges en Modo Billetes y Monedas
+            document.getElementById('txtGranTotal').innerText = (totalBilletesYMonedas < 0 ? '-' : '') + formatoSoles(totalBilletesYMonedas);
+
+            const badgeBilletes = document.getElementById('badgeTotalBilletes');
+            const badgeMonedas = document.getElementById('badgeTotalMonedas');
+            badgeBilletes.innerText = `S/ ${formatoEntero(totalBilletesVal)}`;
+            badgeMonedas.innerText = `S/ ${(totalMonedasVal < 0 ? '-' : '') + formatoSoles(totalMonedasVal)}`;
+
+            badgeBilletes.classList.toggle('badge-con-monto', centimosBilletes !== 0);
+            badgeMonedas.classList.toggle('badge-con-monto', centimosMonedas !== 0);
+
+            // Actualizar pills en los botones de acceso rápido del Cierre
+            const pillB = document.getElementById('pillResumenBilletes');
+            const pillM = document.getElementById('pillResumenMonedas');
+            pillB.innerText = `S/ ${formatoEntero(totalBilletesVal)}`;
+            pillM.innerText = `S/ ${(totalMonedasVal < 0 ? '-' : '') + formatoSoles(totalMonedasVal)}`;
+            pillB.classList.toggle('con-datos', centimosBilletes !== 0);
+            pillM.classList.toggle('con-datos', centimosMonedas !== 0);
+
+            // Actualizar pantalla principal de Cierre
+            document.getElementById('lblEfectivoFisico').innerText = (totalEfectivoFisico < 0 ? '-' : '') + formatoSoles(totalEfectivoFisico);
+            document.getElementById('lblBaseActiva').innerText = formatoSoles(capitalBaseActual);
+
+            const rawSistema = document.getElementById('input-sistema').value.replace(/,/g, '').trim();
+            const numSistema = parseFloat(rawSistema);
+            const centimosSistema = isNaN(numSistema) ? 0 : Math.round(numSistema * 100);
+
+            const centimosSumaES = centimosEfectivoTotal + centimosSistema;
+            const sumaTotalES = centimosSumaES / 100;
+            document.getElementById('lblSumaTotal').innerText = (sumaTotalES < 0 ? '-' : '') + formatoSoles(sumaTotalES);
+
+            const centimosBase = Math.round(capitalBaseActual * 100);
+            const difCentimos = centimosSumaES - centimosBase;
+            const diferenciaSoles = difCentimos / 100;
+
+            const panel = document.getElementById('panelFinal');
+            const badgeOp = document.getElementById('badgeOperacion');
+            let estadoClave = '';
+
+            const hayDatos = (centimosEfectivoTotal !== 0 || rawSistema !== '');
+
+            if (!hayDatos) {
+                panel.className = "panel-resultado estado-esperando";
+                if (!timerBadgeSync) badgeOp.innerText = "CUADRE DE CIERRE · ENTER PARA GUARDAR";
+                setResultadoExpresivo('esperando', "ESPERANDO CONTEO...", "0.00");
+                estadoClave = 'esperando';
+            } else if (Math.abs(diferenciaSoles) <= 0.05) {
+                panel.className = "panel-resultado estado-exacto";
+                if (!timerBadgeSync) badgeOp.innerText = "CIERRE CUADRADO · ENTER PARA GUARDAR";
+                setResultadoExpresivo('exacto', "CUADRE EXACTO CONFORME", "0.00");
+                estadoClave = 'exacto';
+            } else if (diferenciaSoles < -0.05) {
+                panel.className = "panel-resultado estado-faltante";
+                if (!timerBadgeSync) badgeOp.innerText = "DIFERENCIA EN CONTRA · FALTANTE";
+                setResultadoExpresivo('faltante', "FALTAN EN CAJA", "- " + formatoSoles(diferenciaSoles));
+                estadoClave = 'faltante';
+            } else {
+                panel.className = "panel-resultado estado-sobrante";
+                if (!timerBadgeSync) badgeOp.innerText = "DIFERENCIA A FAVOR · SOBRANTE";
+                setResultadoExpresivo('sobrante', "SOBRAN EN CAJA", "+ " + formatoSoles(diferenciaSoles));
+                estadoClave = 'sobrante';
+            }
+
+            if (estadoClave !== ultimoEstadoResultado) {
+                if (estadoClave === 'faltante') {
+                    vibrarRapido([35, 25, 50]);
+                } else if (estadoClave === 'exacto') {
+                    vibrarRapido(20);
+                }
+                ultimoEstadoResultado = estadoClave;
+            }
+        }
+
+        /* =========================================================
+           GUARDADO INSTANTÁNEO CON ENTER A GOOGLE SHEETS + LIMPIEZA
+           ========================================================= */
+        function hayDatosParaSincronizar() {
+            if (cantF1000 !== 0) return true;
+            if (document.getElementById('input-sistema').value.trim() !== '') return true;
+            for (let d of denominacionesBilletes) {
+                if ((cantidadesBilletes[d] || 0) !== 0) return true;
+            }
+            for (let d of denominacionesMonedas) {
+                if ((cantidadesMonedas[d] || 0) !== 0) return true;
+            }
+            return false;
+        }
+
+        function limpiarTodoElCierre() {
+            cantF1000 = 0;
+            document.getElementById('f1000').value = '';
+            document.getElementById('input-sistema').value = '';
+
+            denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
+            denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
+            document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
+
+            ultimoEstadoResultado = '';
+            calcularCuadreTotal();
+        }
+
+        function ejecutarGuardadoConEnter(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            if (document.getElementById('modalAjustes').classList.contains('active')) {
+                guardarCapitalBase();
+                return false;
+            }
+
+            if (hayDatosParaSincronizar()) {
+                const rawSistema = document.getElementById('input-sistema').value.replace(/,/g, '').trim();
+                const paqueteDatos = {
+                    f1000: cantF1000,
+                    b200: cantidadesBilletes[200] || 0,
+                    b100: cantidadesBilletes[100] || 0,
+                    b50: cantidadesBilletes[50] || 0,
+                    b20: cantidadesBilletes[20] || 0,
+                    b10: cantidadesBilletes[10] || 0,
+                    m5: cantidadesMonedas[5] || 0,
+                    m2: cantidadesMonedas[2] || 0,
+                    m1: cantidadesMonedas[1] || 0,
+                    m050: cantidadesMonedas[0.5] || 0,
+                    m020: cantidadesMonedas[0.2] || 0,
+                    m010: cantidadesMonedas[0.1] || 0,
+                    saldoSistema: rawSistema,
+                    capitalBase: capitalBaseActual.toFixed(2)
+                };
+
+                // Envío en segundo plano sin congelar ni bloquear la pantalla
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(paqueteDatos),
+                    keepalive: true
+                }).catch(err => console.error("Error al sincronizar:", err));
+
+                // Limpieza inmediata en 0ms y confirmación visual limpia
+                limpiarTodoElCierre();
+                vibrarRapido([18, 25, 18]);
+
+                const badgeOp = document.getElementById('badgeOperacion');
+                clearTimeout(timerBadgeSync);
+                badgeOp.innerText = "✅ ¡SINCRONIZADO EN HOJA DE CÁLCULO!";
+                timerBadgeSync = setTimeout(() => {
+                    timerBadgeSync = null;
+                    calcularCuadreTotal();
+                }, 1800);
+            } else {
+                limpiarTodoElCierre();
+                vibrarRapido();
+            }
+
+            enfocarInputActivoActual();
+            return false;
+        }
+
+        /* =========================================================
+           DOBLE CERO (,) Y ATAJOS DE TECLADO (- / ENTER)
+           ========================================================= */
+        function insertarDobleCero(input) {
+            if (!input || input.readOnly) return;
+
+            if (input.id === 'f1000' || input.classList.contains('input-qty')) {
+                let actual = input.value.replace(/[^0-9-]/g, '');
+                if (actual === '' || actual === '0' || actual === '-') {
+                    input.value = '';
+                } else {
+                    input.value = actual + '00';
+                }
+
+                if (input.id === 'f1000') {
+                    updateFajo(input.value);
+                } else {
+                    const esBillete = input.id.startsWith('input-b-');
+                    const tipo = esBillete ? 'billete' : 'moneda';
+                    const denom = parseFloat(input.id.replace(esBillete ? 'input-b-' : 'input-m-', ''));
+                    updateQty(tipo, denom, input.value);
+                }
+                vibrarRapido();
+                return;
+            }
+
+            let val = input.value.replace(/,/g, '').trim();
+            if (val === '' || val === '0') {
+                val = '00';
+            } else if (!val.includes('.')) {
+                val = val + '00';
+            } else {
+                let partes = val.split('.');
+                if (partes[1].length === 0) partes[1] = '00';
+                else if (partes[1].length === 1) partes[1] = partes[1] + '0';
+                val = partes[0] + '.' + partes[1].substring(0, 2);
+            }
+
+            input.value = val;
+            formatInput(input);
+            if (input.id === 'input-sistema') {
+                registrarFocoCierre(input);
+                calcularCuadreTotal();
+            }
+            vibrarRapido();
+        }
+
+        function procesarTeclasEspeciales(e) {
+            if (document.getElementById('modalAjustes').classList.contains('active')) return;
+
+            if (e.key === '-' || e.key === 'Minus' || e.code === 'NumpadSubtract' || e.code === 'Minus') {
+                e.preventDefault();
+                e.stopPropagation();
+                alternarPantallas();
+                return;
+            }
+
+            if (e.key === ',' || e.code === 'Comma') {
+                const el = document.activeElement;
+                if (el && el.tagName === 'INPUT' && !el.readOnly) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    insertarDobleCero(el);
+                    return;
+                }
+            }
+
+            const esEnterOAccion = (
+                e.key === 'Enter' || 
+                e.keyCode === 13 || 
+                e.which === 13 || 
+                e.code === 'Enter' || 
+                e.code === 'NumpadEnter' || 
+                e.key === 'ArrowRight'
+            );
+
+            if (esEnterOAccion) {
+                e.preventDefault();
+                e.stopPropagation();
+                ejecutarGuardadoConEnter(e);
+            }
+        }
+
+        document.addEventListener('keydown', procesarTeclasEspeciales, true);
+
+        document.addEventListener('beforeinput', (e) => {
+            if (document.getElementById('modalAjustes').classList.contains('active')) return;
+
+            if (e.data === '-') {
+                e.preventDefault();
+                e.stopPropagation();
+                alternarPantallas();
+            } else if (e.data === ',') {
+                const el = document.activeElement;
+                if (el && el.tagName === 'INPUT' && !el.readOnly) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    insertarDobleCero(el);
+                }
+            }
+        }, true);
+
+        /* =========================================================
+           MODAL DE AJUSTES (CAPITAL BASE + SUBIDA DE FOTOS)
+           ========================================================= */
+        function abrirModalAjustes() {
+            vibrarRapido();
+            const inputBaseModal = document.getElementById('input-base-config');
+            inputBaseModal.value = capitalBaseActual.toFixed(2);
+            formatInput(inputBaseModal);
+
             const listB = document.getElementById('listaSubidaBilletes');
             const listM = document.getElementById('listaSubidaMonedas');
             listB.innerHTML = '<div style="font-weight:900; color:var(--bcp-blue); margin-bottom:4px;">💵 BILLETES</div>';
@@ -1825,11 +2100,32 @@
                     </div>`;
             });
 
-            document.getElementById('modalFotos').classList.add('active');
+            document.getElementById('modalAjustes').classList.add('active');
         }
 
-        function cerrarModalFotos() {
-            document.getElementById('modalFotos').classList.remove('active');
+        function cerrarModalAjustes() {
+            document.getElementById('modalAjustes').classList.remove('active');
+            enfocarInputActivoActual();
+        }
+
+        function guardarCapitalBase() {
+            const raw = document.getElementById('input-base-config').value.replace(/,/g, '').trim();
+            const num = parseFloat(raw);
+            if (!isNaN(num) && num > 0) {
+                capitalBaseActual = num;
+                localStorage.setItem('bcp_capital_base', capitalBaseActual.toFixed(2));
+                calcularCuadreTotal();
+
+                const btn = document.getElementById('btnGuardarBase');
+                btn.innerText = "✓ Listo";
+                btn.style.backgroundColor = "#16a34a";
+                vibrarRapido(20);
+                setTimeout(() => {
+                    btn.innerText = "Guardar";
+                    btn.style.backgroundColor = "var(--bcp-orange)";
+                    cerrarModalAjustes();
+                }, 650);
+            }
         }
 
         function guardarFotoEnStorage(event, tipo, denom) {
@@ -1852,7 +2148,8 @@
                     try {
                         localStorage.setItem(`foto_${tipo}_${denom}`, optimizada);
                         renderizarListasVisuales();
-                        abrirModalFotos();
+                        calcularCuadreTotal();
+                        abrirModalAjustes();
                     } catch(err) {
                         alert('Memoria llena en el navegador móvil.');
                     }
@@ -1862,176 +2159,12 @@
             reader.readAsDataURL(file);
         }
 
-        function reiniciarDenominacion(type, denom) {
-            vibrarRapido();
-            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
-            inputEl.value = '';
-            updateQty(type, denom, 0);
-            if (inputEl) inputEl.focus({ preventScroll: true });
-        }
-
-        function changeQty(type, denom, delta) {
-            const inputEl = document.getElementById(`input-${type === 'billete' ? 'b' : 'm'}-${denom}`);
-            let val = (parseInt(inputEl.value) || 0) + delta;
-            if (val < 0) val = 0;
-            inputEl.value = val === 0 ? '' : val;
-            updateQty(type, denom, val);
-        }
-
-        function updateQty(type, denom, value) {
-            let val = parseInt(value) || 0;
-            if (val < 0) val = 0;
-            if (type === 'billete') cantidadesBilletes[denom] = val;
-            else cantidadesMonedas[denom] = val;
-            calculateAllCounter();
-        }
-
-        function clearAllData() {
-            denominacionesBilletes.forEach(d => cantidadesBilletes[d] = 0);
-            denominacionesMonedas.forEach(d => cantidadesMonedas[d] = 0);
-            document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
-            calculateAllCounter();
-        }
-
-        function calculateAllCounter() {
-            let centimosBilletes = 0, centimosMonedas = 0;
-            denominacionesBilletes.forEach(d => { 
-                const subCentimos = Math.round(d * 100) * (cantidadesBilletes[d] || 0); 
-                centimosBilletes += subCentimos; 
-                document.getElementById(`sub-b-${d}`).innerText = formatoEntero(subCentimos / 100); 
-            });
-            denominacionesMonedas.forEach(d => { 
-                const subCentimos = Math.round(d * 100) * (cantidadesMonedas[d] || 0); 
-                centimosMonedas += subCentimos; 
-                document.getElementById(`sub-m-${d}`).innerText = formatoSoles(subCentimos / 100); 
-            });
-
-            let totalBilletesVal = centimosBilletes / 100;
-            let totalMonedasVal = centimosMonedas / 100;
-            let granTotalNumerico = (centimosBilletes + centimosMonedas) / 100;
-
-            document.getElementById('txtGranTotal').innerText = formatoSoles(granTotalNumerico);
-            document.getElementById('badgeTotalBilletes').innerText = `S/ ${formatoEntero(totalBilletesVal)}`;
-            document.getElementById('badgeTotalMonedas').innerText = `S/ ${formatoSoles(totalMonedasVal)}`;
-
-            if (granTotalNumerico > 0) {
-                const listaOpciones = (modoOperacion === 'retiro' || modoOperacion === 'deposito') 
-                    ? ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'] 
-                    : ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8'];
-
-                if (!cuadroVinculado || !listaOpciones.includes(cuadroVinculado)) {
-                    if (cuadroVinculado) {
-                        let prev = document.getElementById(cuadroVinculado);
-                        if (prev) {
-                            prev.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
-                            prev.readOnly = false;
-                        }
-                    }
-                    cuadroVinculado = null;
-                    for (let id of listaOpciones) {
-                        let cajaFisica = document.getElementById(id);
-                        if (cajaFisica.value.trim() === '') {
-                            cuadroVinculado = id;
-                            break;
-                        }
-                    }
-                    if (!cuadroVinculado) cuadroVinculado = listaOpciones[listaOpciones.length - 1];
-                }
-
-                let targetInput = document.getElementById(cuadroVinculado);
-                targetInput.value = granTotalNumerico.toFixed(2);
-                formatInput(targetInput);
-                
-                if (modoOperacion === 'retiro') {
-                    datosInferior.retiro[cuadroVinculado] = targetInput.value;
-                } else if (modoOperacion === 'deposito') {
-                    datosInferior.deposito[cuadroVinculado] = targetInput.value;
-                } else {
-                    datosSuperior.recibo[cuadroVinculado] = targetInput.value;
-                }
-
-                reaplicarEstiloSincronizacion();
-
-            } else {
-                if (cuadroVinculado) {
-                    let targetInput = document.getElementById(cuadroVinculado);
-                    if (targetInput) {
-                        targetInput.value = '';
-                        targetInput.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
-                        targetInput.readOnly = false;
-                    }
-                    if (modoOperacion === 'retiro') {
-                        datosInferior.retiro[cuadroVinculado] = '';
-                    } else if (modoOperacion === 'deposito') {
-                        datosInferior.deposito[cuadroVinculado] = '';
-                    } else {
-                        datosSuperior.recibo[cuadroVinculado] = '';
-                    }
-                    cuadroVinculado = null;
-                }
-            }
-            calcularTodo(); 
-        }
-
-        function procesarTeclasEspeciales(e) {
-            if (e.key === '-' || e.key === 'Minus' || e.code === 'NumpadSubtract' || e.code === 'Minus') {
-                e.preventDefault();
-                e.stopPropagation();
-                alternarPantallas();
-                return;
-            }
-
-            if (e.key === ',' || e.code === 'Comma') {
-                const el = document.activeElement;
-                if (el && el.tagName === 'INPUT' && !el.readOnly) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    insertarDobleCero(el);
-                    return;
-                }
-            }
-
-            const esEnterOAccion = (
-                e.key === 'Enter' || 
-                e.keyCode === 13 || 
-                e.which === 13 || 
-                e.code === 'Enter' || 
-                e.code === 'NumpadEnter' || 
-                e.key === 'ArrowRight'
-            );
-
-            if (esEnterOAccion) {
-                const isCajaActiva = document.getElementById('app-caja').classList.contains('active-app');
-                if (isCajaActiva) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    ejecutarAccionTecladoCaja(e);
-                } else {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    gestionarLimpiarMultiplicador();
-                }
-            }
-        }
-
-        document.addEventListener('keydown', procesarTeclasEspeciales, true);
-
-        document.addEventListener('beforeinput', (e) => {
-            if (e.data === '-') {
-                e.preventDefault();
-                e.stopPropagation();
-                alternarPantallas();
-            } else if (e.data === ',') {
-                const el = document.activeElement;
-                if (el && el.tagName === 'INPUT' && !el.readOnly) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    insertarDobleCero(el);
-                }
-            }
-        }, true);
-
+        // Inicialización
         renderizarListasVisuales();
+        calcularCuadreTotal();
+        window.onload = () => {
+            enfocarSiguienteInputVisible('app-cierre');
+        };
     </script>
 </body>
 </html>
