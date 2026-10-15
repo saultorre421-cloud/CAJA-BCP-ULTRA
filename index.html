@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>Sistema Ágil Unificado - Agente BCP</title>
+    <!-- Pre-conexión de alta velocidad para Cero Latencia con Google Sheets -->
+    <link rel="preconnect" href="https://script.google.com" crossorigin>
+    <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+    <link rel="dns-prefetch" href="https://script.google.com">
+    <link rel="dns-prefetch" href="https://script.googleusercontent.com">
     <style>
         :root {
             --bcp-blue: #002A8D;
@@ -86,8 +91,9 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Reserva de espacio inferior limpio para el Círculo Conmutador */
         .caja-wrapper, .cierre-wrapper {
-            padding: 2px 4px 4px 4px;
+            padding: 2px 4px 54px 4px;
             height: 100%;
             max-width: 520px;
             margin: 0 auto;
@@ -101,9 +107,9 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 4px 8px 4px 6px; 
+            padding: 3px 8px 3px 6px; 
             border-radius: 9px 9px 0 0; 
-            font-size: 15px; 
+            font-size: 14.5px; 
             font-weight: 900; 
             text-transform: uppercase; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
@@ -115,7 +121,7 @@
         .panel-title-area {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             flex-shrink: 1;
             min-width: 0;
         }
@@ -125,6 +131,31 @@
             overflow: hidden;
             text-overflow: ellipsis;
             letter-spacing: 0.2px;
+        }
+
+        /* Botón de engranaje rápido en Caja Principal */
+        .btn-gear-caja {
+            position: relative;
+            background: rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            color: inherit;
+            border-radius: 6px;
+            width: 24px;
+            height: 24px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.12s ease;
+        }
+        .tema-recibo-header .btn-gear-caja {
+            background: rgba(0, 0, 0, 0.10);
+            border-color: rgba(0, 0, 0, 0.22);
+        }
+        .btn-gear-caja:active {
+            transform: scale(0.88);
         }
 
         .header-dots {
@@ -164,8 +195,8 @@
             to { transform: scale(1.38); }
         }
 
-        .panel-total span:nth-child(2) {
-            font-size: clamp(22px, 6vw, 28px);
+        .panel-total > span:last-child {
+            font-size: clamp(21px, 5.8vw, 27px);
             font-weight: 900;
             letter-spacing: -0.5px;
             white-space: nowrap;
@@ -256,8 +287,8 @@
 
         .caja-contenedor input { 
             width: 100%; 
-            height: 44px; 
-            font-size: clamp(23px, 6.8vw, 29px); 
+            height: 41px; 
+            font-size: clamp(22px, 6.5vw, 28px); 
             font-weight: 900; 
             border: 2px solid #94a3b8; 
             border-radius: 7px; 
@@ -279,7 +310,7 @@
         }
         .caja-contenedor input::placeholder { 
             color: #94a3b8; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: normal; 
         }
 
@@ -303,7 +334,7 @@
            PANEL DE RESULTADO EXPRESIVO (COMPARTIDO CAJA Y CIERRE)
            =============================================================== */
         .panel-resultado { 
-            padding: 0 6px 4px 6px;
+            padding: 0 6px 3px 6px;
             border-radius: 10px; 
             text-align: center; 
             font-weight: bold; 
@@ -334,11 +365,11 @@
             position: relative;
             z-index: 2;
             display: inline-block;
-            padding: 2px 14px;
+            padding: 2px 12px;
             border-radius: 0 0 8px 8px;
-            font-size: 10.5px;
+            font-size: 10px;
             font-weight: 900;
-            letter-spacing: 0.8px;
+            letter-spacing: 0.7px;
             text-transform: uppercase;
             margin-top: 0;
             margin-bottom: 1px;
@@ -350,9 +381,9 @@
         .texto-final-expresivo {
             position: relative;
             z-index: 2;
-            font-size: clamp(15px, 4.4vw, 20px);
+            font-size: clamp(14.5px, 4.2vw, 19px);
             font-weight: 900;
-            letter-spacing: 0.7px;
+            letter-spacing: 0.6px;
             line-height: 1.1;
             text-transform: uppercase;
             margin-top: 1px;
@@ -368,8 +399,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: clamp(15px, 4vw, 19px);
-            height: clamp(15px, 4vw, 19px);
+            width: clamp(15px, 4vw, 18px);
+            height: clamp(15px, 4vw, 18px);
             flex-shrink: 0;
         }
 
@@ -386,7 +417,7 @@
             display: block; 
             width: 100%;
             text-align: center;
-            font-size: clamp(46px, 13vw, 64px); 
+            font-size: clamp(42px, 12.2vw, 58px); 
             font-weight: 900; 
             margin-top: 1px; 
             line-height: 0.94; 
@@ -499,7 +530,7 @@
         @keyframes warningScalePulse { from { transform: scale(0.92); } to { transform: scale(1.22); } }
 
         /* =========================================
-           SELECTOR DE MODOS (CAJA 100% LIMPIA ABAJO)
+           SELECTOR DE MODOS (CAJA PRINCIPAL)
            ========================================= */
         .selector-modos-grid {
             display: grid;
@@ -509,7 +540,7 @@
         }
 
         .btn-modo-operacion {
-            height: 43px;
+            height: 41px;
             border-radius: 7px;
             font-size: 13px;
             font-weight: 900;
@@ -547,40 +578,87 @@
             box-shadow: 0 3px 8px rgba(225, 29, 72, 0.4);
         }
 
-        /* CONMUTADOR ULTRA-DISCRETO EN ESQUINA INFERIOR (TOTALMENTE DESAPERCIBIDO) */
-        .btn-conmutador-discreto {
+        /* ===============================================================
+           CONMUTADOR CIRCULAR PREMIUM ESTILO GOOGLE ACCOUNT SWITCHER
+           =============================================================== */
+        .google-account-switcher {
             position: fixed;
             bottom: 5px;
-            right: 7px;
-            width: 26px;
-            height: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            border: 1px solid rgba(148, 163, 184, 0.22);
-            background: rgba(226, 232, 240, 0.35);
-            color: #94a3b8;
+            padding: 2.5px;
+            background: conic-gradient(from 45deg, #FF6A00 0deg, #FF6A00 110deg, #002A8D 110deg, #002A8D 260deg, #0d9488 260deg, #eab308 360deg);
+            box-shadow: 0 3px 10px rgba(0, 42, 141, 0.28), 0 1px 3px rgba(0,0,0,0.18);
+            border: none;
+            cursor: pointer;
+            user-select: none;
+            z-index: 950;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            user-select: none;
-            z-index: 900;
-            opacity: 0.38;
-            transition: opacity 0.18s ease, transform 0.18s ease, background-color 0.18s ease, color 0.18s ease;
-            touch-action: manipulation;
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+            touch-action: none;
         }
-        .btn-conmutador-discreto:active {
-            opacity: 0.9;
-            color: var(--bcp-blue);
-            background: rgba(203, 213, 225, 0.7);
-            transform: scale(0.88) rotate(25deg);
+        .google-account-switcher:active {
+            transform: translateX(-50%) scale(0.91);
         }
-        .btn-conmutador-discreto svg {
-            width: 13px;
-            height: 13px;
-            display: block;
-        }
-        .btn-conmutador-discreto.oculto {
+        .google-account-switcher.oculto {
             display: none !important;
+        }
+        .switcher-inner-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+            border: 2px solid #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--bcp-blue);
+            position: relative;
+            overflow: hidden;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .google-account-switcher.modo-cierre-activo .switcher-inner-circle {
+            background: linear-gradient(145deg, var(--bcp-blue) 0%, var(--bcp-blue-dark) 100%);
+            color: #ffffff;
+        }
+        .switcher-icon-svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+            transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .google-account-switcher.rotando .switcher-icon-svg {
+            transform: rotate(180deg);
+        }
+        .switcher-mini-label {
+            font-size: 7.5px;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            line-height: 1;
+            margin-top: 1px;
+            text-transform: uppercase;
+        }
+        .dot-sync-switcher {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: transparent;
+            border: 1.5px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .dot-sync-switcher.on {
+            background: #22c55e;
+            border-color: #ffffff;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.9);
         }
 
         /* =========================================================
@@ -651,7 +729,7 @@
             background: #ffffff;
             border: 2px solid var(--bcp-blue);
             border-radius: 11px;
-            padding: 7px 11px;
+            padding: 6px 11px;
             margin-bottom: 4px;
             box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
         }
@@ -660,15 +738,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            min-height: 35px;
-            margin-bottom: 5px;
+            min-height: 34px;
+            margin-bottom: 4px;
         }
 
         .summary-row.row-efectivo {
             cursor: pointer;
             user-select: none;
             padding: 2px 6px;
-            margin: 0 -6px 5px -6px;
+            margin: 0 -6px 4px -6px;
             border-radius: 8px;
         }
         .summary-row.row-efectivo:active { background-color: #f1f5f9; }
@@ -676,12 +754,12 @@
         .summary-row.row-total-es {
             margin-bottom: 0;
             border-top: 2px dashed #cbd5e1;
-            padding-top: 5px;
-            min-height: 34px;
+            padding-top: 4px;
+            min-height: 32px;
         }
 
         .summary-label {
-            font-size: 14.5px;
+            font-size: 14px;
             font-weight: 900;
             color: #1e293b;
             letter-spacing: 0.3px;
@@ -713,7 +791,7 @@
 
         .input-sistema {
             width: 150px;
-            height: 36px;
+            height: 35px;
             font-size: clamp(19px, 5.4vw, 23px);
             font-weight: 900;
             text-align: right;
@@ -796,7 +874,7 @@
             display: flex; 
             align-items: center; 
             justify-content: space-between; 
-            height: 60px;
+            height: 58px;
             border-radius: 10px;
             padding: 0 4px 0 0;
             gap: 6px;
@@ -825,9 +903,9 @@
             user-select: none;
         }
 
-        .fajo-card .btn-step { width: 35px; height: 46px; border-radius: 7px; }
-        .fajo-card .input-qty { width: 60px; height: 46px; font-size: 25px; border-radius: 7px; }
-        .fajo-card .item-subtotal { font-size: clamp(24px, 6.6vw, 30px); letter-spacing: -0.6px; }
+        .fajo-card .btn-step { width: 35px; height: 44px; border-radius: 7px; }
+        .fajo-card .input-qty { width: 60px; height: 44px; font-size: 24px; border-radius: 7px; }
+        .fajo-card .item-subtotal { font-size: clamp(23px, 6.4vw, 29px); letter-spacing: -0.6px; }
 
         /* =========================================================
            PANTALLA 3: MODO BILLETES Y MONEDAS (CON ENGRANAJE DISCRETO)
@@ -865,7 +943,6 @@
             flex-grow: 1;
         }
 
-        /* ENGRANAJE PEQUEÑO Y DESAPERCIBIDO A LA DERECHA DEL PANEL AZUL DE BILLETES */
         .btn-config-billetes {
             position: absolute;
             right: 8px;
@@ -882,7 +959,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.72;
+            opacity: 0.78;
             transition: opacity 0.15s ease, transform 0.15s ease;
             z-index: 1002;
         }
@@ -1146,7 +1223,7 @@
         #containerMonedas .item-subtotal { font-size: clamp(23px, 6.4vw, 29px); letter-spacing: -0.6px; }
 
         /* =========================================================
-           MODAL DE AJUSTES MODERNO (SWITCH MÓVIL + BASE + LIMPIEZA)
+           MODAL DE AJUSTES SEPARADO POR CONTEXTO (CAJA vs CIERRE)
            ========================================================= */
         .modal-config {
             display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
@@ -1156,20 +1233,54 @@
         .modal-config.active { display: flex; }
         .modal-card {
             background: white; border-radius: 16px; width: 100%; max-width: 420px;
-            max-height: 88vh; overflow-y: auto; padding: 16px;
+            max-height: 88vh; overflow-y: auto; padding: 15px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.35);
         }
         .modal-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
+            margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;
         }
-        .modal-header h3 { font-size: 15.5px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; }
+        .modal-header h3 { font-size: 15px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; }
         .btn-close-modal {
             background: #f1f5f9; border: none; width: 30px; height: 30px; border-radius: 50%;
             font-size: 16px; font-weight: 900; cursor: pointer; color: #475569;
         }
 
-        /* 1° SWITCH MODERNO ESTILO CELULAR (DESTACADO PRINCIPAL) */
+        /* PESTAÑAS INTERNAS DEL MODAL: CAJA vs CIERRE */
+        .modal-context-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .btn-tab-modal {
+            padding: 8px 6px;
+            border: none;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #475569;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .btn-tab-modal.active {
+            background: var(--bcp-blue);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 42, 141, 0.25);
+        }
+        .seccion-config-panel {
+            display: none;
+        }
+        .seccion-config-panel.active {
+            display: block;
+        }
+
+        /* 1° SWITCH MODERNO ESTILO CELULAR (EXCLUSIVO DE CAJA) */
         .switch-hero-card {
             background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
             border: 2px solid var(--bcp-blue);
@@ -1218,7 +1329,7 @@
             transform: translateX(24px);
         }
 
-        /* 2° BLOQUE CAPITAL BASE */
+        /* 2° BLOQUE CAPITAL BASE (EXCLUSIVO DE CIERRE) */
         .bloque-base-config {
             background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 11px;
             padding: 10px 12px; margin-bottom: 12px;
@@ -1239,16 +1350,15 @@
             text-transform: uppercase; cursor: pointer;
         }
 
-        /* 3° BOTONES DE LIMPIEZA DE NUEVO DÍA (CAJA Y CIERRE) */
+        /* 3° BOTONES DE BORRADO INTELIGENTE */
         .grid-limpieza-hojas {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 8px;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 10px;
         }
         .btn-accion-hoja {
+            width: 100%;
             padding: 10px 8px;
             border-radius: 9px;
             border: 1.5px solid #cbd5e1;
@@ -1259,9 +1369,25 @@
             text-align: center;
             cursor: pointer;
             transition: transform 0.12s ease, background 0.15s ease;
-            line-height: 1.25;
+            line-height: 1.28;
         }
         .btn-accion-hoja:active { transform: scale(0.96); background: #eff6ff; }
+        .btn-accion-hoja.btn-danger-soft {
+            border-color: #fecaca;
+            background: #fff1f2;
+            color: #be123c;
+        }
+        .nota-explicativa-config {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #475569;
+            background: #f8fafc;
+            border-left: 3px solid var(--bcp-blue);
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
 
         .fila-upload {
             display: flex; align-items: center; justify-content: space-between;
@@ -1277,7 +1403,7 @@
 <body>
 
     <!-- =========================================================
-         APLICACIÓN 1: CAJA PRINCIPAL (100% LIMPIA SIN ELEMENTOS ABAJO)
+         APLICACIÓN 1: CAJA PRINCIPAL
          ========================================================= -->
     <div id="app-caja" class="main-app-container active-app">
         <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
@@ -1285,6 +1411,10 @@
                 
                 <div class="panel-total tema-recibo-header" id="panelSuperior">
                     <div class="panel-title-area">
+                        <button type="button" class="btn-gear-caja" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustes('caja')" title="Configuración de Caja">
+                            ⚙️
+                            <span class="dot-sync-mini" id="dotSyncCajaHeader"></span>
+                        </button>
                         <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
                         <div class="header-dots">
                             <div class="h-dot active" id="dot-sup-1" onclick="scrollPaginacionDirecta('swipeEfectivo', 1)"></div>
@@ -1356,7 +1486,7 @@
                     <span class="monto-final" id="montoFinal">0.00</span>
                 </div>
 
-                <!-- SELECTOR DE 3 MODOS (TERMINACIÓN LIMPIA) -->
+                <!-- SELECTOR DE 3 MODOS -->
                 <div class="selector-modos-grid">
                     <button type="button" class="btn-modo-operacion" id="btn-modo-deposito" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="seleccionarModoDirecto(event, 'deposito')">
                         DEPÓSITO
@@ -1374,7 +1504,7 @@
     </div>
 
     <!-- =========================================================
-         APLICACIÓN 2: CIERRE DE CAJA BCP (ORDEN JERÁRQUICO LIMPIO)
+         APLICACIÓN 2: CIERRE DE CAJA BCP
          ========================================================= -->
     <div id="app-cierre" class="main-app-container">
         <form id="formCierre" onsubmit="ejecutarGuardadoCierreConEnter(event)" action="javascript:void(0);">
@@ -1389,7 +1519,7 @@
                         <button type="button" class="btn-ir-efectivo" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="irAModoEfectivoCierre('tab-billetes')" title="Presiona (-) o toca aquí para ir a Billetes y Monedas">
                             <span>💵🪙 EFECTIVO</span>
                         </button>
-                        <button type="button" class="btn-config-cierre" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="abrirModalAjustes()" title="Ajustes de Caja y Cierre">⚙️</button>
+                        <button type="button" class="btn-config-cierre" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="abrirModalAjustes('cierre')" title="Configuración de Cierre">⚙️</button>
                     </div>
                 </div>
 
@@ -1414,17 +1544,17 @@
                     </div>
                 </div>
 
-                <!-- 3. FILA DE CAPITAL BASE (SOLO EDITABLE DESDE AJUSTES) -->
+                <!-- 3. FILA DE CAPITAL BASE -->
                 <div class="capital-row">
                     <span class="capital-label">Capital Base</span>
-                    <span class="capital-display-pill" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="abrirModalAjustes()" title="Editar Capital Base en Ajustes">
+                    <span class="capital-display-pill" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="abrirModalAjustes('cierre')" title="Editar Capital Base en Ajustes">
                         S/ <span id="lblBaseActiva">26,729.00</span>
                     </span>
                 </div>
 
                 <!-- 4. SEMÁFORO / PANEL DE RESPUESTA EXPRESIVO DEL CIERRE -->
                 <div class="panel-resultado estado-esperando" id="panelFinalCierre">
-                    <div class="badge-operacion" id="badgeOperacionCierre">ENTER SOLO EFECTIVO = SALDO INICIAL · CON SISTEMA = CIERRE</div>
+                    <div class="badge-operacion" id="badgeOperacionCierre">SOLO EFECTIVO = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)</div>
                     <div class="texto-final-expresivo" id="textoFinalCierre">ESPERANDO CONTEO...</div>
                     <span class="monto-final" id="montoFinalCierre">S/ 0.00</span>
                 </div>
@@ -1469,16 +1599,15 @@
     </div>
 
     <!-- =========================================================
-         APLICACIÓN 3: MODO BILLETES Y MONEDAS (CON ENGRANAJE EN BILLETES)
+         APLICACIÓN 3: MODO BILLETES Y MONEDAS
          ========================================================= -->
     <div id="app-multiplicador" class="main-app-container">
         <form id="formMultiplicador" onsubmit="ejecutarAccionTecladoMulti(event)" action="javascript:void(0);">
             <div class="multiplicador-wrapper">
                 
-                <!-- CABECERA AZUL CON ENGRANAJE PEQUEÑO Y DESAPERCIBIDO EN LA DERECHA -->
                 <div class="sticky-header-compact" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="alternarConMultiplicador()" title="Toca o presiona (-) para regresar">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
-                    <button type="button" id="btnAjustesBilletes" class="btn-config-billetes" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustesDesdeMulti(event)" title="Configuración General">
+                    <button type="button" id="btnAjustesBilletes" class="btn-config-billetes" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustesDesdeMulti(event)" title="Configuración">
                         ⚙️
                         <span class="dot-sync-mini" id="dotSyncMulti"></span>
                     </button>
@@ -1509,61 +1638,109 @@
         </form>
     </div>
 
-    <!-- CONMUTADOR ULTRA-DISCRETO EN LA ESQUINA INFERIOR DERECHA (FUERA DE LA VISTA PRINCIPAL) -->
-    <button type="button" id="btnConmutadorDiscreto" class="btn-conmutador-discreto" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="conmutarEntreCajaYCierre()" title="Cambiar entre Caja Principal y Cierre de Caja">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M17 2.1l4 4-4 4"/>
-            <path d="M3 12.2v-2a4 4 0 0 1 4-4h12.8M7 21.9l-4-4 4-4"/>
-            <path d="M21 11.8v2a4 4 0 0 1-4 4H4.2"/>
-        </svg>
+    <!-- =========================================================
+         CONMUTADOR CIRCULAR PREMIUM ESTILO CUENTA DE GOOGLE
+         (Toca para cambiar Caja <-> Cierre | Arrastra para mover)
+         ========================================================= -->
+    <button type="button" id="btnGoogleSwitcher" class="google-account-switcher" title="Cambiar entre Caja Principal y Cierre de Caja">
+        <div class="switcher-inner-circle">
+            <svg class="switcher-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 2.1l4 4-4 4"/>
+                <path d="M3 12.2v-2a4 4 0 0 1 4-4h12.8"/>
+                <path d="M7 21.9l-4-4 4-4"/>
+                <path d="M21 11.8v2a4 4 0 0 1-4 4H4.2"/>
+            </svg>
+            <span class="switcher-mini-label" id="lblSwitcherModo">CAJA</span>
+        </div>
+        <span class="dot-sync-switcher" id="dotSyncSwitcher"></span>
     </button>
 
     <!-- =========================================================
-         MODAL DE AJUSTES UNIFICADO (SWITCH + REMESA + NUEVO DÍA + FOTOS)
+         MODAL DE AJUSTES SEPARADO POR APLICACIÓN (CAJA vs CIERRE)
          ========================================================= -->
     <div class="modal-config" id="modalAjustes">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>⚙️ Configuración General</h3>
+                <h3 id="tituloModalConfig">⚙️ Configuración</h3>
                 <button type="button" class="btn-close-modal" onclick="cerrarModalAjustes()">✕</button>
             </div>
 
-            <!-- 1. OPCIÓN MÁS VISIBLE: SWITCH ESTILO CELULAR MODERNO PARA GUARDAR MOVIMIENTOS -->
-            <div class="switch-hero-card">
-                <div>
-                    <div class="switch-info-title">Guardar Movimientos en Hoja</div>
-                    <div class="switch-info-sub" id="txtSubEstadoSwitch">Registra cada operación en tiempo real al dar Enter</div>
-                </div>
-                <label class="ios-switch">
-                    <input type="checkbox" id="chkGuardarMovimientos" onchange="cambiarEstadoGuardadoMovimientos(this.checked)">
-                    <span class="ios-slider"></span>
-                </label>
+            <!-- SELECTOR DE PESTAÑA DE CONFIGURACIÓN -->
+            <div class="modal-context-tabs">
+                <button type="button" class="btn-tab-modal active" id="tabConfigCaja" onclick="cambiarPestanaModalConfig('caja')">
+                    ⚡ Config. Caja (Hoja 1)
+                </button>
+                <button type="button" class="btn-tab-modal" id="tabConfigCierre" onclick="cambiarPestanaModalConfig('cierre')">
+                    📋 Config. Cierre (H1 / H2)
+                </button>
             </div>
 
-            <!-- 2. EDICIÓN EXCLUSIVA DE CAPITAL BASE / REMESA -->
-            <div class="bloque-base-config">
-                <label for="input-base-config">💰 Capital Base / Remesa Asignada (S/)</label>
-                <div class="base-input-group">
-                    <input type="text" id="input-base-config" class="input-base-modal" inputmode="decimal" oninput="formatInput(this)" placeholder="26,729.00">
-                    <button type="button" class="btn-save-base" id="btnGuardarBase" onclick="guardarCapitalBase()">Guardar</button>
+            <!-- =====================================================
+                 SECCIÓN A: CONFIGURACIÓN EXCLUSIVA DE CAJA PRINCIPAL
+                 ===================================================== -->
+            <div id="panelConfigCaja" class="seccion-config-panel active">
+                <div class="switch-hero-card">
+                    <div>
+                        <div class="switch-info-title">Guardar Movimientos en Hoja 1</div>
+                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Actívalo (~7:15 p. m.) luego de fijar tu Saldo Inicial</div>
+                    </div>
+                    <label class="ios-switch">
+                        <input type="checkbox" id="chkGuardarMovimientos" onchange="cambiarEstadoGuardadoMovimientos(this.checked)">
+                        <span class="ios-slider"></span>
+                    </label>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
+                    🧹 Borrado Inteligente desde Caja (Hoja 1)
+                </div>
+                <button type="button" class="btn-accion-hoja" id="btnBorrarSoloMovimientos" onclick="ejecutarAccionHojaRemota('borrar_solo_movimientos', 'btnBorrarSoloMovimientos')" style="margin-bottom: 8px;">
+                    🧹 Borrar Solo Movimientos de Caja (Hoja 1)<br>
+                    <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Saldo Inicial)</span>
+                </button>
+                <div class="nota-explicativa-config">
+                    💡 <b>Protección de Saldo Inicial:</b> Este botón borra únicamente las filas de operaciones registradas desde la Caja (fila 6 en adelante), sin alterar ni borrar tu <b>Saldo Inicial</b> contado a las 7:15 p. m.
                 </div>
             </div>
 
-            <!-- 3. LIMPIEZA RÁPIDA DE HOJAS PARA NUEVO DÍA (SIN BORRAR BORDES) -->
-            <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
-                🏦 Limpieza para Nuevo Día en Google Sheets
-            </div>
-            <div class="grid-limpieza-hojas">
-                <button type="button" class="btn-accion-hoja" id="btnLimpiarMovHojas" onclick="ejecutarLimpiezaHoja('aperturar_movimientos')">
-                    🔄 Nuevo Día:<br>Movimientos Ultra
+            <!-- =====================================================
+                 SECCIÓN B: CONFIGURACIÓN EXCLUSIVA DE CIERRE DE CAJA
+                 ===================================================== -->
+            <div id="panelConfigCierre" class="seccion-config-panel">
+                <div class="bloque-base-config">
+                    <label for="input-base-config">💰 Capital Base / Remesa Asignada (S/)</label>
+                    <div class="base-input-group">
+                        <input type="text" id="input-base-config" class="input-base-modal" inputmode="decimal" oninput="formatInput(this)" placeholder="26,729.00">
+                        <button type="button" class="btn-save-base" id="btnGuardarBase" onclick="guardarCapitalBase()">Guardar</button>
+                    </div>
+                </div>
+
+                <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
+                    🏦 Borrado Independiente desde Cierre
+                </div>
+                <div class="grid-limpieza-hojas">
+                    <button type="button" class="btn-accion-hoja btn-danger-soft" id="btnBorrarSaldoInicial" onclick="ejecutarAccionHojaRemota('borrar_saldo_inicial', 'btnBorrarSaldoInicial')">
+                        🗑️ Borrar Saldo Inicial<br>
+                        <span style="font-size:10px; font-weight:700;">(Solo en Hoja 1)</span>
+                    </button>
+                    <button type="button" class="btn-accion-hoja" id="btnLimpiarCierreHojas" onclick="ejecutarAccionHojaRemota('limpiar_cierre', 'btnLimpiarCierreHojas')">
+                        🧹 Borrar Cierre General<br>
+                        <span style="font-size:10px; font-weight:700;">(Solo en Hoja 2)</span>
+                    </button>
+                </div>
+
+                <button type="button" class="btn-accion-hoja" id="btnLimpiarConteoLocalCierre" onclick="reiniciarConteoLocalCierreDesdeModal()" style="margin-bottom: 8px; background:#f8fafc; color:#334155;">
+                    🔄 Poner en Cero Conteo de Cierre en Pantalla (Local)
                 </button>
-                <button type="button" class="btn-accion-hoja" id="btnLimpiarCierreHojas" onclick="ejecutarLimpiezaHoja('limpiar_cierre')">
-                    🧹 Limpiar Hoja:<br>Cierre de Caja
-                </button>
+
+                <div class="nota-explicativa-config">
+                    💡 <b>Regla inteligente de Enter en Cierre:</b><br>
+                    • <b>Sin S. Sistema:</b> Guarda solo el <b>Saldo Inicial</b> en la <b>Hoja 1</b> (sin tocar la Hoja 2).<br>
+                    • <b>Con S. Sistema:</b> Guarda el <b>Cierre General</b> en la <b>Hoja 2</b> (sin alterar la Hoja 1).
+                </div>
             </div>
 
             <!-- 4. FOTOS REALES DE BILLETES Y MONEDAS -->
-            <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 4px;">
+            <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 4px; border-top: 1px solid var(--border-color); padding-top: 10px;">
                 📸 Fotos de Denominaciones
             </div>
             <div id="listaSubidaBilletes"></div>
@@ -1573,10 +1750,33 @@
 
     <script>
         /* ===============================================================
-           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS
+           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (CERO LATENCIA)
            =============================================================== */
-        const URL_MOVIMIENTOS_ULTRA = "https://script.google.com/macros/s/AKfycbyGk7ux1F-niBX6c-QsuqCpWqXVNOVKTGNBP3JV16X1J_YC3wBEbDyHsfdFgIehtanjvQ/exec";
-        const URL_CIERRE_CAJA = "https://script.google.com/macros/s/AKfycbyk1XMXrpOBVc6hz_IqYtpRVeZrU-3qFkTymv76kJLfYf8MQaozYQv9bx9Cp1YEdL_a/exec";
+        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwwe4lQGvtgcTypwRQVacNfQw1CesINsVCmAMbt4JHiF7BqGngscXJie1B_B1ZKHNKO-Q/exec";
+        const URL_MOVIMIENTOS_ULTRA = URL_APPS_SCRIPT;
+        const URL_CIERRE_CAJA = URL_APPS_SCRIPT;
+
+        // Motor de despacho instantáneo sin bloqueo de interfaz (0 ms) con reintento automático
+        function enviarASheetsCeroLatencia(payload) {
+            const bodyStr = JSON.stringify(payload);
+            const opcionesFetch = {
+                method: 'POST',
+                mode: 'no-cors',
+                cache: 'no-store',
+                credentials: 'omit',
+                keepalive: true,
+                priority: 'high',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: bodyStr
+            };
+
+            fetch(URL_APPS_SCRIPT, opcionesFetch).catch(() => {
+                // Reintento silencioso en caso de microcorte de señal móvil
+                setTimeout(() => {
+                    fetch(URL_APPS_SCRIPT, opcionesFetch).catch(err => console.error("Error sync Sheets:", err));
+                }, 1200);
+            });
+        }
 
         const formatoSoles = (num) => Math.abs(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
@@ -1585,17 +1785,17 @@
             return valor < 0 ? "- S/ " + absStr : "S/ " + absStr;
         };
 
-        // Contexto principal activo ('caja' o 'cierre')
-        let contextoPrincipal = 'caja';
+        // Contexto principal activo ('caja' o 'cierre') persistente
+        let contextoPrincipal = localStorage.getItem('bcp_contexto_activo') || 'caja';
 
-        // Estado del Switch de Guardado de Movimientos en Sheets (Persistente)
+        // Estado del Switch de Guardado de Movimientos en Hoja 1 (Persistente)
         let guardarMovimientosActivo = localStorage.getItem('bcp_sync_movimientos') === 'true';
 
         // Capital Base persistente en localStorage (Por defecto: 26729.00)
         let capitalBaseActual = parseFloat(localStorage.getItem('bcp_capital_base')) || 26729.00;
 
         // Estado de Caja Principal
-        let modoOperacion = 'recibo'; 
+        let modoOperacion = localStorage.getItem('bcp_modo_operacion') || 'recibo'; 
         let ultimoEstadoResultadoCaja = '';
         let datosSuperior = {
             recibo: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' },
@@ -1627,6 +1827,56 @@
 
         let esTransicionClickTab = false;
         let timerFinTransicion = null;
+
+        /* ===============================================================
+           BLINDAJE TOTAL ANTI-CIERRE ACCIDENTAL (LOCALSTORAGE)
+           =============================================================== */
+        function guardarEstadoEnStorage() {
+            try {
+                const estado = {
+                    modoOperacion,
+                    datosSuperior,
+                    datosInferior,
+                    cuadroVinculado,
+                    billetesCaja,
+                    monedasCaja,
+                    billetesCierre,
+                    monedasCierre,
+                    cantF1000,
+                    inputSistema: document.getElementById('input-sistema') ? document.getElementById('input-sistema').value : ''
+                };
+                localStorage.setItem('bcp_estado_blindado_v2', JSON.stringify(estado));
+            } catch (e) {
+                console.warn('No se pudo guardar estado en localStorage:', e);
+            }
+        }
+
+        function restaurarEstadoDesdeStorage() {
+            try {
+                const raw = localStorage.getItem('bcp_estado_blindado_v2');
+                if (!raw) return;
+                const est = JSON.parse(raw);
+                if (est.modoOperacion) modoOperacion = est.modoOperacion;
+                if (est.datosSuperior) datosSuperior = est.datosSuperior;
+                if (est.datosInferior) datosInferior = est.datosInferior;
+                if (est.cuadroVinculado) cuadroVinculado = est.cuadroVinculado;
+                if (est.billetesCaja) billetesCaja = est.billetesCaja;
+                if (est.monedasCaja) monedasCaja = est.monedasCaja;
+                if (est.billetesCierre) billetesCierre = est.billetesCierre;
+                if (est.monedasCierre) monedasCierre = est.monedasCierre;
+                if (typeof est.cantF1000 === 'number') {
+                    cantF1000 = est.cantF1000;
+                    const elFajo = document.getElementById('f1000');
+                    if (elFajo) elFajo.value = cantF1000 === 0 ? '' : cantF1000;
+                }
+                if (est.inputSistema !== undefined) {
+                    const elSis = document.getElementById('input-sistema');
+                    if (elSis) elSis.value = est.inputSistema;
+                }
+            } catch (e) {
+                console.warn('Error restaurando estado:', e);
+            }
+        }
 
         /* ===============================================================
            ICONOS DINÁMICOS DE DOBLE ALA PARA STEPPERS
@@ -1715,17 +1965,84 @@
         document.addEventListener('focusin', () => window.scrollTo(0, 0));
 
         /* ===============================================================
-           CONMUTADOR DISCRETO: CAJA PRINCIPAL <-> CIERRE DE CAJA
+           CONMUTADOR CIRCULAR GOOGLE SWITCHER (CON ARRASTRE HORIZONTAL)
            =============================================================== */
+        function inicializarGoogleSwitcher() {
+            const btn = document.getElementById('btnGoogleSwitcher');
+            if (!btn) return;
+
+            const savedLeft = localStorage.getItem('bcp_switcher_x');
+            if (savedLeft) {
+                btn.style.left = savedLeft;
+            }
+
+            let startX = 0;
+            let initialLeftPx = 0;
+            let movioArrastre = false;
+
+            btn.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                startX = e.clientX;
+                const rect = btn.getBoundingClientRect();
+                initialLeftPx = rect.left + rect.width / 2;
+                movioArrastre = false;
+                btn.setPointerCapture(e.pointerId);
+            });
+
+            btn.addEventListener('pointermove', (e) => {
+                if (!btn.hasPointerCapture(e.pointerId)) return;
+                const dx = e.clientX - startX;
+                if (Math.abs(dx) > 8) {
+                    movioArrastre = true;
+                    const minX = 32;
+                    const maxX = window.innerWidth - 32;
+                    const nuevoX = Math.max(minX, Math.min(maxX, initialLeftPx + dx));
+                    const porcentaje = ((nuevoX / window.innerWidth) * 100).toFixed(1) + '%';
+                    btn.style.left = porcentaje;
+                }
+            });
+
+            btn.addEventListener('pointerup', (e) => {
+                if (!btn.hasPointerCapture(e.pointerId)) return;
+                btn.releasePointerCapture(e.pointerId);
+                if (movioArrastre) {
+                    localStorage.setItem('bcp_switcher_x', btn.style.left);
+                    vibrarRapido(10);
+                } else {
+                    conmutarEntreCajaYCierre();
+                }
+            });
+        }
+
+        function actualizarAparienciaGoogleSwitcher() {
+            const btn = document.getElementById('btnGoogleSwitcher');
+            const lbl = document.getElementById('lblSwitcherModo');
+            if (!btn || !lbl) return;
+
+            const esCierre = (contextoPrincipal === 'cierre');
+            btn.classList.toggle('modo-cierre-activo', esCierre);
+            lbl.innerText = esCierre ? 'CIERRE' : 'CAJA';
+        }
+
         function conmutarEntreCajaYCierre() {
             vibrarRapido(16);
+            const btn = document.getElementById('btnGoogleSwitcher');
+            if (btn) {
+                btn.classList.add('rotando');
+                setTimeout(() => btn.classList.remove('rotando'), 320);
+            }
+
             if (contextoPrincipal === 'caja') {
                 contextoPrincipal = 'cierre';
+                localStorage.setItem('bcp_contexto_activo', 'cierre');
+                actualizarAparienciaGoogleSwitcher();
                 sincronizarInputsMultiplicadorSegunContexto();
                 switchMainApp('app-cierre');
                 enfocarSiguienteInputVisible('app-cierre');
             } else {
                 contextoPrincipal = 'caja';
+                localStorage.setItem('bcp_contexto_activo', 'caja');
+                actualizarAparienciaGoogleSwitcher();
                 sincronizarInputsMultiplicadorSegunContexto();
                 switchMainApp('app-caja');
                 enfocarSiguienteInputVisible('app-caja');
@@ -1737,9 +2054,9 @@
             document.getElementById(appId).classList.add('active-app');
             window.scrollTo(0, 0);
 
-            const btnDiscreto = document.getElementById('btnConmutadorDiscreto');
-            if (btnDiscreto) {
-                btnDiscreto.classList.toggle('oculto', appId === 'app-multiplicador');
+            const btnSwitcher = document.getElementById('btnGoogleSwitcher');
+            if (btnSwitcher) {
+                btnSwitcher.classList.toggle('oculto', appId === 'app-multiplicador');
             }
 
             if (appId === 'app-caja') {
@@ -1770,6 +2087,8 @@
 
         function irAModoEfectivoCierre(targetTabId) {
             contextoPrincipal = 'cierre';
+            localStorage.setItem('bcp_contexto_activo', 'cierre');
+            actualizarAparienciaGoogleSwitcher();
             sincronizarInputsMultiplicadorSegunContexto();
             switchMainApp('app-multiplicador');
             gestionarPestanaMultiplicador(null, targetTabId || 'tab-billetes');
@@ -1791,7 +2110,7 @@
         }
 
         /* ===============================================================
-           LÓGICA DE LA CAJA PRINCIPAL (SIN BLOQUEOS EN ENTER)
+           LÓGICA DE LA CAJA PRINCIPAL
            =============================================================== */
         function registrarFocoCaja(input) {
             if (input && !input.readOnly) ultimoInputCajaActivo = input.id;
@@ -1806,6 +2125,7 @@
                 datosSuperior[modoOperacion]['b' + i] = document.getElementById('b' + i).value;
                 datosInferior[modoOperacion]['p' + i] = document.getElementById('p' + i).value;
             }
+            guardarEstadoEnStorage();
         }
 
         function restaurarValoresModoActual() {
@@ -1895,6 +2215,7 @@
             }
             guardarValoresModoActual();
             modoOperacion = nuevoModo;
+            localStorage.setItem('bcp_modo_operacion', modoOperacion);
             ultimoInputCajaActivo = null;
             ultimoEstadoResultadoCaja = '';
 
@@ -1902,6 +2223,7 @@
             restaurarValoresModoActual();
             reaplicarEstiloSincronizacion();
             calcularTodoCaja();
+            guardarEstadoEnStorage();
             enfocarSiguienteInputVisible('app-caja');
         }
 
@@ -2083,7 +2405,7 @@
             }
         }
 
-        // ENTER EN CAJA: SIEMPRE DA LUZ VERDE (CERO BLOQUEOS) Y GUARDA SI EL SWITCH ESTÁ ON
+        // ENTER EN CAJA: LIMPIA EN 0 MS Y DESPACHA A HOJA 1 SI EL SWITCH ESTÁ ACTIVO
         function ejecutarAccionTecladoCaja(e) {
             if (e) {
                 e.preventDefault();
@@ -2095,48 +2417,45 @@
             let centimosInf = 0;
             for (let i = 1; i <= 8; i++) centimosInf += getValCentimos('p' + i);
 
-            if (centimosSup > 0 || centimosInf > 0) {
-                if (guardarMovimientosActivo) {
-                    let detalleOp = "PAGO SERVICIO";
-                    let montoOp = 0;
+            let payloadParaEnviar = null;
 
-                    if (modoOperacion === 'recibo') {
-                        detalleOp = "PAGO SERVICIO";
-                        montoOp = (centimosInf > 0 ? centimosInf : centimosSup) / 100;
-                    } else if (modoOperacion === 'deposito') {
-                        detalleOp = "DEPÓSITO";
-                        montoOp = (centimosSup > 0 ? centimosSup : centimosInf) / 100;
-                    } else if (modoOperacion === 'retiro') {
-                        detalleOp = "RETIRO";
-                        montoOp = -((centimosSup > 0 ? centimosSup : centimosInf) / 100);
-                    }
+            if ((centimosSup > 0 || centimosInf > 0) && guardarMovimientosActivo) {
+                let detalleOp = "PAGO SERVICIO";
+                let montoOp = 0;
 
-                    const ahora = new Date();
-                    const payload = {
-                        accion: "registrar_movimiento",
-                        fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-                        hora: ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
-                        detalle: detalleOp,
-                        monto: montoOp
-                    };
-
-                    const badge = document.getElementById('badgeOperacion');
-                    badge.innerText = "✓ GUARDADO EN HOJA";
-
-                    fetch(URL_MOVIMIENTOS_ULTRA, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload),
-                        keepalive: true
-                    }).catch(err => console.error("Error sync Caja:", err));
-
-                    setTimeout(() => actualizarEstiloVisualModo(), 650);
+                if (modoOperacion === 'recibo') {
+                    detalleOp = "PAGO SERVICIO";
+                    montoOp = (centimosInf > 0 ? centimosInf : centimosSup) / 100;
+                } else if (modoOperacion === 'deposito') {
+                    detalleOp = "DEPÓSITO";
+                    montoOp = (centimosSup > 0 ? centimosSup : centimosInf) / 100;
+                } else if (modoOperacion === 'retiro') {
+                    detalleOp = "RETIRO";
+                    montoOp = -((centimosSup > 0 ? centimosSup : centimosInf) / 100);
                 }
+
+                const ahora = new Date();
+                payloadParaEnviar = {
+                    accion: "registrar_movimiento",
+                    fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+                    hora: ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
+                    detalle: detalleOp,
+                    monto: montoOp
+                };
             }
 
+            // 1° Respuesta visual y limpieza en 0 ms (Cero Latencia)
             limpiarCaja();
             enfocarSiguienteInputVisible('app-caja');
+
+            // 2° Despacho asíncrono inmediato en segundo plano
+            if (payloadParaEnviar) {
+                const badge = document.getElementById('badgeOperacion');
+                badge.innerText = "✓ GUARDADO EN HOJA 1 (0 ms)";
+                enviarASheetsCeroLatencia(payloadParaEnviar);
+                setTimeout(() => actualizarEstiloVisualModo(), 650);
+            }
+
             return false;
         }
 
@@ -2173,16 +2492,18 @@
 
             calculateAllCounter();
             calcularTodoCaja();
+            guardarEstadoEnStorage();
             vibrarRapido();
         }
 
         /* ===============================================================
-           LÓGICA DE CIERRE DE CAJA BCP + DOBLE PROPÓSITO CON ENTER
+           LÓGICA DE CIERRE DE CAJA BCP: GUARDADO INTELIGENTE (HOJA 1 vs HOJA 2)
            =============================================================== */
         function handleInputSistema(input) {
             formatInput(input);
             registrarFocoCierre(input);
             calcularCuadreCierre();
+            guardarEstadoEnStorage();
         }
 
         function gestionarStepFajo(event, delta) {
@@ -2201,6 +2522,7 @@
         function updateFajo(value) {
             cantF1000 = parseInt(value) || 0;
             calcularCuadreCierre();
+            guardarEstadoEnStorage();
         }
 
         function reiniciarFajo() {
@@ -2208,6 +2530,7 @@
             document.getElementById('f1000').value = '';
             cantF1000 = 0;
             calcularCuadreCierre();
+            guardarEstadoEnStorage();
             enfocarSiguienteInputVisible('app-cierre');
         }
 
@@ -2260,31 +2583,31 @@
             let estadoClave = '';
 
             const tieneEfectivo = totalCentimos !== 0;
-            const tieneSistema = rawSistema !== '' && centimosSistema !== 0;
+            const tieneSistema = rawSistema !== '' && !isNaN(numSistema) && centimosSistema !== 0;
 
             if (!tieneEfectivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-esperando";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "ENTER SOLO EFECTIVO = SALDO INICIAL · CON SISTEMA = CIERRE";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SOLO EFECTIVO = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'esperando', "ESPERANDO CONTEO...", "S/ 0.00");
                 estadoClave = 'esperando';
             } else if (tieneEfectivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-vuelto";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "ENTER PARA GUARDAR COMO SALDO INICIAL EN CAJA ULTRA";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "ENTER = GUARDAR SOLO SALDO INICIAL EN HOJA 1 (NO TOCA HOJA 2)";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'mano', "EFECTIVO PARA SALDO INICIAL", formatoMonedaConPrefijo(totalEfectivoFisico));
                 estadoClave = 'saldo-inicial';
             } else if (Math.abs(diferenciaSoles) <= 0.05) {
                 panel.className = "panel-resultado estado-exacto";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "DATOS COMPLETOS · ENTER PARA GUARDAR CIERRE";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA INGRESADO · ENTER PARA GUARDAR CIERRE GENERAL EN HOJA 2";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "EXACTO", "S/ 0.00");
                 estadoClave = 'exacto';
             } else if (diferenciaSoles < -0.05) {
                 panel.className = "panel-resultado estado-faltante";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "DATOS COMPLETOS · ENTER PARA GUARDAR CIERRE";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA INGRESADO · ENTER PARA GUARDAR CIERRE GENERAL EN HOJA 2";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'faltante', "FALTAN", "- S/ " + formatoSoles(diferenciaSoles));
                 estadoClave = 'faltante';
             } else {
                 panel.className = "panel-resultado estado-faltante-entregar";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "DATOS COMPLETOS · ENTER PARA GUARDAR CIERRE";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA INGRESADO · ENTER PARA GUARDAR CIERRE GENERAL EN HOJA 2";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'entregar', "SOBRAN", "+ S/ " + formatoSoles(diferenciaSoles));
                 estadoClave = 'sobrante';
             }
@@ -2308,6 +2631,7 @@
             ultimoEstadoResultadoCierre = '';
             calculateAllCounter();
             calcularCuadreCierre();
+            guardarEstadoEnStorage();
         }
 
         function ejecutarGuardadoCierreConEnter(e) {
@@ -2320,11 +2644,10 @@
             const totalEfectivoFisico = totalCentimos / 100;
             const rawSistema = document.getElementById('input-sistema').value.replace(/,/g, '').trim();
             const numSistema = parseFloat(rawSistema);
-            const tieneSistema = !isNaN(numSistema) && numSistema !== 0;
+            const tieneSistema = rawSistema !== '' && !isNaN(numSistema) && numSistema !== 0;
             const tieneEfectivo = totalCentimos !== 0;
 
             if (!tieneEfectivo && !tieneSistema) {
-                limpiarTodoElCierre();
                 enfocarInputActivoActual();
                 return false;
             }
@@ -2333,23 +2656,18 @@
             clearTimeout(timerBadgeSyncCierre);
 
             if (tieneEfectivo && !tieneSistema) {
+                // MODO 1 (7:15 PM): SIN S. SISTEMA -> GUARDA ÚNICAMENTE SALDO INICIAL EN HOJA 1
+                // Y CONSERVA EL CONTEO DE BILLETES EN PANTALLA PARA EL CIERRE DE LAS 8:00 PM
                 const payloadSaldoInicial = {
                     accion: "fijar_saldo_inicial",
                     saldoInicial: totalEfectivoFisico
                 };
 
-                fetch(URL_MOVIMIENTOS_ULTRA, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payloadSaldoInicial),
-                    keepalive: true
-                }).catch(err => console.error("Error al fijar Saldo Inicial:", err));
-
-                limpiarTodoElCierre();
                 vibrarRapido([18, 25, 18]);
-                badgeOp.innerText = "✅ EFECTIVO GUARDADO COMO SALDO INICIAL EN CAJA ULTRA";
-            } else {
+                badgeOp.innerText = "✅ SALDO INICIAL ENVIADO A HOJA 1 (0 ms)";
+                enviarASheetsCeroLatencia(payloadSaldoInicial);
+            } else if (tieneSistema) {
+                // MODO 2 (8:00 PM): CON S. SISTEMA -> GUARDA EL CIERRE GENERAL EN LA HOJA 2
                 const paqueteCierre = {
                     accion: "guardar_cierre",
                     f1000: cantF1000,
@@ -2364,27 +2682,23 @@
                     m050: monedasCierre[0.5] || 0,
                     m020: monedasCierre[0.2] || 0,
                     m010: monedasCierre[0.1] || 0,
-                    saldoSistema: rawSistema,
+                    saldoSistema: numSistema,
                     capitalBase: capitalBaseActual.toFixed(2)
                 };
 
-                fetch(URL_CIERRE_CAJA, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(paqueteCierre),
-                    keepalive: true
-                }).catch(err => console.error("Error al guardar Cierre:", err));
-
+                // 1° Limpieza y respuesta visual inmediata en 0 ms
                 limpiarTodoElCierre();
                 vibrarRapido([18, 25, 18]);
-                badgeOp.innerText = "✅ ¡CIERRE FINAL SINCRONIZADO EN HOJA!";
+                badgeOp.innerText = "✅ ¡CIERRE GENERAL GUARDADO EN HOJA 2! (0 ms)";
+
+                // 2° Despacho inmediato a Google Sheets
+                enviarASheetsCeroLatencia(paqueteCierre);
             }
 
             timerBadgeSyncCierre = setTimeout(() => {
                 timerBadgeSyncCierre = null;
                 calcularCuadreCierre();
-            }, 1900);
+            }, 2200);
 
             enfocarInputActivoActual();
             return false;
@@ -2558,6 +2872,7 @@
             else mapaM[denom] = val;
 
             calculateAllCounter();
+            guardarEstadoEnStorage();
         }
 
         function calculateAllCounter() {
@@ -2672,6 +2987,7 @@
                 denominacionesMonedas.forEach(d => monedasCaja[d] = 0);
                 document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
                 calculateAllCounter();
+                guardarEstadoEnStorage();
                 const tabActiva = document.querySelector('.sub-tab-btn.active');
                 if (tabActiva) enfocarSiguienteInputVisible(tabActiva.id === 'tab-btn-billetes' ? 'tab-billetes' : 'tab-monedas');
                 vibrarRapido();
@@ -2821,6 +3137,7 @@
             if (input.id === 'input-sistema') {
                 registrarFocoCierre(input);
                 calcularCuadreCierre();
+                guardarEstadoEnStorage();
             } else {
                 registrarFocoCaja(input);
                 guardarValoresModoActual();
@@ -2885,27 +3202,42 @@
         }, true);
 
         /* ===============================================================
-           MODAL DE AJUSTES: SWITCH ON/OFF + CAPITAL BASE + NUEVO DÍA
+           MODAL DE AJUSTES SEPARADO POR CONTEXTO (CAJA vs CIERRE)
            =============================================================== */
         function abrirModalAjustesDesdeMulti(event) {
             if (event) {
                 event.preventDefault();
                 event.stopPropagation();
             }
-            abrirModalAjustes();
+            abrirModalAjustes(contextoPrincipal);
+        }
+
+        function cambiarPestanaModalConfig(modoTab) {
+            const esCaja = (modoTab === 'caja');
+            document.getElementById('tabConfigCaja').classList.toggle('active', esCaja);
+            document.getElementById('tabConfigCierre').classList.toggle('active', !esCaja);
+            document.getElementById('panelConfigCaja').classList.toggle('active', esCaja);
+            document.getElementById('panelConfigCierre').classList.toggle('active', !esCaja);
+            document.getElementById('tituloModalConfig').innerText = esCaja 
+                ? '⚙️ Configuración de Caja' 
+                : '⚙️ Configuración de Cierre';
         }
 
         function actualizarIndicadorSwitchVisual() {
             const dotMulti = document.getElementById('dotSyncMulti');
+            const dotCajaHeader = document.getElementById('dotSyncCajaHeader');
+            const dotSwitcher = document.getElementById('dotSyncSwitcher');
             const chk = document.getElementById('chkGuardarMovimientos');
             const sub = document.getElementById('txtSubEstadoSwitch');
 
             if (chk) chk.checked = guardarMovimientosActivo;
             if (dotMulti) dotMulti.classList.toggle('on', guardarMovimientosActivo);
+            if (dotCajaHeader) dotCajaHeader.classList.toggle('on', guardarMovimientosActivo);
+            if (dotSwitcher) dotSwitcher.classList.toggle('on', guardarMovimientosActivo);
             if (sub) {
                 sub.innerText = guardarMovimientosActivo 
-                    ? "ACTIVO: Cada Enter en Caja se registra en Movimientos Ultra" 
-                    : "DESACTIVADO: La Caja funciona sin enviar registros a la hoja";
+                    ? "ACTIVO: Cada Enter en Caja se guarda en la Hoja 1 en tiempo real" 
+                    : "DESACTIVADO: La Caja opera rápido sin enviar movimientos a la Hoja 1";
             }
         }
 
@@ -2916,9 +3248,10 @@
             actualizarIndicadorSwitchVisual();
         }
 
-        function abrirModalAjustes() {
+        function abrirModalAjustes(modoForzado) {
             vibrarRapido();
             actualizarIndicadorSwitchVisual();
+            cambiarPestanaModalConfig(modoForzado || contextoPrincipal);
 
             const inputBaseModal = document.getElementById('input-base-config');
             inputBaseModal.value = capitalBaseActual.toFixed(2);
@@ -2981,35 +3314,38 @@
             }
         }
 
-        function ejecutarLimpiezaHoja(tipoAccion) {
+        function ejecutarAccionHojaRemota(accionRemota, btnId) {
             vibrarRapido([20, 30, 20]);
-            const esMovimientos = (tipoAccion === 'aperturar_movimientos');
-            const btn = document.getElementById(esMovimientos ? 'btnLimpiarMovHojas' : 'btnLimpiarCierreHojas');
+            const btn = document.getElementById(btnId);
             const textoOriginal = btn.innerHTML;
 
-            const urlDestino = esMovimientos ? URL_MOVIMIENTOS_ULTRA : URL_CIERRE_CAJA;
-            const payload = { accion: esMovimientos ? "aperturar" : "limpiar_cierre" };
-
-            fetch(urlDestino, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                keepalive: true
-            }).catch(err => console.error("Error limpieza Sheets:", err));
+            // Despacho instantáneo con cero latencia
+            enviarASheetsCeroLatencia({ accion: accionRemota });
 
             btn.style.background = "#dcfce7";
             btn.style.borderColor = "#16a34a";
             btn.style.color = "#15803d";
-            btn.innerHTML = "✅ ¡Enviado a Hoja!<br>(0 ms)";
+            btn.innerHTML = "✅ ¡Ejecutado en Google Sheets!<br>(0 ms)";
 
             setTimeout(() => {
-                btn.style.background = "#ffffff";
-                btn.style.borderColor = "#cbd5e1";
-                btn.style.color = "var(--bcp-blue)";
+                btn.style.background = "";
+                btn.style.borderColor = "";
+                btn.style.color = "";
                 btn.innerHTML = textoOriginal;
                 cerrarModalAjustes();
-            }, 900);
+            }, 600);
+        }
+
+        function reiniciarConteoLocalCierreDesdeModal() {
+            vibrarRapido([20, 30, 20]);
+            limpiarTodoElCierre();
+            const btn = document.getElementById('btnLimpiarConteoLocalCierre');
+            const original = btn.innerHTML;
+            btn.innerHTML = "✅ ¡Conteo de Cierre en Cero!";
+            setTimeout(() => {
+                btn.innerHTML = original;
+                cerrarModalAjustes();
+            }, 550);
         }
 
         function guardarFotoEnStorage(event, tipo, denom) {
@@ -3031,7 +3367,7 @@
                         localStorage.setItem(`foto_${tipo}_${denom}`, optimizada);
                         renderizarListasVisuales();
                         sincronizarInputsMultiplicadorSegunContexto();
-                        abrirModalAjustes();
+                        abrirModalAjustes(contextoPrincipal);
                     } catch(err) {
                         alert('Memoria llena en el navegador móvil.');
                     }
@@ -3041,12 +3377,28 @@
             reader.readAsDataURL(file);
         }
 
-        // Inicialización
+        // Inicialización con restauración blindada
         renderizarListasVisuales();
+        restaurarEstadoDesdeStorage();
+        inicializarGoogleSwitcher();
         actualizarIndicadorSwitchVisual();
+        actualizarEstiloVisualModo();
+        restaurarValoresModoActual();
+        reaplicarEstiloSincronizacion();
+        actualizarAparienciaGoogleSwitcher();
+        sincronizarInputsMultiplicadorSegunContexto();
         calcularTodoCaja();
         calcularCuadreCierre();
-        window.onload = () => enfocarSiguienteInputVisible('app-caja');
+
+        window.onload = () => {
+            if (contextoPrincipal === 'cierre') {
+                switchMainApp('app-cierre');
+                enfocarSiguienteInputVisible('app-cierre');
+            } else {
+                switchMainApp('app-caja');
+                enfocarSiguienteInputVisible('app-caja');
+            }
+        };
     </script>
 </body>
 </html>
