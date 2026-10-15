@@ -1573,11 +1573,10 @@
 
     <script>
         /* ===============================================================
-           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (URL UNIFICADA)
+           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS
            =============================================================== */
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwLS3r5bl09G_VGTW870PYGXorxCxMMQoYy9v44BtmnIPgWUwUBjZaGssEpl72DD0Y5fw/exec";
-        const URL_MOVIMIENTOS_ULTRA = URL_APPS_SCRIPT;
-        const URL_CIERRE_CAJA = URL_APPS_SCRIPT;
+        const URL_MOVIMIENTOS_ULTRA = "https://script.google.com/macros/s/AKfycbyGk7ux1F-niBX6c-QsuqCpWqXVNOVKTGNBP3JV16X1J_YC3wBEbDyHsfdFgIehtanjvQ/exec";
+        const URL_CIERRE_CAJA = "https://script.google.com/macros/s/AKfycbyk1XMXrpOBVc6hz_IqYtpRVeZrU-3qFkTymv76kJLfYf8MQaozYQv9bx9Cp1YEdL_a/exec";
 
         const formatoSoles = (num) => Math.abs(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
@@ -2127,7 +2126,7 @@
                     fetch(URL_MOVIMIENTOS_ULTRA, {
                         method: 'POST',
                         mode: 'no-cors',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload),
                         keepalive: true
                     }).catch(err => console.error("Error sync Caja:", err));
@@ -2342,7 +2341,7 @@
                 fetch(URL_MOVIMIENTOS_ULTRA, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(payloadSaldoInicial),
                     keepalive: true
                 }).catch(err => console.error("Error al fijar Saldo Inicial:", err));
@@ -2372,7 +2371,7 @@
                 fetch(URL_CIERRE_CAJA, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(paqueteCierre),
                     keepalive: true
                 }).catch(err => console.error("Error al guardar Cierre:", err));
@@ -2994,7 +2993,7 @@
             fetch(urlDestino, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
                 keepalive: true
             }).catch(err => console.error("Error limpieza Sheets:", err));
