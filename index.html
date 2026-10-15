@@ -91,9 +91,8 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Reserva de espacio inferior limpio para el Círculo Conmutador */
         .caja-wrapper, .cierre-wrapper {
-            padding: 2px 4px 54px 4px;
+            padding: 2px 4px 6px 4px;
             height: 100%;
             max-width: 520px;
             margin: 0 auto;
@@ -101,15 +100,15 @@
         }
 
         /* =========================================
-           PANELES DE CABECERA DE CAJA PRINCIPAL
+           PANELES DE CABECERA DE CAJA PRINCIPAL (100% LIMPIOS SIN ENGRANAJE)
            ========================================= */
         .panel-total { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 3px 8px 3px 6px; 
+            padding: 4px 8px 4px 6px; 
             border-radius: 9px 9px 0 0; 
-            font-size: 14.5px; 
+            font-size: 15px; 
             font-weight: 900; 
             text-transform: uppercase; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
@@ -121,7 +120,7 @@
         .panel-title-area {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             flex-shrink: 1;
             min-width: 0;
         }
@@ -131,31 +130,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
             letter-spacing: 0.2px;
-        }
-
-        /* Botón de engranaje rápido en Caja Principal */
-        .btn-gear-caja {
-            position: relative;
-            background: rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.35);
-            color: inherit;
-            border-radius: 6px;
-            width: 24px;
-            height: 24px;
-            font-size: 12px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: transform 0.12s ease;
-        }
-        .tema-recibo-header .btn-gear-caja {
-            background: rgba(0, 0, 0, 0.10);
-            border-color: rgba(0, 0, 0, 0.22);
-        }
-        .btn-gear-caja:active {
-            transform: scale(0.88);
         }
 
         .header-dots {
@@ -196,7 +170,7 @@
         }
 
         .panel-total > span:last-child {
-            font-size: clamp(21px, 5.8vw, 27px);
+            font-size: clamp(22px, 6vw, 28px);
             font-weight: 900;
             letter-spacing: -0.5px;
             white-space: nowrap;
@@ -287,8 +261,8 @@
 
         .caja-contenedor input { 
             width: 100%; 
-            height: 41px; 
-            font-size: clamp(22px, 6.5vw, 28px); 
+            height: 44px; 
+            font-size: clamp(23px, 6.8vw, 29px); 
             font-weight: 900; 
             border: 2px solid #94a3b8; 
             border-radius: 7px; 
@@ -310,7 +284,7 @@
         }
         .caja-contenedor input::placeholder { 
             color: #94a3b8; 
-            font-size: 15px; 
+            font-size: 16px; 
             font-weight: normal; 
         }
 
@@ -334,7 +308,7 @@
            PANEL DE RESULTADO EXPRESIVO (COMPARTIDO CAJA Y CIERRE)
            =============================================================== */
         .panel-resultado { 
-            padding: 0 6px 3px 6px;
+            padding: 0 6px 4px 6px;
             border-radius: 10px; 
             text-align: center; 
             font-weight: bold; 
@@ -381,9 +355,9 @@
         .texto-final-expresivo {
             position: relative;
             z-index: 2;
-            font-size: clamp(14.5px, 4.2vw, 19px);
+            font-size: clamp(15px, 4.4vw, 20px);
             font-weight: 900;
-            letter-spacing: 0.6px;
+            letter-spacing: 0.7px;
             line-height: 1.1;
             text-transform: uppercase;
             margin-top: 1px;
@@ -399,8 +373,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: clamp(15px, 4vw, 18px);
-            height: clamp(15px, 4vw, 18px);
+            width: clamp(15px, 4vw, 19px);
+            height: clamp(15px, 4vw, 19px);
             flex-shrink: 0;
         }
 
@@ -417,7 +391,7 @@
             display: block; 
             width: 100%;
             text-align: center;
-            font-size: clamp(42px, 12.2vw, 58px); 
+            font-size: clamp(44px, 12.6vw, 62px); 
             font-weight: 900; 
             margin-top: 1px; 
             line-height: 0.94; 
@@ -540,7 +514,7 @@
         }
 
         .btn-modo-operacion {
-            height: 41px;
+            height: 43px;
             border-radius: 7px;
             font-size: 13px;
             font-weight: 900;
@@ -579,13 +553,14 @@
         }
 
         /* ===============================================================
-           CONMUTADOR CIRCULAR PREMIUM ESTILO GOOGLE ACCOUNT SWITCHER
+           CONMUTADOR CIRCULAR FLOTANTE 2D (SIN PUNTO VERDE Y FIJO BAJO TECLADO)
            =============================================================== */
         .google-account-switcher {
             position: fixed;
-            bottom: 5px;
+            top: 460px;
             left: 50%;
-            transform: translateX(-50%);
+            bottom: auto !important;
+            transform: translate(-50%, -50%);
             width: 44px;
             height: 44px;
             border-radius: 50%;
@@ -599,14 +574,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+            transition: box-shadow 0.2s ease, opacity 0.15s ease;
             touch-action: none;
         }
         .google-account-switcher:active {
-            transform: translateX(-50%) scale(0.91);
+            transform: translate(-50%, -50%) scale(0.91);
         }
         .google-account-switcher.oculto {
             display: none !important;
+        }
+        /* Cuando el usuario deja la burbuja abajo y abre el teclado, queda tapada debajo del teclado sin subirse */
+        .google-account-switcher.tapado-por-teclado {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
         }
         .switcher-inner-circle {
             width: 100%;
@@ -643,22 +624,6 @@
             line-height: 1;
             margin-top: 1px;
             text-transform: uppercase;
-        }
-        .dot-sync-switcher {
-            position: absolute;
-            top: 1px;
-            right: 1px;
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background: transparent;
-            border: 1.5px solid transparent;
-            transition: all 0.2s ease;
-        }
-        .dot-sync-switcher.on {
-            background: #22c55e;
-            border-color: #ffffff;
-            box-shadow: 0 0 6px rgba(34, 197, 94, 0.9);
         }
 
         /* =========================================================
@@ -841,7 +806,7 @@
             cursor: pointer;
         }
 
-        /* 4° SECCIÓN INDEPENDIENTE: FAJOS ESPECIALES (ABAJO) */
+        /* 4° SECCIÓN INDEPENDIENTE: FAJOS ESPECIALES */
         .fajos-section {
             margin-top: 2px;
             margin-bottom: 0;
@@ -907,8 +872,43 @@
         .fajo-card .input-qty { width: 60px; height: 44px; font-size: 24px; border-radius: 7px; }
         .fajo-card .item-subtotal { font-size: clamp(23px, 6.4vw, 29px); letter-spacing: -0.6px; }
 
+        /* 5° BOTÓN DEBAJO DE FAJOS ESPECIALES PARA BORRAR TODO LO EDITADO EN CIERRE */
+        .cierre-reset-zone {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn-borrar-todo-cierre {
+            width: 100%;
+            height: 38px;
+            border-radius: 9px;
+            border: 1.5px solid #cbd5e1;
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            color: #475569;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05);
+            user-select: none;
+            touch-action: manipulation;
+            transition: all 0.15s ease;
+        }
+        .btn-borrar-todo-cierre:active {
+            transform: scale(0.97);
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #b91c1c;
+        }
+
         /* =========================================================
-           PANTALLA 3: MODO BILLETES Y MONEDAS (CON ENGRANAJE DISCRETO)
+           PANTALLA 3: MODO BILLETES Y MONEDAS (ENGRANAJE SOLO EN MONEDAS)
            ========================================================= */
         .multiplicador-wrapper {
             background-color: var(--bg-light);
@@ -943,14 +943,15 @@
             flex-grow: 1;
         }
 
-        .btn-config-billetes {
+        /* ENGRANAJE EXCLUSIVO DEL PANEL DE MONEDAS */
+        .btn-config-monedas {
             position: absolute;
             right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            color: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.9);
             border-radius: 6px;
             width: 26px;
             height: 26px;
@@ -959,15 +960,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.78;
+            opacity: 0.82;
             transition: opacity 0.15s ease, transform 0.15s ease;
             z-index: 1002;
         }
-        .btn-config-billetes:active {
+        .btn-config-monedas:active {
             transform: translateY(-50%) scale(0.9);
             opacity: 1;
         }
-        .btn-config-billetes.oculto-en-monedas {
+        .btn-config-monedas.oculto-en-billetes {
             opacity: 0;
             pointer-events: none;
         }
@@ -1403,7 +1404,7 @@
 <body>
 
     <!-- =========================================================
-         APLICACIÓN 1: CAJA PRINCIPAL
+         APLICACIÓN 1: CAJA PRINCIPAL (100% LIMPIA SIN ENGRANAJE)
          ========================================================= -->
     <div id="app-caja" class="main-app-container active-app">
         <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
@@ -1411,10 +1412,6 @@
                 
                 <div class="panel-total tema-recibo-header" id="panelSuperior">
                     <div class="panel-title-area">
-                        <button type="button" class="btn-gear-caja" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustes('caja')" title="Configuración de Caja">
-                            ⚙️
-                            <span class="dot-sync-mini" id="dotSyncCajaHeader"></span>
-                        </button>
                         <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
                         <div class="header-dots">
                             <div class="h-dot active" id="dot-sup-1" onclick="scrollPaginacionDirecta('swipeEfectivo', 1)"></div>
@@ -1554,7 +1551,7 @@
 
                 <!-- 4. SEMÁFORO / PANEL DE RESPUESTA EXPRESIVO DEL CIERRE -->
                 <div class="panel-resultado estado-esperando" id="panelFinalCierre">
-                    <div class="badge-operacion" id="badgeOperacionCierre">SOLO EFECTIVO = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)</div>
+                    <div class="badge-operacion" id="badgeOperacionCierre">SIN SISTEMA = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)</div>
                     <div class="texto-final-expresivo" id="textoFinalCierre">ESPERANDO CONTEO...</div>
                     <span class="monto-final" id="montoFinalCierre">S/ 0.00</span>
                 </div>
@@ -1563,7 +1560,7 @@
                 <div class="fajos-section">
                     <div class="fajos-header-bar">
                         <span class="fajos-title">Fajos Especiales</span>
-                        <span class="fajos-subtitle">Doble toque para limpiar</span>
+                        <span class="fajos-subtitle">Doble toque para limpiar fajo</span>
                     </div>
                     <div class="fajo-card" id="card-f1000">
                         <div class="fajo-visual-box" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" ondblclick="reiniciarFajo()" title="Doble toque para reiniciar fajo">
@@ -1594,20 +1591,28 @@
                     </div>
                 </div>
 
+                <!-- 6. BOTÓN DEDICADO DEBAJO DE FAJOS ESPECIALES PARA BORRAR TODO LO EDITADO EN CIERRE -->
+                <div class="cierre-reset-zone">
+                    <button type="button" class="btn-borrar-todo-cierre" id="btnBorrarTodoPantallaCierre" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="borrarTodoEditadoEnCierrePantalla()">
+                        <span>🗑️ BORRAR DATOS EDITADOS DE CIERRE</span>
+                    </button>
+                </div>
+
             </div>
         </form>
     </div>
 
     <!-- =========================================================
-         APLICACIÓN 3: MODO BILLETES Y MONEDAS
+         APLICACIÓN 3: MODO BILLETES Y MONEDAS (ENGRANAJE SOLO EN MONEDAS)
          ========================================================= -->
     <div id="app-multiplicador" class="main-app-container">
         <form id="formMultiplicador" onsubmit="ejecutarAccionTecladoMulti(event)" action="javascript:void(0);">
             <div class="multiplicador-wrapper">
                 
+                <!-- CABECERA AZUL CON ENGRANAJE VISIBLE EXCLUSIVAMENTE EN EL PANEL DE MONEDAS -->
                 <div class="sticky-header-compact" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="alternarConMultiplicador()" title="Toca o presiona (-) para regresar">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
-                    <button type="button" id="btnAjustesBilletes" class="btn-config-billetes" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustesDesdeMulti(event)" title="Configuración">
+                    <button type="button" id="btnAjustesMonedas" class="btn-config-monedas oculto-en-billetes" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustesDesdeMulti(event)" title="Configuración">
                         ⚙️
                         <span class="dot-sync-mini" id="dotSyncMulti"></span>
                     </button>
@@ -1639,10 +1644,9 @@
     </div>
 
     <!-- =========================================================
-         CONMUTADOR CIRCULAR PREMIUM ESTILO CUENTA DE GOOGLE
-         (Toca para cambiar Caja <-> Cierre | Arrastra para mover)
+         CONMUTADOR CIRCULAR FLOTANTE 2D (SIN PUNTO VERDE Y FIJO BAJO EL TECLADO)
          ========================================================= -->
-    <button type="button" id="btnGoogleSwitcher" class="google-account-switcher" title="Cambiar entre Caja Principal y Cierre de Caja">
+    <button type="button" id="btnGoogleSwitcher" class="google-account-switcher" title="Toca para cambiar Caja/Cierre · Arrastra hacia cualquier lugar">
         <div class="switcher-inner-circle">
             <svg class="switcher-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M17 2.1l4 4-4 4"/>
@@ -1652,7 +1656,6 @@
             </svg>
             <span class="switcher-mini-label" id="lblSwitcherModo">CAJA</span>
         </div>
-        <span class="dot-sync-switcher" id="dotSyncSwitcher"></span>
     </button>
 
     <!-- =========================================================
@@ -1715,7 +1718,7 @@
                 </div>
 
                 <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
-                    🏦 Borrado Independiente desde Cierre
+                    🏦 Borrado Independiente en Google Sheets
                 </div>
                 <div class="grid-limpieza-hojas">
                     <button type="button" class="btn-accion-hoja btn-danger-soft" id="btnBorrarSaldoInicial" onclick="ejecutarAccionHojaRemota('borrar_saldo_inicial', 'btnBorrarSaldoInicial')">
@@ -1728,14 +1731,10 @@
                     </button>
                 </div>
 
-                <button type="button" class="btn-accion-hoja" id="btnLimpiarConteoLocalCierre" onclick="reiniciarConteoLocalCierreDesdeModal()" style="margin-bottom: 8px; background:#f8fafc; color:#334155;">
-                    🔄 Poner en Cero Conteo de Cierre en Pantalla (Local)
-                </button>
-
                 <div class="nota-explicativa-config">
                     💡 <b>Regla inteligente de Enter en Cierre:</b><br>
                     • <b>Sin S. Sistema:</b> Guarda solo el <b>Saldo Inicial</b> en la <b>Hoja 1</b> (sin tocar la Hoja 2).<br>
-                    • <b>Con S. Sistema:</b> Guarda el <b>Cierre General</b> en la <b>Hoja 2</b> (sin alterar la Hoja 1).
+                    • <b>Con S. Sistema:</b> Guarda el <b>Cierre General</b> completo en la <b>Hoja 2</b> (sin tocar la Hoja 1).
                 </div>
             </div>
 
@@ -1752,7 +1751,7 @@
         /* ===============================================================
            CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (CERO LATENCIA)
            =============================================================== */
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwwe4lQGvtgcTypwRQVacNfQw1CesINsVCmAMbt4JHiF7BqGngscXJie1B_B1ZKHNKO-Q/exec";
+        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwq3s6Pdx5Lm3hwexf-2hDxJ2k7BnJUUWFJPAPPkaiDTjODP6B2YWG2WkPJ2xUjm-mrKg/exec";
         const URL_MOVIMIENTOS_ULTRA = URL_APPS_SCRIPT;
         const URL_CIERRE_CAJA = URL_APPS_SCRIPT;
 
@@ -1771,7 +1770,6 @@
             };
 
             fetch(URL_APPS_SCRIPT, opcionesFetch).catch(() => {
-                // Reintento silencioso en caso de microcorte de señal móvil
                 setTimeout(() => {
                     fetch(URL_APPS_SCRIPT, opcionesFetch).catch(err => console.error("Error sync Sheets:", err));
                 }, 1200);
@@ -1827,6 +1825,9 @@
 
         let esTransicionClickTab = false;
         let timerFinTransicion = null;
+
+        // Alto máximo real de la pantalla sin teclado para fijar la burbuja flotante
+        let altoPantallaSinTeclado = Math.max(window.innerHeight || 640, 520);
 
         /* ===============================================================
            BLINDAJE TOTAL ANTI-CIERRE ACCIDENTAL (LOCALSTORAGE)
@@ -1965,26 +1966,39 @@
         document.addEventListener('focusin', () => window.scrollTo(0, 0));
 
         /* ===============================================================
-           CONMUTADOR CIRCULAR GOOGLE SWITCHER (CON ARRASTRE HORIZONTAL)
+           BURBUJA FLOTANTE 2D: ARRASTRE ARRIBA/ABAJO/IZQ/DER Y OCULTA BAJO TECLADO
            =============================================================== */
         function inicializarGoogleSwitcher() {
             const btn = document.getElementById('btnGoogleSwitcher');
             if (!btn) return;
 
-            const savedLeft = localStorage.getItem('bcp_switcher_x');
-            if (savedLeft) {
-                btn.style.left = savedLeft;
+            if (window.innerHeight > altoPantallaSinTeclado) {
+                altoPantallaSinTeclado = window.innerHeight;
             }
 
-            let startX = 0;
-            let initialLeftPx = 0;
+            let savedX = parseFloat(localStorage.getItem('bcp_switcher_x_px'));
+            let savedY = parseFloat(localStorage.getItem('bcp_switcher_y_px'));
+
+            if (isNaN(savedX) || savedX < 24 || savedX > window.innerWidth - 24) {
+                savedX = Math.round(window.innerWidth / 2);
+            }
+            if (isNaN(savedY) || savedY < 26 || savedY > altoPantallaSinTeclado - 24) {
+                savedY = Math.min(altoPantallaSinTeclado - 30, 480);
+            }
+
+            btn.style.left = savedX + 'px';
+            btn.style.top = savedY + 'px';
+
+            let startX = 0, startY = 0;
+            let initialX = savedX, initialY = savedY;
             let movioArrastre = false;
 
             btn.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
                 startX = e.clientX;
-                const rect = btn.getBoundingClientRect();
-                initialLeftPx = rect.left + rect.width / 2;
+                startY = e.clientY;
+                initialX = parseFloat(btn.style.left) || (window.innerWidth / 2);
+                initialY = parseFloat(btn.style.top) || (altoPantallaSinTeclado - 30);
                 movioArrastre = false;
                 btn.setPointerCapture(e.pointerId);
             });
@@ -1992,13 +2006,19 @@
             btn.addEventListener('pointermove', (e) => {
                 if (!btn.hasPointerCapture(e.pointerId)) return;
                 const dx = e.clientX - startX;
-                if (Math.abs(dx) > 8) {
+                const dy = e.clientY - startY;
+                if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
                     movioArrastre = true;
-                    const minX = 32;
-                    const maxX = window.innerWidth - 32;
-                    const nuevoX = Math.max(minX, Math.min(maxX, initialLeftPx + dx));
-                    const porcentaje = ((nuevoX / window.innerWidth) * 100).toFixed(1) + '%';
-                    btn.style.left = porcentaje;
+                    const minX = 26;
+                    const maxX = window.innerWidth - 26;
+                    const minY = 26;
+                    const maxY = altoPantallaSinTeclado - 26;
+
+                    const nuevoX = Math.round(Math.max(minX, Math.min(maxX, initialX + dx)));
+                    const nuevoY = Math.round(Math.max(minY, Math.min(maxY, initialY + dy)));
+
+                    btn.style.left = nuevoX + 'px';
+                    btn.style.top = nuevoY + 'px';
                 }
             });
 
@@ -2006,12 +2026,40 @@
                 if (!btn.hasPointerCapture(e.pointerId)) return;
                 btn.releasePointerCapture(e.pointerId);
                 if (movioArrastre) {
-                    localStorage.setItem('bcp_switcher_x', btn.style.left);
+                    localStorage.setItem('bcp_switcher_x_px', btn.style.left);
+                    localStorage.setItem('bcp_switcher_y_px', btn.style.top);
+                    verificarSiTecladoTapaBurbuja();
                     vibrarRapido(10);
                 } else {
                     conmutarEntreCajaYCierre();
                 }
             });
+
+            // Si el teclado numérico se abre y la burbuja fue colocada en la zona baja,
+            // se queda tapada debajo del teclado sin subirse jamás a estorbar.
+            if (window.visualViewport) {
+                window.visualViewport.addEventListener('resize', verificarSiTecladoTapaBurbuja);
+            }
+            window.addEventListener('resize', verificarSiTecladoTapaBurbuja);
+        }
+
+        function verificarSiTecladoTapaBurbuja() {
+            const btn = document.getElementById('btnGoogleSwitcher');
+            if (!btn) return;
+
+            const alturaVisibleActual = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+            if (alturaVisibleActual > altoPantallaSinTeclado) {
+                altoPantallaSinTeclado = alturaVisibleActual;
+            }
+
+            const tecladoAbierto = alturaVisibleActual < (altoPantallaSinTeclado * 0.82);
+            const posTopBurbuja = parseFloat(btn.style.top) || 480;
+
+            if (tecladoAbierto && (posTopBurbuja + 22 > alturaVisibleActual)) {
+                btn.classList.add('tapado-por-teclado');
+            } else {
+                btn.classList.remove('tapado-por-teclado');
+            }
         }
 
         function actualizarAparienciaGoogleSwitcher() {
@@ -2071,7 +2119,7 @@
                 switchMainApp('app-multiplicador');
                 const tabActiva = document.querySelector('.sub-tab-btn.active');
                 let tabTarget = (tabActiva && tabActiva.id === 'tab-btn-billetes') ? 'tab-billetes' : 'tab-monedas';
-                actualizarVisibilidadEngranajeBilletes(tabTarget === 'tab-billetes');
+                actualizarVisibilidadEngranajeMonedas(tabTarget === 'tab-monedas');
                 enfocarSiguienteInputVisible(tabTarget);
             } else {
                 if (contextoPrincipal === 'caja') {
@@ -2542,6 +2590,18 @@
             return { centB, centM, centFajo, totalCentimos: centB + centM + centFajo };
         }
 
+        function obtenerEstadoCampoSistema() {
+            const rawInput = document.getElementById('input-sistema').value.replace(/,/g, '').trim();
+            const numSistema = parseFloat(rawInput);
+            const tieneSistema = (rawInput !== '' && !isNaN(numSistema));
+            return {
+                rawInput,
+                numSistema: tieneSistema ? numSistema : 0,
+                centimosSistema: tieneSistema ? Math.round(numSistema * 100) : 0,
+                tieneSistema
+            };
+        }
+
         function calcularCuadreCierre() {
             const { centB, centM, centFajo, totalCentimos } = obtenerEfectivoFisicoCierreCentimos();
 
@@ -2566,9 +2626,7 @@
             document.getElementById('display-efectivo').innerText = formatoMonedaConPrefijo(totalEfectivoFisico);
             document.getElementById('lblBaseActiva').innerText = formatoSoles(capitalBaseActual);
 
-            const rawSistema = document.getElementById('input-sistema').value.replace(/,/g, '').trim();
-            const numSistema = parseFloat(rawSistema);
-            const centimosSistema = isNaN(numSistema) ? 0 : Math.round(numSistema * 100);
+            const { centimosSistema, tieneSistema } = obtenerEstadoCampoSistema();
 
             const centimosSumaES = totalCentimos + centimosSistema;
             const sumaTotalES = centimosSumaES / 100;
@@ -2583,11 +2641,10 @@
             let estadoClave = '';
 
             const tieneEfectivo = totalCentimos !== 0;
-            const tieneSistema = rawSistema !== '' && !isNaN(numSistema) && centimosSistema !== 0;
 
             if (!tieneEfectivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-esperando";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SOLO EFECTIVO = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SIN SISTEMA = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'esperando', "ESPERANDO CONTEO...", "S/ 0.00");
                 estadoClave = 'esperando';
             } else if (tieneEfectivo && !tieneSistema) {
@@ -2597,17 +2654,17 @@
                 estadoClave = 'saldo-inicial';
             } else if (Math.abs(diferenciaSoles) <= 0.05) {
                 panel.className = "panel-resultado estado-exacto";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA INGRESADO · ENTER PARA GUARDAR CIERRE GENERAL EN HOJA 2";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA ACTIVO · ENTER PARA LLENAR CIERRE GENERAL EN HOJA 2";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "EXACTO", "S/ 0.00");
                 estadoClave = 'exacto';
             } else if (diferenciaSoles < -0.05) {
                 panel.className = "panel-resultado estado-faltante";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA INGRESADO · ENTER PARA GUARDAR CIERRE GENERAL EN HOJA 2";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA ACTIVO · ENTER PARA LLENAR CIERRE GENERAL EN HOJA 2";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'faltante', "FALTAN", "- S/ " + formatoSoles(diferenciaSoles));
                 estadoClave = 'faltante';
             } else {
                 panel.className = "panel-resultado estado-faltante-entregar";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA INGRESADO · ENTER PARA GUARDAR CIERRE GENERAL EN HOJA 2";
+                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA ACTIVO · ENTER PARA LLENAR CIERRE GENERAL EN HOJA 2";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'entregar', "SOBRAN", "+ S/ " + formatoSoles(diferenciaSoles));
                 estadoClave = 'sobrante';
             }
@@ -2634,6 +2691,27 @@
             guardarEstadoEnStorage();
         }
 
+        // Botón debajo de Fajos Especiales: Limpia todo lo editado en la pantalla de Cierre
+        function borrarTodoEditadoEnCierrePantalla() {
+            vibrarRapido([20, 30, 20]);
+            limpiarTodoElCierre();
+
+            const btn = document.getElementById('btnBorrarTodoPantallaCierre');
+            const textoOriginal = btn.innerHTML;
+            btn.style.background = "#dcfce7";
+            btn.style.borderColor = "#16a34a";
+            btn.style.color = "#15803d";
+            btn.innerHTML = "<span>✅ DATOS DE CIERRE BORRADOS</span>";
+
+            setTimeout(() => {
+                btn.style.background = "";
+                btn.style.borderColor = "";
+                btn.style.color = "";
+                btn.innerHTML = textoOriginal;
+                enfocarSiguienteInputVisible('app-cierre');
+            }, 650);
+        }
+
         function ejecutarGuardadoCierreConEnter(e) {
             if (e) {
                 e.preventDefault();
@@ -2642,9 +2720,7 @@
 
             const { totalCentimos } = obtenerEfectivoFisicoCierreCentimos();
             const totalEfectivoFisico = totalCentimos / 100;
-            const rawSistema = document.getElementById('input-sistema').value.replace(/,/g, '').trim();
-            const numSistema = parseFloat(rawSistema);
-            const tieneSistema = rawSistema !== '' && !isNaN(numSistema) && numSistema !== 0;
+            const { numSistema, tieneSistema } = obtenerEstadoCampoSistema();
             const tieneEfectivo = totalCentimos !== 0;
 
             if (!tieneEfectivo && !tieneSistema) {
@@ -2655,22 +2731,11 @@
             const badgeOp = document.getElementById('badgeOperacionCierre');
             clearTimeout(timerBadgeSyncCierre);
 
-            if (tieneEfectivo && !tieneSistema) {
-                // MODO 1 (7:15 PM): SIN S. SISTEMA -> GUARDA ÚNICAMENTE SALDO INICIAL EN HOJA 1
-                // Y CONSERVA EL CONTEO DE BILLETES EN PANTALLA PARA EL CIERRE DE LAS 8:00 PM
-                const payloadSaldoInicial = {
-                    accion: "fijar_saldo_inicial",
-                    saldoInicial: totalEfectivoFisico
-                };
-
-                vibrarRapido([18, 25, 18]);
-                badgeOp.innerText = "✅ SALDO INICIAL ENVIADO A HOJA 1 (0 ms)";
-                enviarASheetsCeroLatencia(payloadSaldoInicial);
-            } else if (tieneSistema) {
-                // MODO 2 (8:00 PM): CON S. SISTEMA -> GUARDA EL CIERRE GENERAL EN LA HOJA 2
+            if (tieneSistema) {
+                // MODO 2 (CON S. SISTEMA): LLENA TODOS LOS CUADROS DE LA HOJA 2 (JAMÁS TOCA HOJA 1)
                 const paqueteCierre = {
                     accion: "guardar_cierre",
-                    f1000: cantF1000,
+                    f1000: cantF1000 || 0,
                     b200: billetesCierre[200] || 0,
                     b100: billetesCierre[100] || 0,
                     b50: billetesCierre[50] || 0,
@@ -2686,13 +2751,19 @@
                     capitalBase: capitalBaseActual.toFixed(2)
                 };
 
-                // 1° Limpieza y respuesta visual inmediata en 0 ms
-                limpiarTodoElCierre();
                 vibrarRapido([18, 25, 18]);
-                badgeOp.innerText = "✅ ¡CIERRE GENERAL GUARDADO EN HOJA 2! (0 ms)";
-
-                // 2° Despacho inmediato a Google Sheets
+                badgeOp.innerText = "✅ ¡CIERRE COMPLETO ENVIADO A HOJA 2! (0 ms)";
                 enviarASheetsCeroLatencia(paqueteCierre);
+            } else {
+                // MODO 1 (SIN S. SISTEMA): GUARDA ÚNICAMENTE SALDO INICIAL EN HOJA 1
+                const payloadSaldoInicial = {
+                    accion: "fijar_saldo_inicial",
+                    saldoInicial: totalEfectivoFisico
+                };
+
+                vibrarRapido([18, 25, 18]);
+                badgeOp.innerText = "✅ SALDO INICIAL GUARDADO EN HOJA 1 (0 ms)";
+                enviarASheetsCeroLatencia(payloadSaldoInicial);
             }
 
             timerBadgeSyncCierre = setTimeout(() => {
@@ -2997,10 +3068,11 @@
             return false;
         }
 
-        function actualizarVisibilidadEngranajeBilletes(esBilletes) {
-            const btn = document.getElementById('btnAjustesBilletes');
+        // Engranaje visible únicamente en el panel de Monedas
+        function actualizarVisibilidadEngranajeMonedas(esMonedas) {
+            const btn = document.getElementById('btnAjustesMonedas');
             if (btn) {
-                btn.classList.toggle('oculto-en-monedas', !esBilletes);
+                btn.classList.toggle('oculto-en-billetes', !esMonedas);
             }
         }
 
@@ -3019,7 +3091,7 @@
             const esBilletes = (tabId === 'tab-billetes');
             document.getElementById('tab-btn-billetes').classList.toggle('active', esBilletes);
             document.getElementById('tab-btn-monedas').classList.toggle('active', !esBilletes);
-            actualizarVisibilidadEngranajeBilletes(esBilletes);
+            actualizarVisibilidadEngranajeMonedas(!esBilletes);
 
             slider.scrollTo({ left: esBilletes ? 0 : slider.clientWidth, behavior: 'smooth' });
             enfocarSiguienteInputVisible(tabId);
@@ -3037,7 +3109,7 @@
             const cambio = btnM.classList.contains('active') !== esMonedas;
             btnB.classList.toggle('active', !esMonedas);
             btnM.classList.toggle('active', esMonedas);
-            actualizarVisibilidadEngranajeBilletes(!esMonedas);
+            actualizarVisibilidadEngranajeMonedas(esMonedas);
             if (cambio) enfocarSiguienteInputVisible(esMonedas ? 'tab-monedas' : 'tab-billetes');
         }
 
@@ -3225,15 +3297,11 @@
 
         function actualizarIndicadorSwitchVisual() {
             const dotMulti = document.getElementById('dotSyncMulti');
-            const dotCajaHeader = document.getElementById('dotSyncCajaHeader');
-            const dotSwitcher = document.getElementById('dotSyncSwitcher');
             const chk = document.getElementById('chkGuardarMovimientos');
             const sub = document.getElementById('txtSubEstadoSwitch');
 
             if (chk) chk.checked = guardarMovimientosActivo;
             if (dotMulti) dotMulti.classList.toggle('on', guardarMovimientosActivo);
-            if (dotCajaHeader) dotCajaHeader.classList.toggle('on', guardarMovimientosActivo);
-            if (dotSwitcher) dotSwitcher.classList.toggle('on', guardarMovimientosActivo);
             if (sub) {
                 sub.innerText = guardarMovimientosActivo 
                     ? "ACTIVO: Cada Enter en Caja se guarda en la Hoja 1 en tiempo real" 
@@ -3336,18 +3404,6 @@
             }, 600);
         }
 
-        function reiniciarConteoLocalCierreDesdeModal() {
-            vibrarRapido([20, 30, 20]);
-            limpiarTodoElCierre();
-            const btn = document.getElementById('btnLimpiarConteoLocalCierre');
-            const original = btn.innerHTML;
-            btn.innerHTML = "✅ ¡Conteo de Cierre en Cero!";
-            setTimeout(() => {
-                btn.innerHTML = original;
-                cerrarModalAjustes();
-            }, 550);
-        }
-
         function guardarFotoEnStorage(event, tipo, denom) {
             const file = event.target.files[0];
             if (!file) return;
@@ -3398,6 +3454,7 @@
                 switchMainApp('app-caja');
                 enfocarSiguienteInputVisible('app-caja');
             }
+            verificarSiTecladoTapaBurbuja();
         };
     </script>
 </body>
