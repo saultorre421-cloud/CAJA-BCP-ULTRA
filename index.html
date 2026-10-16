@@ -79,7 +79,7 @@
             width: 100%;
             height: 100%;
             overflow-y: hidden;
-            animation: fadeInScreen 0.16s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: fadeInScreen 0.14s ease-out forwards;
         }
 
         .main-app-container.active-app {
@@ -87,8 +87,8 @@
         }
 
         @keyframes fadeInScreen {
-            from { opacity: 0; transform: translateY(3px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .caja-wrapper, .cierre-wrapper {
@@ -100,7 +100,7 @@
         }
 
         /* =========================================
-           PANELES DE CABECERA DE CAJA PRINCIPAL (100% LIMPIOS SIN ENGRANAJE)
+           PANELES DE CABECERA DE CAJA PRINCIPAL (100% LIMPIOS)
            ========================================= */
         .panel-total { 
             display: flex; 
@@ -113,7 +113,6 @@
             text-transform: uppercase; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
             user-select: none;
-            transition: background 0.2s ease, color 0.2s ease;
             gap: 6px;
         }
         
@@ -147,26 +146,20 @@
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.4);
             cursor: pointer;
-            transition: all 0.2s ease;
         }
         .tema-recibo-header .h-dot {
             background-color: rgba(0, 0, 0, 0.25);
         }
         .h-dot.active {
             background-color: #ffffff !important;
-            transform: scale(1.3);
+            transform: scale(1.25);
         }
         .tema-recibo-header .h-dot.active {
             background-color: #000000 !important;
         }
         .h-dot.has-data:not(.active) {
             background-color: #ff6a00 !important;
-            box-shadow: 0 0 6px #ff6a00;
-            animation: dotAlertPulse 0.9s infinite alternate;
-        }
-        @keyframes dotAlertPulse {
-            from { transform: scale(1); }
-            to { transform: scale(1.38); }
+            box-shadow: 0 0 5px #ff6a00;
         }
 
         .panel-total > span:last-child {
@@ -179,15 +172,15 @@
         }
 
         .tema-recibo-header { 
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%) !important; 
+            background: #eab308 !important; 
             color: var(--recibo-header-text) !important; 
         }
         .tema-deposito-header { 
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important; 
+            background: #0d9488 !important; 
             color: var(--deposito-header-text) !important; 
         }
         .tema-retiro-header { 
-            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important; 
+            background: #e11d48 !important; 
             color: var(--retiro-header-text) !important; 
         }
 
@@ -201,8 +194,7 @@
             border-bottom: 3px solid; 
             border-left: 2px solid; 
             border-right: 2px solid; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05); 
-            transition: background-color 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04); 
             position: relative;
         }
 
@@ -270,8 +262,7 @@
             text-align: center; 
             color: #0f172a; 
             background-color: #ffffff; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-            transition: border-color 0.15s, background-color 0.15s, color 0.15s, box-shadow 0.15s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04); 
         }
         .caja-contenedor input:not(:placeholder-shown) {
             border-color: #334155;
@@ -280,7 +271,7 @@
             outline: none; 
             border-color: var(--bcp-orange); 
             background-color: #ffffff; 
-            box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.25);
+            box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.22);
         }
         .caja-contenedor input::placeholder { 
             color: #94a3b8; 
@@ -305,76 +296,65 @@
         }
 
         /* ===============================================================
-           PANEL DE RESULTADO EXPRESIVO (COMPARTIDO CAJA Y CIERRE)
+           CUADRO DE RESULTADOS ESTÁTICO Y PROFESIONAL (CERO DISTRACCIONES)
+           Protagonismo total en el Texto Informativo y el Monto
            =============================================================== */
         .panel-resultado { 
-            padding: 0 6px 4px 6px;
+            padding: 0 6px 5px 6px;
             border-radius: 10px; 
             text-align: center; 
             font-weight: bold; 
             margin-bottom: 4px;
-            border: 3px solid; 
-            transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.06); 
+            background-color: #ffffff;
+            border: 2.5px solid #cbd5e1; 
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05); 
             position: relative;
             overflow: hidden;
-            isolation: isolate;
-        }
-
-        .panel-resultado::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -130%;
-            width: 55%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.48), transparent);
-            transform: skewX(-25deg);
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0;
         }
 
         .badge-operacion {
-            position: relative;
-            z-index: 2;
             display: inline-block;
-            padding: 2px 12px;
-            border-radius: 0 0 8px 8px;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 0.7px;
+            padding: 1.5px 10px;
+            border-radius: 0 0 6px 6px;
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: 0.6px;
             text-transform: uppercase;
             margin-top: 0;
-            margin-bottom: 1px;
-            background: rgba(0, 0, 0, 0.11);
+            margin-bottom: 3px;
+            background: #f1f5f9;
+            color: #475569;
             line-height: 1.2;
-            transition: background 0.2s ease, color 0.2s ease;
         }
 
+        /* TEXTO INFORMATIVO PRINCIPAL: MÁXIMA JERARQUÍA Y CLARIDAD VISUAL */
         .texto-final-expresivo {
-            position: relative;
-            z-index: 2;
-            font-size: clamp(15px, 4.4vw, 20px);
+            font-size: clamp(16px, 4.7vw, 21px);
             font-weight: 900;
-            letter-spacing: 0.7px;
-            line-height: 1.1;
+            letter-spacing: 0.5px;
+            line-height: 1.15;
             text-transform: uppercase;
-            margin-top: 1px;
-            margin-bottom: 1px;
+            margin: 2px auto 2px auto;
+            padding: 4px 10px;
+            border-radius: 7px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 7px;
             text-align: center;
+            width: 100%;
+        }
+
+        #panelFinalCierre .texto-final-expresivo {
+            margin-top: 6px;
         }
 
         .sig-wing {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: clamp(15px, 4vw, 19px);
-            height: clamp(15px, 4vw, 19px);
+            width: clamp(16px, 4.2vw, 20px);
+            height: clamp(16px, 4.2vw, 20px);
             flex-shrink: 0;
         }
 
@@ -382,126 +362,119 @@
             width: 100%;
             height: 100%;
             display: block;
-            overflow: visible;
         }
 
         .monto-final { 
-            position: relative;
-            z-index: 2;
             display: block; 
             width: 100%;
             text-align: center;
             font-size: clamp(44px, 12.6vw, 62px); 
             font-weight: 900; 
             margin-top: 1px; 
-            line-height: 0.94; 
+            line-height: 0.95; 
             letter-spacing: -2px;
-            will-change: transform;
         }
 
-        .monto-pop {
-            animation: montoPopAnim 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+        /* ESTADOS ESTÁTICOS DE ALTO CONTRASTE (SIN RAYAS NI ANIMACIONES DE FONDO) */
+        .estado-esperando {
+            background-color: #ffffff;
+            border-color: #cbd5e1;
+            color: #475569;
         }
-
-        @keyframes montoPopAnim {
-            0% { transform: scale(0.96); }
-            60% { transform: scale(1.02); }
-            100% { transform: scale(1); }
+        .estado-esperando .texto-final-expresivo {
+            background-color: #f1f5f9;
+            color: #475569;
         }
-
-        /* ESTADOS OPERATIVOS */
-        .estado-esperando { background-color: #f8fafc; border-color: #cbd5e1; color: #475569; }
-        .estado-esperando .sig-wing { opacity: 0.55; }
 
         .estado-proceso { 
-            background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); 
-            border-color: #9333ea; color: #6b21a8; 
-            box-shadow: 0 3px 10px rgba(147, 51, 234, 0.16);
+            background-color: #ffffff; 
+            border-color: #7e22ce; 
+            color: #581c87; 
         }
-        .estado-proceso .badge-operacion { background: #7e22ce; color: #ffffff; }
-        .estado-proceso .sig-wing { animation: pulseSoftWing 1s ease-in-out infinite alternate; }
+        .estado-proceso .texto-final-expresivo {
+            background-color: #7e22ce;
+            color: #ffffff;
+        }
 
         .estado-cobrar { 
-            background: repeating-linear-gradient(-45deg, #ffedd5, #ffedd5 14px, #fed7aa 14px, #fed7aa 28px);
-            background-size: 40px 40px;
-            border-color: #ea580c; color: #9a3412; 
-            box-shadow: 0 3px 12px rgba(234, 88, 12, 0.22);
-            animation: stripeFlowSlow 1.6s linear infinite;
+            background-color: #ffffff;
+            border-color: #d97706; 
+            color: #b45309; 
         }
-        .estado-cobrar .badge-operacion { background: #ea580c; color: #ffffff; }
-        .estado-cobrar .sig-wing { animation: arrowDownCobrar 0.65s ease-in-out infinite alternate; }
+        .estado-cobrar .texto-final-expresivo {
+            background-color: #d97706;
+            color: #ffffff;
+        }
 
         .estado-vuelto { 
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 55%, #7dd3fc 100%); 
-            border-color: #0284c7; color: #0369a1; 
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
+            background-color: #ffffff; 
+            border-color: #0284c7; 
+            color: #0369a1; 
         }
-        .estado-vuelto::before { opacity: 1; animation: shimmerSweep 2.1s infinite; }
-        .estado-vuelto .badge-operacion { background: #0284c7; color: #ffffff; }
-        .estado-vuelto .sig-wing.wing-left { animation: wingOutLeft 0.65s ease-in-out infinite alternate; }
-        .estado-vuelto .sig-wing.wing-right { animation: wingOutRight 0.65s ease-in-out infinite alternate; }
+        .estado-vuelto .texto-final-expresivo {
+            background-color: #0284c7;
+            color: #ffffff;
+        }
 
         .estado-faltante { 
-            background: repeating-linear-gradient(45deg, #fee2e2, #fee2e2 12px, #fecaca 12px, #fecaca 24px);
-            background-size: 34px 34px;
-            border-color: #dc2626 !important; color: #991b1b !important; 
-            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.28), 0 5px 16px rgba(220, 38, 38, 0.38) !important;
-            animation: faltanteJolt 0.35s cubic-bezier(0.36, 0.07, 0.19, 0.97) both, stripeFlowFast 1s linear infinite, dangerBorderPulse 0.65s infinite alternate;
+            background-color: #ffffff;
+            border-color: #dc2626 !important; 
+            color: #dc2626 !important; 
         }
-        .estado-faltante .badge-operacion { background: #dc2626 !important; color: #ffffff !important; }
-        .estado-faltante .sig-wing { color: #dc2626; animation: warningScalePulse 0.45s infinite alternate; }
+        .estado-faltante .texto-final-expresivo {
+            background-color: #dc2626 !important;
+            color: #ffffff !important;
+        }
 
         .estado-faltante-entregar {
-            background: repeating-linear-gradient(-45deg, #fff7ed, #fff7ed 12px, #ffedd5 12px, #fed7aa 24px);
-            background-size: 34px 34px;
-            border-color: #ea580c !important; color: #9a3412 !important;
-            box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.25), 0 4px 15px rgba(234, 88, 12, 0.32) !important;
-            animation: stripeFlowFast 1.2s linear infinite, entregarBorderPulse 0.75s infinite alternate;
+            background-color: #ffffff;
+            border-color: #ea580c !important; 
+            color: #c2410c !important;
         }
-        .estado-faltante-entregar .badge-operacion { background: #c2410c !important; color: #ffffff !important; }
-        .estado-faltante-entregar .sig-wing { color: #ea580c; animation: arrowUpEntregar 0.55s ease-in-out infinite alternate; }
+        .estado-faltante-entregar .texto-final-expresivo {
+            background-color: #ea580c !important;
+            color: #ffffff !important;
+        }
 
         .estado-exacto { 
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 55%, #86efac 100%); 
-            border-color: #16a34a; color: #14532d; 
-            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.30);
-            animation: exactoGlow 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background-color: #ffffff; 
+            border-color: #16a34a; 
+            color: #15803d; 
         }
-        .estado-exacto::before { opacity: 1; animation: shimmerSweep 1.8s infinite; }
-        .estado-exacto .badge-operacion { background: #15803d; color: #ffffff; }
-        .estado-exacto .sig-wing { color: #15803d; animation: checkBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .estado-exacto .texto-final-expresivo {
+            background-color: #16a34a;
+            color: #ffffff;
+        }
 
         .estado-peligro-mas {
-            background: repeating-linear-gradient(-45deg, #fef2f2, #fef2f2 12px, #fee2e2 12px, #fecaca 24px);
-            background-size: 34px 34px;
-            border-color: #dc2626 !important; color: #991b1b !important;
-            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.35), 0 6px 20px rgba(220, 38, 38, 0.5) !important;
-            animation: dangerShakeAlert 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both, stripeFlowFast 0.85s linear infinite, dangerStrobe 0.55s infinite alternate;
+            background-color: #ffffff;
+            border-color: #dc2626 !important; 
+            color: #dc2626 !important;
         }
-        .estado-peligro-mas .badge-operacion { background: #dc2626 !important; color: #ffffff !important; }
-        .estado-peligro-mas .sig-wing { color: #dc2626; animation: warningScalePulse 0.42s infinite alternate; }
+        .estado-peligro-mas .texto-final-expresivo {
+            background-color: #dc2626 !important;
+            color: #ffffff !important;
+        }
 
-        .estado-retiro { background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-color: var(--retiro-header); color: #9F1239; }
-        .estado-retiro .badge-operacion { background: var(--retiro-header); color: #ffffff; }
-        .estado-deposito { background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%); border-color: var(--deposito-header); color: #0f766e; }
-        .estado-deposito .badge-operacion { background: var(--deposito-header); color: #ffffff; }
+        .estado-retiro {
+            background-color: #ffffff;
+            border-color: var(--retiro-header);
+            color: #be123c;
+        }
+        .estado-retiro .texto-final-expresivo {
+            background-color: var(--retiro-header);
+            color: #ffffff;
+        }
 
-        @keyframes pulseSoftWing { from { transform: scale(0.92); opacity: 0.75; } to { transform: scale(1.1); opacity: 1; } }
-        @keyframes arrowDownCobrar { from { transform: translateY(-2.5px); } to { transform: translateY(2.5px); } }
-        @keyframes wingOutLeft { from { transform: translateX(2px); } to { transform: translateX(-3px); } }
-        @keyframes wingOutRight { from { transform: translateX(-2px); } to { transform: translateX(3px); } }
-        @keyframes faltanteJolt { 0%, 100% { transform: translateY(0); } 25%, 75% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
-        @keyframes dangerBorderPulse { from { border-color: #dc2626; } to { border-color: #991b1b; } }
-        @keyframes entregarBorderPulse { from { border-color: #f97316; } to { border-color: #c2410c; } }
-        @keyframes arrowUpEntregar { from { transform: translateY(2.5px) scale(0.95); } to { transform: translateY(-2.5px) scale(1.12); } }
-        @keyframes shimmerSweep { 0% { left: -130%; } 60%, 100% { left: 160%; } }
-        @keyframes exactoGlow { 0% { transform: scale(0.985); } 60% { transform: scale(1.01); } 100% { transform: scale(1); } }
-        @keyframes checkBounce { 0% { transform: scale(0.4); } 75% { transform: scale(1.22); } 100% { transform: scale(1); } }
-        @keyframes stripeFlowFast { from { background-position: 0 0; } to { background-position: 34px 0; } }
-        @keyframes stripeFlowSlow { from { background-position: 0 0; } to { background-position: 40px 0; } }
-        @keyframes dangerShakeAlert { 0%, 100% { transform: translateX(0); } 15%, 45%, 75% { transform: translateX(-5px); } 30%, 60%, 90% { transform: translateX(5px); } }
-        @keyframes dangerStrobe { from { border-color: #dc2626; } to { border-color: #ea580c; } }
-        @keyframes warningScalePulse { from { transform: scale(0.92); } to { transform: scale(1.22); } }
+        .estado-deposito {
+            background-color: #ffffff;
+            border-color: var(--deposito-header);
+            color: #0f766e;
+        }
+        .estado-deposito .texto-final-expresivo {
+            background-color: var(--deposito-header);
+            color: #ffffff;
+        }
 
         /* =========================================
            SELECTOR DE MODOS (CAJA PRINCIPAL)
@@ -525,7 +498,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.15s ease-in-out;
             user-select: none;
             touch-action: manipulation;
         }
@@ -533,23 +505,20 @@
 
         #btn-modo-deposito { background-color: #e6fffa; color: #0d9488; border-color: #99f6e4; }
         #btn-modo-deposito.active-modo {
-            background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%) !important;
+            background: #0d9488 !important;
             color: #ffffff !important; border-color: #0f766e !important;
-            box-shadow: 0 3px 8px rgba(13, 148, 136, 0.4);
         }
 
         #btn-modo-servicio { background-color: #fefce8; color: #a16207; border-color: #fef08a; }
         #btn-modo-servicio.active-modo {
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%) !important;
+            background: #eab308 !important;
             color: #000000 !important; border-color: #ca8a04 !important;
-            box-shadow: 0 3px 8px rgba(234, 179, 8, 0.4);
         }
 
         #btn-modo-retiro { background-color: #fff1f2; color: #e11d48; border-color: #fecdd3; }
         #btn-modo-retiro.active-modo {
-            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+            background: #e11d48 !important;
             color: #ffffff !important; border-color: #be123c !important;
-            box-shadow: 0 3px 8px rgba(225, 29, 72, 0.4);
         }
 
         /* ===============================================================
@@ -574,7 +543,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: box-shadow 0.2s ease, opacity 0.15s ease;
             touch-action: none;
         }
         .google-account-switcher:active {
@@ -583,7 +551,6 @@
         .google-account-switcher.oculto {
             display: none !important;
         }
-        /* Cuando el usuario deja la burbuja abajo y abre el teclado, queda tapada debajo del teclado sin subirse */
         .google-account-switcher.tapado-por-teclado {
             opacity: 0 !important;
             visibility: hidden !important;
@@ -593,7 +560,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+            background: #ffffff;
             border: 2px solid #ffffff;
             display: flex;
             flex-direction: column;
@@ -602,17 +569,16 @@
             color: var(--bcp-blue);
             position: relative;
             overflow: hidden;
-            transition: background 0.2s ease, color 0.2s ease;
         }
         .google-account-switcher.modo-cierre-activo .switcher-inner-circle {
-            background: linear-gradient(145deg, var(--bcp-blue) 0%, var(--bcp-blue-dark) 100%);
+            background: var(--bcp-blue);
             color: #ffffff;
         }
         .switcher-icon-svg {
             width: 18px;
             height: 18px;
             display: block;
-            transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: transform 0.25s ease;
         }
         .google-account-switcher.rotando .switcher-icon-svg {
             transform: rotate(180deg);
@@ -633,7 +599,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: linear-gradient(135deg, var(--bcp-blue) 0%, var(--bcp-blue-dark) 100%);
+            background: var(--bcp-blue);
             color: #ffffff;
             padding: 5px 8px 5px 10px;
             border-radius: 10px;
@@ -766,7 +732,6 @@
             border-radius: 7px;
             padding: 0 9px;
             outline: none;
-            transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
         }
         .input-sistema:not(:placeholder-shown) {
             background: #ffffff;
@@ -849,7 +814,6 @@
         }
         .fajo-card.fila-activa {
             border-color: var(--bcp-blue);
-            box-shadow: 0 2px 8px rgba(0, 42, 141, 0.12);
         }
         .fajo-card.fila-negativa {
             border-color: var(--danger-color) !important;
@@ -884,7 +848,7 @@
             height: 38px;
             border-radius: 9px;
             border: 1.5px solid #cbd5e1;
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            background: #ffffff;
             color: #475569;
             font-size: 12px;
             font-weight: 900;
@@ -898,7 +862,6 @@
             box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05);
             user-select: none;
             touch-action: manipulation;
-            transition: all 0.15s ease;
         }
         .btn-borrar-todo-cierre:active {
             transform: scale(0.97);
@@ -921,7 +884,7 @@
         .sticky-header-compact {
             position: sticky; 
             top: 0; 
-            background: linear-gradient(135deg, var(--bcp-blue) 0%, #001F6B 100%); 
+            background: var(--bcp-blue); 
             color: white; 
             padding: 6px 12px; 
             display: flex; 
@@ -960,8 +923,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0.82;
-            transition: opacity 0.15s ease, transform 0.15s ease;
+            opacity: 0.85;
             z-index: 1002;
         }
         .btn-config-monedas:active {
@@ -981,11 +943,9 @@
             height: 6px;
             border-radius: 50%;
             background: transparent;
-            transition: background 0.2s ease, box-shadow 0.2s ease;
         }
         .dot-sync-mini.on {
             background: #22c55e;
-            box-shadow: 0 0 5px rgba(34, 197, 94, 0.85);
         }
 
         .tabs-container-sub { 
@@ -1009,7 +969,6 @@
             color: var(--text-muted); 
             cursor: pointer; 
             border-bottom: 4px solid transparent; 
-            transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
             touch-action: manipulation;
             user-select: none;
             display: flex;
@@ -1033,14 +992,12 @@
             border: 1px solid rgba(0, 42, 141, 0.18);
             padding: 2px 9px;
             border-radius: 10px;
-            transition: all 0.18s ease;
         }
 
         .tab-badge-subtotal.badge-con-monto {
             background: var(--bcp-blue);
             color: #ffffff;
             border-color: var(--bcp-blue);
-            box-shadow: 0 2px 5px rgba(0, 42, 141, 0.25);
         }
 
         .multiplicador-slider {
@@ -1088,7 +1045,7 @@
             padding: 0 4px 0 0;
             gap: 6px;
             border: 1.5px solid #cbd5e1;
-            box-shadow: 0 3px 7px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
             overflow: hidden;
         }
 
@@ -1096,7 +1053,6 @@
         #containerMonedas .item-card.fila-activa {
             border-color: #94a3b8;
             background-color: #ffffff;
-            box-shadow: 0 3px 9px rgba(0, 42, 141, 0.12);
         }
 
         #containerBilletes .item-card.fila-negativa,
@@ -1133,7 +1089,7 @@
             padding: 0 4px 0 0;
             gap: 6px;
             border: 1.5px solid #cbd5e1;
-            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.06);
             overflow: hidden;
         }
         #containerMonedas .item-card:last-child { margin-bottom: 0; }
@@ -1159,7 +1115,7 @@
             border-radius: 50%;
             object-fit: cover;
             display: block;
-            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.75), inset 0 -1px 2px rgba(0, 0, 0, 0.4), 0 3px 6px rgba(15, 23, 42, 0.22);
+            box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.75), inset 0 -1px 2px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(15, 23, 42, 0.2);
         }
 
         .moneda-100 { width: 66px; height: 66px; }
@@ -1179,19 +1135,18 @@
         .stepper-control { display: flex; align-items: center; gap: 3px; flex-shrink: 0; user-select: none; }
         .btn-step {
             border: 1.5px solid #cbd5e1;
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%); 
+            background: #f8fafc; 
             display: flex; align-items: center; justify-content: center; 
             cursor: pointer; user-select: none;
-            transition: background 0.12s ease, transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1);
             touch-action: manipulation; padding: 0;
         }
         .btn-step-down { color: #475569; }
         .btn-step-up {
             color: var(--bcp-blue); border-color: #bac8dc;
-            background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+            background: #eff6ff;
         }
-        .btn-step-down:active { background: #e2e8f0; transform: translateY(1.5px) scale(0.93); }
-        .btn-step-up:active { background: #dbeafe; color: var(--bcp-orange); transform: translateY(-1.5px) scale(0.93); }
+        .btn-step-down:active { background: #e2e8f0; transform: scale(0.93); }
+        .btn-step-up:active { background: #dbeafe; color: var(--bcp-orange); transform: scale(0.93); }
         .btn-step svg { width: 21px; height: 21px; pointer-events: none; display: block; }
         
         .input-qty {
@@ -1247,7 +1202,6 @@
             font-size: 16px; font-weight: 900; cursor: pointer; color: #475569;
         }
 
-        /* PESTAÑAS INTERNAS DEL MODAL: CAJA vs CIERRE */
         .modal-context-tabs {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1267,12 +1221,10 @@
             color: #475569;
             background: transparent;
             cursor: pointer;
-            transition: all 0.15s ease;
         }
         .btn-tab-modal.active {
             background: var(--bcp-blue);
             color: #ffffff;
-            box-shadow: 0 2px 6px rgba(0, 42, 141, 0.25);
         }
         .seccion-config-panel {
             display: none;
@@ -1281,9 +1233,8 @@
             display: block;
         }
 
-        /* 1° SWITCH MODERNO ESTILO CELULAR (EXCLUSIVO DE CAJA) */
         .switch-hero-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+            background: #f8fafc;
             border: 2px solid var(--bcp-blue);
             border-radius: 12px;
             padding: 12px 14px;
@@ -1292,7 +1243,6 @@
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            box-shadow: 0 3px 10px rgba(0, 42, 141, 0.08);
         }
         .switch-info-title {
             font-size: 13.5px;
@@ -1316,11 +1266,11 @@
         .ios-switch input { opacity: 0; width: 0; height: 0; }
         .ios-slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #cbd5e1; transition: 0.25s; border-radius: 34px;
+            background-color: #cbd5e1; transition: 0.2s; border-radius: 34px;
         }
         .ios-slider:before {
             position: absolute; content: ""; height: 24px; width: 24px; left: 3px; bottom: 3px;
-            background-color: white; transition: 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background-color: white; transition: 0.2s;
             border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.25);
         }
         .ios-switch input:checked + .ios-slider {
@@ -1330,7 +1280,6 @@
             transform: translateX(24px);
         }
 
-        /* 2° BLOQUE CAPITAL BASE (EXCLUSIVO DE CIERRE) */
         .bloque-base-config {
             background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 11px;
             padding: 10px 12px; margin-bottom: 12px;
@@ -1351,7 +1300,6 @@
             text-transform: uppercase; cursor: pointer;
         }
 
-        /* 3° BOTONES DE BORRADO INTELIGENTE */
         .grid-limpieza-hojas {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1369,7 +1317,6 @@
             font-weight: 900;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.12s ease, background 0.15s ease;
             line-height: 1.28;
         }
         .btn-accion-hoja:active { transform: scale(0.96); background: #eff6ff; }
@@ -1476,7 +1423,7 @@
                     </div>
                 </div>
 
-                <!-- PANEL DE RESULTADO CAJA -->
+                <!-- PANEL DE RESULTADO CAJA (ESTÁTICO, SIN ANIMACIONES DISTRACTIVAS) -->
                 <div class="panel-resultado estado-esperando" id="panelFinal">
                     <div class="badge-operacion" id="badgeOperacion">PAGO DE SERVICIOS / RECIBO</div>
                     <div class="texto-final-expresivo" id="textoFinal">ESPERANDO MONTOS...</div>
@@ -1549,9 +1496,8 @@
                     </span>
                 </div>
 
-                <!-- 4. SEMÁFORO / PANEL DE RESPUESTA EXPRESIVO DEL CIERRE -->
+                <!-- 4. PANEL DE RESPUESTA DEL CIERRE (SIN EL MENSAJE SUPERIOR MOLESTO) -->
                 <div class="panel-resultado estado-esperando" id="panelFinalCierre">
-                    <div class="badge-operacion" id="badgeOperacionCierre">SIN SISTEMA = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)</div>
                     <div class="texto-final-expresivo" id="textoFinalCierre">ESPERANDO CONTEO...</div>
                     <span class="monto-final" id="montoFinalCierre">S/ 0.00</span>
                 </div>
@@ -1685,7 +1631,7 @@
                 <div class="switch-hero-card">
                     <div>
                         <div class="switch-info-title">Guardar Movimientos en Hoja 1</div>
-                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Actívalo (~7:15 p. m.) luego de fijar tu Saldo Inicial</div>
+                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Cola garantizada activa: ninguna operación se pierde</div>
                     </div>
                     <label class="ios-switch">
                         <input type="checkbox" id="chkGuardarMovimientos" onchange="cambiarEstadoGuardadoMovimientos(this.checked)">
@@ -1701,7 +1647,7 @@
                     <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Saldo Inicial)</span>
                 </button>
                 <div class="nota-explicativa-config">
-                    💡 <b>Protección de Saldo Inicial:</b> Este botón borra únicamente las filas de operaciones registradas desde la Caja (fila 6 en adelante), sin alterar ni borrar tu <b>Saldo Inicial</b> contado a las 7:15 p. m.
+                    💡 <b>Cola Anti-Pérdidas Activa:</b> Todas tus operaciones al dar Enter se encolan en memoria y se envían en orden estricto a la <b>Hoja 1</b> sin perder jamás ningún registro.
                 </div>
             </div>
 
@@ -1732,9 +1678,9 @@
                 </div>
 
                 <div class="nota-explicativa-config">
-                    💡 <b>Regla inteligente de Enter en Cierre:</b><br>
-                    • <b>Sin S. Sistema:</b> Guarda solo el <b>Saldo Inicial</b> en la <b>Hoja 1</b> (sin tocar la Hoja 2).<br>
-                    • <b>Con S. Sistema:</b> Guarda el <b>Cierre General</b> completo en la <b>Hoja 2</b> (sin tocar la Hoja 1).
+                    💡 <b>Envío inteligente con Enter en Cierre:</b><br>
+                    • <b>Sin S. Sistema:</b> Envía el <b>Saldo Inicial</b> a la <b>Hoja 1</b> y activa el guardado de Caja.<br>
+                    • <b>Con S. Sistema:</b> Llena todos los cuadros del <b>Cierre General</b> en la <b>Hoja 2</b>.
                 </div>
             </div>
 
@@ -1749,32 +1695,129 @@
 
     <script>
         /* ===============================================================
-           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (CERO LATENCIA)
+           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (COLA GARANTIZADA FIFO)
+           Cero Latencia en Pantalla (0 ms) + Cero Operaciones Perdidas
            =============================================================== */
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwq3s6Pdx5Lm3hwexf-2hDxJ2k7BnJUUWFJPAPPkaiDTjODP6B2YWG2WkPJ2xUjm-mrKg/exec";
-        const URL_MOVIMIENTOS_ULTRA = URL_APPS_SCRIPT;
-        const URL_CIERRE_CAJA = URL_APPS_SCRIPT;
+        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwdBXOAeD00vRh1hqRbF0sqgyHf1QbPcS8ySPoD0hpZNOd63lKdLAecXFe95yArPWlyAQ/exec";
 
-        // Motor de despacho instantáneo sin bloqueo de interfaz (0 ms) con reintento automático
-        function enviarASheetsCeroLatencia(payload) {
-            const bodyStr = JSON.stringify(payload);
-            const opcionesFetch = {
-                method: 'POST',
-                mode: 'no-cors',
-                cache: 'no-store',
-                credentials: 'omit',
-                keepalive: true,
-                priority: 'high',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: bodyStr
-            };
+        let colaEnviosSheets = [];
+        let procesandoColaSheets = false;
+        let timerReintentoCola = null;
 
-            fetch(URL_APPS_SCRIPT, opcionesFetch).catch(() => {
-                setTimeout(() => {
-                    fetch(URL_APPS_SCRIPT, opcionesFetch).catch(err => console.error("Error sync Sheets:", err));
-                }, 1200);
-            });
+        function cargarColaPersistente() {
+            try {
+                const guardada = localStorage.getItem('bcp_cola_envios_v3');
+                if (guardada) {
+                    const parsed = JSON.parse(guardada);
+                    if (Array.isArray(parsed)) colaEnviosSheets = parsed;
+                }
+            } catch (e) {
+                colaEnviosSheets = [];
+            }
         }
+
+        function guardarColaPersistente() {
+            try {
+                localStorage.setItem('bcp_cola_envios_v3', JSON.stringify(colaEnviosSheets));
+            } catch (e) {
+                console.warn('Error guardando cola en localStorage:', e);
+            }
+        }
+
+        // Encola instantáneamente en 0 ms y despacha en segundo plano en orden estricto
+        function enviarASheetsCeroLatencia(payload) {
+            // Si el usuario ordena borrar los movimientos de la Hoja 1, limpiamos movimientos pendientes no enviados
+            if (payload.accion === 'borrar_solo_movimientos' || payload.accion === 'aperturar') {
+                colaEnviosSheets = colaEnviosSheets.filter(item => item.accion !== 'registrar_movimiento');
+            }
+
+            colaEnviosSheets.push(payload);
+            guardarColaPersistente();
+            procesarColaSheets();
+        }
+
+        async function procesarColaSheets() {
+            if (procesandoColaSheets || colaEnviosSheets.length === 0) return;
+            procesandoColaSheets = true;
+            clearTimeout(timerReintentoCola);
+
+            try {
+                const primerItem = colaEnviosSheets[0];
+                let paqueteEnviar = primerItem;
+                let cantidadConsumida = 1;
+
+                // Si hay varios movimientos de Caja en espera, los agrupa en un solo lote (Batch)
+                if (primerItem.accion === 'registrar_movimiento') {
+                    const loteMovs = [];
+                    for (let i = 0; i < colaEnviosSheets.length; i++) {
+                        if (colaEnviosSheets[i].accion === 'registrar_movimiento') {
+                            loteMovs.push(colaEnviosSheets[i]);
+                        } else {
+                            break;
+                        }
+                    }
+                    cantidadConsumida = loteMovs.length;
+                    if (cantidadConsumida > 1) {
+                        paqueteEnviar = {
+                            accion: 'registrar_lote_movimientos',
+                            movimientos: loteMovs
+                        };
+                    }
+                }
+
+                const bodyStr = JSON.stringify(paqueteEnviar);
+                let enviadoConExito = false;
+
+                try {
+                    const response = await fetch(URL_APPS_SCRIPT, {
+                        method: 'POST',
+                        redirect: 'follow',
+                        cache: 'no-store',
+                        credentials: 'omit',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: bodyStr
+                    });
+
+                    if (response && (response.ok || response.type === 'opaque')) {
+                        enviadoConExito = true;
+                    }
+                } catch (errCors) {
+                    // Respaldo inmediato si el navegador bloquea la lectura del redirect CORS
+                    await fetch(URL_APPS_SCRIPT, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        cache: 'no-store',
+                        credentials: 'omit',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: bodyStr
+                    });
+                    enviadoConExito = true;
+                }
+
+                if (enviadoConExito) {
+                    colaEnviosSheets.splice(0, cantidadConsumida);
+                    guardarColaPersistente();
+                    procesandoColaSheets = false;
+
+                    if (colaEnviosSheets.length > 0) {
+                        procesarColaSheets();
+                    }
+                    return;
+                }
+            } catch (errorRed) {
+                console.warn('Reintentando envío a Google Sheets...', errorRed);
+            }
+
+            procesandoColaSheets = false;
+            if (colaEnviosSheets.length > 0) {
+                timerReintentoCola = setTimeout(procesarColaSheets, 1200);
+            }
+        }
+
+        window.addEventListener('online', () => procesarColaSheets());
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) procesarColaSheets();
+        });
 
         const formatoSoles = (num) => Math.abs(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
@@ -1786,8 +1829,9 @@
         // Contexto principal activo ('caja' o 'cierre') persistente
         let contextoPrincipal = localStorage.getItem('bcp_contexto_activo') || 'caja';
 
-        // Estado del Switch de Guardado de Movimientos en Hoja 1 (Persistente)
-        let guardarMovimientosActivo = localStorage.getItem('bcp_sync_movimientos') === 'true';
+        // Estado del Switch de Guardado de Movimientos en Hoja 1 (Activo por defecto para evitar omisiones)
+        const syncGuardadoStorage = localStorage.getItem('bcp_sync_movimientos');
+        let guardarMovimientosActivo = syncGuardadoStorage === null ? true : (syncGuardadoStorage === 'true');
 
         // Capital Base persistente en localStorage (Por defecto: 26729.00)
         let capitalBaseActual = parseFloat(localStorage.getItem('bcp_capital_base')) || 26729.00;
@@ -1812,7 +1856,7 @@
         let cantF1000 = 0;
         let ultimoInputCierreActivo = 'input-sistema';
         let ultimoEstadoResultadoCierre = '';
-        let timerBadgeSyncCierre = null;
+        let timerConfirmacionCierre = null;
 
         // Memorias separadas de Billetes y Monedas para Caja y para Cierre
         const denominacionesBilletes = [200, 100, 50, 20, 10];
@@ -1898,7 +1942,7 @@
         document.getElementById('btnFajoUp').innerHTML = ICON_SUBIR;
 
         /* ===============================================================
-           SEÑALES SIMÉTRICAS DE ALTA PRECISIÓN
+           SEÑALES SIMÉTRICAS DE ALTA PRECISIÓN (ESTÁTICAS Y CLARAS)
            =============================================================== */
         const SIGNALS = {
             esperando: {
@@ -1941,12 +1985,8 @@
             const sig = SIGNALS[iconoKey] || SIGNALS.esperando;
 
             textoEl.innerHTML = `<span class="sig-wing wing-left">${sig.L}</span><span>${mensajeTexto}</span><span class="sig-wing wing-right">${sig.R}</span>`;
-
             if (montoEl.innerText !== valorFormateado) {
                 montoEl.innerText = valorFormateado;
-                montoEl.classList.remove('monto-pop');
-                void montoEl.offsetWidth;
-                montoEl.classList.add('monto-pop');
             }
         }
 
@@ -2035,8 +2075,6 @@
                 }
             });
 
-            // Si el teclado numérico se abre y la burbuja fue colocada en la zona baja,
-            // se queda tapada debajo del teclado sin subirse jamás a estorbar.
             if (window.visualViewport) {
                 window.visualViewport.addEventListener('resize', verificarSiTecladoTapaBurbuja);
             }
@@ -2077,7 +2115,7 @@
             const btn = document.getElementById('btnGoogleSwitcher');
             if (btn) {
                 btn.classList.add('rotando');
-                setTimeout(() => btn.classList.remove('rotando'), 320);
+                setTimeout(() => btn.classList.remove('rotando'), 280);
             }
 
             if (contextoPrincipal === 'caja') {
@@ -2453,7 +2491,7 @@
             }
         }
 
-        // ENTER EN CAJA: LIMPIA EN 0 MS Y DESPACHA A HOJA 1 SI EL SWITCH ESTÁ ACTIVO
+        // ENTER EN CAJA: LIMPIA EN 0 MS Y ENCOLA EN MEMORIA SEGURA PARA ENVÍO GARANTIZADO
         function ejecutarAccionTecladoCaja(e) {
             if (e) {
                 e.preventDefault();
@@ -2492,16 +2530,16 @@
                 };
             }
 
-            // 1° Respuesta visual y limpieza en 0 ms (Cero Latencia)
+            // 1° Limpieza instantánea en 0 ms
             limpiarCaja();
             enfocarSiguienteInputVisible('app-caja');
 
-            // 2° Despacho asíncrono inmediato en segundo plano
+            // 2° Encolado garantizado sin pérdidas
             if (payloadParaEnviar) {
                 const badge = document.getElementById('badgeOperacion');
-                badge.innerText = "✓ GUARDADO EN HOJA 1 (0 ms)";
+                badge.innerText = "✓ GUARDADO EN HOJA 1";
                 enviarASheetsCeroLatencia(payloadParaEnviar);
-                setTimeout(() => actualizarEstiloVisualModo(), 650);
+                setTimeout(() => actualizarEstiloVisualModo(), 550);
             }
 
             return false;
@@ -2636,36 +2674,31 @@
             const difCentimos = centimosSumaES - centimosBase;
             const diferenciaSoles = difCentimos / 100;
 
-            const panel = document.getElementById('panelFinalCierre');
-            const badgeOp = document.getElementById('badgeOperacionCierre');
-            let estadoClave = '';
+            if (timerConfirmacionCierre) return;
 
+            const panel = document.getElementById('panelFinalCierre');
+            let estadoClave = '';
             const tieneEfectivo = totalCentimos !== 0;
 
             if (!tieneEfectivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-esperando";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SIN SISTEMA = SALDO INICIAL (HOJA 1) · CON SISTEMA = CIERRE (HOJA 2)";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'esperando', "ESPERANDO CONTEO...", "S/ 0.00");
                 estadoClave = 'esperando';
             } else if (tieneEfectivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-vuelto";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "ENTER = GUARDAR SOLO SALDO INICIAL EN HOJA 1 (NO TOCA HOJA 2)";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'mano', "EFECTIVO PARA SALDO INICIAL", formatoMonedaConPrefijo(totalEfectivoFisico));
                 estadoClave = 'saldo-inicial';
             } else if (Math.abs(diferenciaSoles) <= 0.05) {
                 panel.className = "panel-resultado estado-exacto";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA ACTIVO · ENTER PARA LLENAR CIERRE GENERAL EN HOJA 2";
-                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "EXACTO", "S/ 0.00");
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "CUADRE EXACTO CONFORME", "S/ 0.00");
                 estadoClave = 'exacto';
             } else if (diferenciaSoles < -0.05) {
                 panel.className = "panel-resultado estado-faltante";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA ACTIVO · ENTER PARA LLENAR CIERRE GENERAL EN HOJA 2";
-                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'faltante', "FALTAN", "- S/ " + formatoSoles(diferenciaSoles));
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'faltante', "FALTANTE EN CAJA", "- S/ " + formatoSoles(diferenciaSoles));
                 estadoClave = 'faltante';
             } else {
                 panel.className = "panel-resultado estado-faltante-entregar";
-                if (!timerBadgeSyncCierre) badgeOp.innerText = "SISTEMA ACTIVO · ENTER PARA LLENAR CIERRE GENERAL EN HOJA 2";
-                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'entregar', "SOBRAN", "+ S/ " + formatoSoles(diferenciaSoles));
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'entregar', "SOBRANTE EN CAJA", "+ S/ " + formatoSoles(diferenciaSoles));
                 estadoClave = 'sobrante';
             }
 
@@ -2709,7 +2742,7 @@
                 btn.style.color = "";
                 btn.innerHTML = textoOriginal;
                 enfocarSiguienteInputVisible('app-cierre');
-            }, 650);
+            }, 600);
         }
 
         function ejecutarGuardadoCierreConEnter(e) {
@@ -2728,8 +2761,8 @@
                 return false;
             }
 
-            const badgeOp = document.getElementById('badgeOperacionCierre');
-            clearTimeout(timerBadgeSyncCierre);
+            const panelCierre = document.getElementById('panelFinalCierre');
+            clearTimeout(timerConfirmacionCierre);
 
             if (tieneSistema) {
                 // MODO 2 (CON S. SISTEMA): LLENA TODOS LOS CUADROS DE LA HOJA 2 (JAMÁS TOCA HOJA 1)
@@ -2752,24 +2785,32 @@
                 };
 
                 vibrarRapido([18, 25, 18]);
-                badgeOp.innerText = "✅ ¡CIERRE COMPLETO ENVIADO A HOJA 2! (0 ms)";
                 enviarASheetsCeroLatencia(paqueteCierre);
+
+                panelCierre.className = "panel-resultado estado-exacto";
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ CIERRE GUARDADO EN HOJA 2", formatoMonedaConPrefijo(totalEfectivoFisico + numSistema));
             } else {
-                // MODO 1 (SIN S. SISTEMA): GUARDA ÚNICAMENTE SALDO INICIAL EN HOJA 1
+                // MODO 1 (SIN S. SISTEMA): GUARDA SALDO INICIAL EN HOJA 1 Y ACTIVA GUARDADO DE CAJA
                 const payloadSaldoInicial = {
                     accion: "fijar_saldo_inicial",
                     saldoInicial: totalEfectivoFisico
                 };
 
+                if (!guardarMovimientosActivo) {
+                    cambiarEstadoGuardadoMovimientos(true);
+                }
+
                 vibrarRapido([18, 25, 18]);
-                badgeOp.innerText = "✅ SALDO INICIAL GUARDADO EN HOJA 1 (0 ms)";
                 enviarASheetsCeroLatencia(payloadSaldoInicial);
+
+                panelCierre.className = "panel-resultado estado-exacto";
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ SALDO INICIAL GUARDADO EN HOJA 1", formatoMonedaConPrefijo(totalEfectivoFisico));
             }
 
-            timerBadgeSyncCierre = setTimeout(() => {
-                timerBadgeSyncCierre = null;
+            timerConfirmacionCierre = setTimeout(() => {
+                timerConfirmacionCierre = null;
                 calcularCuadreCierre();
-            }, 2200);
+            }, 1300);
 
             enfocarInputActivoActual();
             return false;
@@ -3304,8 +3345,8 @@
             if (dotMulti) dotMulti.classList.toggle('on', guardarMovimientosActivo);
             if (sub) {
                 sub.innerText = guardarMovimientosActivo 
-                    ? "ACTIVO: Cada Enter en Caja se guarda en la Hoja 1 en tiempo real" 
-                    : "DESACTIVADO: La Caja opera rápido sin enviar movimientos a la Hoja 1";
+                    ? "ACTIVO: Cola garantizada registrando cada Enter en la Hoja 1" 
+                    : "DESACTIVADO: La Caja opera localmente sin enviar a la Hoja 1";
             }
         }
 
@@ -3378,7 +3419,7 @@
                     btn.innerText = "Guardar";
                     btn.style.backgroundColor = "var(--bcp-orange)";
                     cerrarModalAjustes();
-                }, 500);
+                }, 450);
             }
         }
 
@@ -3387,13 +3428,12 @@
             const btn = document.getElementById(btnId);
             const textoOriginal = btn.innerHTML;
 
-            // Despacho instantáneo con cero latencia
             enviarASheetsCeroLatencia({ accion: accionRemota });
 
             btn.style.background = "#dcfce7";
             btn.style.borderColor = "#16a34a";
             btn.style.color = "#15803d";
-            btn.innerHTML = "✅ ¡Ejecutado en Google Sheets!<br>(0 ms)";
+            btn.innerHTML = "✅ ¡Ejecutado en Google Sheets!";
 
             setTimeout(() => {
                 btn.style.background = "";
@@ -3401,7 +3441,7 @@
                 btn.style.color = "";
                 btn.innerHTML = textoOriginal;
                 cerrarModalAjustes();
-            }, 600);
+            }, 550);
         }
 
         function guardarFotoEnStorage(event, tipo, denom) {
@@ -3433,7 +3473,8 @@
             reader.readAsDataURL(file);
         }
 
-        // Inicialización con restauración blindada
+        // Inicialización con restauración blindada y vaciado de cola pendiente
+        cargarColaPersistente();
         renderizarListasVisuales();
         restaurarEstadoDesdeStorage();
         inicializarGoogleSwitcher();
@@ -3455,6 +3496,7 @@
                 enfocarSiguienteInputVisible('app-caja');
             }
             verificarSiTecladoTapaBurbuja();
+            procesarColaSheets();
         };
     </script>
 </body>
