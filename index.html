@@ -185,7 +185,7 @@
         }
 
         /* =========================================
-           CAJAS DE ENTRADA NUMÉRICA (CAJA PRINCIPAL)
+           CAJAS DE ENTRADA NUMÉRICA Y EXPANSIÓN INTELIGENTE (4 -> 6 CUADROS)
            ========================================= */
         .caja-contenedor { 
             padding: 4px 5px 5px 5px; 
@@ -251,10 +251,21 @@
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 
+        /* Fila inteligente 5 y 6 en Página 1 (Oculta por defecto, se despliega al llenar 1..4) */
+        .fila-extra-expandible {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        .fila-extra-expandible.activa {
+            display: grid;
+        }
+
         .caja-contenedor input { 
             width: 100%; 
-            height: 44px; 
-            font-size: clamp(23px, 6.8vw, 29px); 
+            height: 43px; 
+            font-size: clamp(22px, 6.6vw, 28px); 
             font-weight: 900; 
             border: 2px solid #94a3b8; 
             border-radius: 7px; 
@@ -263,6 +274,12 @@
             color: #0f172a; 
             background-color: #ffffff; 
             box-shadow: 0 1px 2px rgba(0,0,0,0.04); 
+            transition: height 0.12s ease;
+        }
+        /* Ajuste sutil de altura cuando el bloque tiene 6 cuadros activos en Pág. 1 para encajar perfecto */
+        .caja-contenedor.bloque-con-6 input {
+            height: 38px;
+            font-size: clamp(21px, 6.2vw, 26px);
         }
         .caja-contenedor input:not(:placeholder-shown) {
             border-color: #334155;
@@ -275,7 +292,7 @@
         }
         .caja-contenedor input::placeholder { 
             color: #94a3b8; 
-            font-size: 16px; 
+            font-size: 15px; 
             font-weight: normal; 
         }
 
@@ -297,7 +314,6 @@
 
         /* ===============================================================
            CUADRO DE RESULTADOS ESTÁTICO Y PROFESIONAL (CERO DISTRACCIONES)
-           Protagonismo total en el Texto Informativo y el Monto
            =============================================================== */
         .panel-resultado { 
             padding: 0 6px 5px 6px;
@@ -327,7 +343,6 @@
             line-height: 1.2;
         }
 
-        /* TEXTO INFORMATIVO PRINCIPAL: MÁXIMA JERARQUÍA Y CLARIDAD VISUAL */
         .texto-final-expresivo {
             font-size: clamp(16px, 4.7vw, 21px);
             font-weight: 900;
@@ -368,113 +383,43 @@
             display: block; 
             width: 100%;
             text-align: center;
-            font-size: clamp(44px, 12.6vw, 62px); 
+            font-size: clamp(42px, 12vw, 58px); 
             font-weight: 900; 
             margin-top: 1px; 
             line-height: 0.95; 
             letter-spacing: -2px;
         }
 
-        /* ESTADOS ESTÁTICOS DE ALTO CONTRASTE (SIN RAYAS NI ANIMACIONES DE FONDO) */
-        .estado-esperando {
-            background-color: #ffffff;
-            border-color: #cbd5e1;
-            color: #475569;
-        }
-        .estado-esperando .texto-final-expresivo {
-            background-color: #f1f5f9;
-            color: #475569;
-        }
+        /* ESTADOS ESTÁTICOS DE ALTO CONTRASTE */
+        .estado-esperando { background-color: #ffffff; border-color: #cbd5e1; color: #475569; }
+        .estado-esperando .texto-final-expresivo { background-color: #f1f5f9; color: #475569; }
 
-        .estado-proceso { 
-            background-color: #ffffff; 
-            border-color: #7e22ce; 
-            color: #581c87; 
-        }
-        .estado-proceso .texto-final-expresivo {
-            background-color: #7e22ce;
-            color: #ffffff;
-        }
+        .estado-proceso { background-color: #ffffff; border-color: #7e22ce; color: #581c87; }
+        .estado-proceso .texto-final-expresivo { background-color: #7e22ce; color: #ffffff; }
 
-        .estado-cobrar { 
-            background-color: #ffffff;
-            border-color: #d97706; 
-            color: #b45309; 
-        }
-        .estado-cobrar .texto-final-expresivo {
-            background-color: #d97706;
-            color: #ffffff;
-        }
+        .estado-cobrar { background-color: #ffffff; border-color: #d97706; color: #b45309; }
+        .estado-cobrar .texto-final-expresivo { background-color: #d97706; color: #ffffff; }
 
-        .estado-vuelto { 
-            background-color: #ffffff; 
-            border-color: #0284c7; 
-            color: #0369a1; 
-        }
-        .estado-vuelto .texto-final-expresivo {
-            background-color: #0284c7;
-            color: #ffffff;
-        }
+        .estado-vuelto { background-color: #ffffff; border-color: #0284c7; color: #0369a1; }
+        .estado-vuelto .texto-final-expresivo { background-color: #0284c7; color: #ffffff; }
 
-        .estado-faltante { 
-            background-color: #ffffff;
-            border-color: #dc2626 !important; 
-            color: #dc2626 !important; 
-        }
-        .estado-faltante .texto-final-expresivo {
-            background-color: #dc2626 !important;
-            color: #ffffff !important;
-        }
+        .estado-faltante { background-color: #ffffff; border-color: #dc2626 !important; color: #dc2626 !important; }
+        .estado-faltante .texto-final-expresivo { background-color: #dc2626 !important; color: #ffffff !important; }
 
-        .estado-faltante-entregar {
-            background-color: #ffffff;
-            border-color: #ea580c !important; 
-            color: #c2410c !important;
-        }
-        .estado-faltante-entregar .texto-final-expresivo {
-            background-color: #ea580c !important;
-            color: #ffffff !important;
-        }
+        .estado-faltante-entregar { background-color: #ffffff; border-color: #ea580c !important; color: #c2410c !important; }
+        .estado-faltante-entregar .texto-final-expresivo { background-color: #ea580c !important; color: #ffffff !important; }
 
-        .estado-exacto { 
-            background-color: #ffffff; 
-            border-color: #16a34a; 
-            color: #15803d; 
-        }
-        .estado-exacto .texto-final-expresivo {
-            background-color: #16a34a;
-            color: #ffffff;
-        }
+        .estado-exacto { background-color: #ffffff; border-color: #16a34a; color: #15803d; }
+        .estado-exacto .texto-final-expresivo { background-color: #16a34a; color: #ffffff; }
 
-        .estado-peligro-mas {
-            background-color: #ffffff;
-            border-color: #dc2626 !important; 
-            color: #dc2626 !important;
-        }
-        .estado-peligro-mas .texto-final-expresivo {
-            background-color: #dc2626 !important;
-            color: #ffffff !important;
-        }
+        .estado-peligro-mas { background-color: #ffffff; border-color: #dc2626 !important; color: #dc2626 !important; }
+        .estado-peligro-mas .texto-final-expresivo { background-color: #dc2626 !important; color: #ffffff !important; }
 
-        .estado-retiro {
-            background-color: #ffffff;
-            border-color: var(--retiro-header);
-            color: #be123c;
-        }
-        .estado-retiro .texto-final-expresivo {
-            background-color: var(--retiro-header);
-            color: #ffffff;
-        }
+        .estado-retiro { background-color: #ffffff; border-color: var(--retiro-header); color: #be123c; }
+        .estado-retiro .texto-final-expresivo { background-color: var(--retiro-header); color: #ffffff; }
 
-        .estado-deposito {
-            background-color: #ffffff;
-            border-color: var(--deposito-header);
-            color: #0f766e;
-        }
-        .estado-deposito .texto-final-expresivo {
-            background-color: var(--deposito-header);
-            color: #ffffff;
-        }
+        .estado-deposito { background-color: #ffffff; border-color: var(--deposito-header); color: #0f766e; }
+        .estado-deposito .texto-final-expresivo { background-color: var(--deposito-header); color: #ffffff; }
 
         /* =========================================
            SELECTOR DE MODOS (CAJA PRINCIPAL)
@@ -519,6 +464,78 @@
         #btn-modo-retiro.active-modo {
             background: #e11d48 !important;
             color: #ffffff !important; border-color: #be123c !important;
+        }
+
+        /* ===============================================================
+           BOTONES ESTÁTICOS REUBICABLES: "BORRAR" Y "ANULAR" (MISMO TAMAÑO QUE MODOS)
+           Colores distintos a verde/amarillo/rojo · Ocultos bajo el teclado
+           =============================================================== */
+        .btn-aux-caja-fijo {
+            position: fixed;
+            bottom: auto !important;
+            height: 43px;
+            width: calc((min(100vw, 520px) - 18px) / 3);
+            border-radius: 7px;
+            font-size: 12.5px;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            user-select: none;
+            z-index: 940;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+            touch-action: none;
+        }
+        .btn-aux-caja-fijo svg {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+            pointer-events: none;
+        }
+        .btn-aux-caja-fijo:active {
+            transform: scale(0.96);
+        }
+        /* Estado cuando el usuario mantiene presionado 0.38s para reubicarlo */
+        .btn-aux-caja-fijo.modo-reubicacion {
+            box-shadow: 0 0 0 3px var(--bcp-orange), 0 8px 18px rgba(0,0,0,0.25) !important;
+            transform: scale(1.04);
+            z-index: 990;
+        }
+        .btn-aux-caja-fijo.oculto {
+            display: none !important;
+        }
+        .btn-aux-caja-fijo.tapado-por-teclado {
+            opacity: 0 !important;
+            visibility: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* 1. Botón BORRAR (Gris Pizarra Acero - debajo de DEPÓSITO) */
+        #btnCajaBorrar {
+            background-color: #e2e8f0;
+            color: #1e293b;
+            border: 2px solid #94a3b8;
+        }
+        #btnCajaBorrar.confirmado {
+            background-color: #334155 !important;
+            color: #ffffff !important;
+            border-color: #0f172a !important;
+        }
+
+        /* 2. Botón ANULAR (Índigo Contable - debajo de RETIRO) */
+        #btnCajaAnular {
+            background-color: #e0e7ff;
+            color: #1e1b4b;
+            border: 2px solid #6366f1;
+        }
+        #btnCajaAnular.confirmado {
+            background-color: #312e81 !important;
+            color: #ffffff !important;
+            border-color: #1e1b4b !important;
         }
 
         /* ===============================================================
@@ -1351,12 +1368,13 @@
 <body>
 
     <!-- =========================================================
-         APLICACIÓN 1: CAJA PRINCIPAL (100% LIMPIA SIN ENGRANAJE)
+         APLICACIÓN 1: CAJA PRINCIPAL (CON EXPANSIÓN INTELIGENTE 4 -> 6 + PÁG. 2 = 10 CUADROS)
          ========================================================= -->
     <div id="app-caja" class="main-app-container active-app">
         <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
             <div class="caja-wrapper">
                 
+                <!-- BLOQUE SUPERIOR -->
                 <div class="panel-total tema-recibo-header" id="panelSuperior">
                     <div class="panel-title-area">
                         <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
@@ -1370,6 +1388,7 @@
                 
                 <div class="caja-contenedor tema-recibo-bg" id="cajaSuperiorContenedor">
                     <div class="contenedor-deslizable" id="swipeEfectivo" onscroll="handleScrollIndicators('swipeEfectivo', 'dot-sup-1', 'dot-sup-2')">
+                        <!-- PÁGINA 1: 4 cuadros base + 2 cuadros inteligentes (b5, b6) -->
                         <div class="pagina-deslizable">
                             <div class="grid-2">
                                 <input type="text" id="b1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
@@ -1377,19 +1396,25 @@
                                 <input type="text" id="b3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="b4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
-                        </div>
-                        <div class="pagina-deslizable pagina-secundaria">
-                            <div class="grid-2">
+                            <div class="fila-extra-expandible" id="filaExtraSup">
                                 <input type="text" id="b5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="b6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                            </div>
+                        </div>
+                        <!-- PÁGINA 2: 4 cuadros completos (b7, b8, b9, b10) -->
+                        <div class="pagina-deslizable pagina-secundaria">
+                            <div class="grid-2">
                                 <input type="text" id="b7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="b8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b10" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
                             <span class="badge-pagina-dos">PÁG. 2</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- BLOQUE INFERIOR -->
                 <div class="panel-total tema-recibo-header" id="panelModoSecundario">
                     <div class="panel-title-area">
                         <span id="lblTituloModo">RECIBO POR PAGAR</span>
@@ -1403,6 +1428,7 @@
                 
                 <div class="caja-contenedor tema-recibo-bg" id="cajaInferiorContenedor">
                     <div class="contenedor-deslizable" id="swipeRecibo" onscroll="handleScrollIndicators('swipeRecibo', 'dot-inf-1', 'dot-inf-2')">
+                        <!-- PÁGINA 1: 4 cuadros base + 2 cuadros inteligentes (p5, p6) -->
                         <div class="pagina-deslizable">
                             <div class="grid-2">
                                 <input type="text" id="p1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
@@ -1410,13 +1436,18 @@
                                 <input type="text" id="p3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="p4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
-                        </div>
-                        <div class="pagina-deslizable pagina-secundaria">
-                            <div class="grid-2">
+                            <div class="fila-extra-expandible" id="filaExtraInf">
                                 <input type="text" id="p5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="p6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                            </div>
+                        </div>
+                        <!-- PÁGINA 2: 4 cuadros completos (p7, p8, p9, p10) -->
+                        <div class="pagina-deslizable pagina-secundaria">
+                            <div class="grid-2">
                                 <input type="text" id="p7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                                 <input type="text" id="p8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p10" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
                             </div>
                             <span class="badge-pagina-dos">PÁG. 2</span>
                         </div>
@@ -1431,7 +1462,7 @@
                 </div>
 
                 <!-- SELECTOR DE 3 MODOS -->
-                <div class="selector-modos-grid">
+                <div class="selector-modos-grid" id="gridSelectorModos">
                     <button type="button" class="btn-modo-operacion" id="btn-modo-deposito" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="seleccionarModoDirecto(event, 'deposito')">
                         DEPÓSITO
                     </button>
@@ -1446,6 +1477,24 @@
             </div>
         </form>
     </div>
+
+    <!-- =========================================================
+         BOTONES ESTÁTICOS REUBICABLES DE CAJA: "BORRAR" Y "ANULAR"
+         (Mismo tamaño que los modos · Ocultos bajo el teclado · Mantener presionado para mover)
+         ========================================================= -->
+    <button type="button" id="btnCajaBorrar" class="btn-aux-caja-fijo" title="Toque: Borrar montos editados · Mantener presionado: Mover ubicación">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+        </svg>
+        <span id="txtBtnCajaBorrar">BORRAR</span>
+    </button>
+
+    <button type="button" id="btnCajaAnular" class="btn-aux-caja-fijo" title="Toque: Anular última operación en Hoja 1 · Mantener presionado: Mover ubicación">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
+        </svg>
+        <span id="txtBtnCajaAnular">ANULAR</span>
+    </button>
 
     <!-- =========================================================
          APLICACIÓN 2: CIERRE DE CAJA BCP
@@ -1496,7 +1545,7 @@
                     </span>
                 </div>
 
-                <!-- 4. PANEL DE RESPUESTA DEL CIERRE (SIN EL MENSAJE SUPERIOR MOLESTO) -->
+                <!-- 4. PANEL DE RESPUESTA DEL CIERRE (SIN TEXTO SUPERIOR MOLESTO) -->
                 <div class="panel-resultado estado-esperando" id="panelFinalCierre">
                     <div class="texto-final-expresivo" id="textoFinalCierre">ESPERANDO CONTEO...</div>
                     <span class="monto-final" id="montoFinalCierre">S/ 0.00</span>
@@ -1555,7 +1604,6 @@
         <form id="formMultiplicador" onsubmit="ejecutarAccionTecladoMulti(event)" action="javascript:void(0);">
             <div class="multiplicador-wrapper">
                 
-                <!-- CABECERA AZUL CON ENGRANAJE VISIBLE EXCLUSIVAMENTE EN EL PANEL DE MONEDAS -->
                 <div class="sticky-header-compact" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="alternarConMultiplicador()" title="Toca o presiona (-) para regresar">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
                     <button type="button" id="btnAjustesMonedas" class="btn-config-monedas oculto-en-billetes" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustesDesdeMulti(event)" title="Configuración">
@@ -1631,7 +1679,7 @@
                 <div class="switch-hero-card">
                     <div>
                         <div class="switch-info-title">Guardar Movimientos en Hoja 1</div>
-                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Cola garantizada activa: ninguna operación se pierde</div>
+                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Escudo Anti-Duplicados y Cola Garantizada activos</div>
                     </div>
                     <label class="ios-switch">
                         <input type="checkbox" id="chkGuardarMovimientos" onchange="cambiarEstadoGuardadoMovimientos(this.checked)">
@@ -1647,7 +1695,7 @@
                     <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Saldo Inicial)</span>
                 </button>
                 <div class="nota-explicativa-config">
-                    💡 <b>Cola Anti-Pérdidas Activa:</b> Todas tus operaciones al dar Enter se encolan en memoria y se envían en orden estricto a la <b>Hoja 1</b> sin perder jamás ningún registro.
+                    💡 <b>Doble Escudo Anti-Duplicados:</b> Cada operación viaja con huella única (<b>idUnico</b>) por un canal único sin doble disparo, impidiendo filas repetidas.
                 </div>
             </div>
 
@@ -1695,18 +1743,24 @@
 
     <script>
         /* ===============================================================
-           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (COLA GARANTIZADA FIFO)
-           Cero Latencia en Pantalla (0 ms) + Cero Operaciones Perdidas
+           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (CANAL ÚNICO SIN DUPLICIDAD)
+           Cero Latencia en Pantalla (0 ms) + Cero Operaciones Duplicadas
            =============================================================== */
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwdBXOAeD00vRh1hqRbF0sqgyHf1QbPcS8ySPoD0hpZNOd63lKdLAecXFe95yArPWlyAQ/exec";
+        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbw_Q-m30QWBeFla5rnIz8-ldGWykMJgAXntjrArQs3yn5ladFZD-6UDL543kaQEwEkgJQ/exec";
 
         let colaEnviosSheets = [];
         let procesandoColaSheets = false;
         let timerReintentoCola = null;
+        let timestampUltimoEnterCaja = 0;
+
+        function generarIdUnicoOperacion(detalle, monto) {
+            const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
+            return `OP-${Date.now()}-${Math.round(Math.abs(monto) * 100)}-${rand}`;
+        }
 
         function cargarColaPersistente() {
             try {
-                const guardada = localStorage.getItem('bcp_cola_envios_v3');
+                const guardada = localStorage.getItem('bcp_cola_envios_v4');
                 if (guardada) {
                     const parsed = JSON.parse(guardada);
                     if (Array.isArray(parsed)) colaEnviosSheets = parsed;
@@ -1718,15 +1772,14 @@
 
         function guardarColaPersistente() {
             try {
-                localStorage.setItem('bcp_cola_envios_v3', JSON.stringify(colaEnviosSheets));
+                localStorage.setItem('bcp_cola_envios_v4', JSON.stringify(colaEnviosSheets));
             } catch (e) {
                 console.warn('Error guardando cola en localStorage:', e);
             }
         }
 
-        // Encola instantáneamente en 0 ms y despacha en segundo plano en orden estricto
+        // Encola en 0 ms y despacha por UN SOLO CANAL para evitar cualquier disparo doble
         function enviarASheetsCeroLatencia(payload) {
-            // Si el usuario ordena borrar los movimientos de la Hoja 1, limpiamos movimientos pendientes no enviados
             if (payload.accion === 'borrar_solo_movimientos' || payload.accion === 'aperturar') {
                 colaEnviosSheets = colaEnviosSheets.filter(item => item.accion !== 'registrar_movimiento');
             }
@@ -1738,6 +1791,11 @@
 
         async function procesarColaSheets() {
             if (procesandoColaSheets || colaEnviosSheets.length === 0) return;
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                timerReintentoCola = setTimeout(procesarColaSheets, 1500);
+                return;
+            }
+
             procesandoColaSheets = true;
             clearTimeout(timerReintentoCola);
 
@@ -1746,7 +1804,7 @@
                 let paqueteEnviar = primerItem;
                 let cantidadConsumida = 1;
 
-                // Si hay varios movimientos de Caja en espera, los agrupa en un solo lote (Batch)
+                // Agrupación en lote si hay múltiples movimientos seguidos en espera
                 if (primerItem.accion === 'registrar_movimiento') {
                     const loteMovs = [];
                     for (let i = 0; i < colaEnviosSheets.length; i++) {
@@ -1765,52 +1823,32 @@
                     }
                 }
 
-                const bodyStr = JSON.stringify(paqueteEnviar);
-                let enviadoConExito = false;
+                // ENVÍO ÚNICO DIRECTO: Sin doble disparo en catch (elimina de raíz las filas duplicadas)
+                await fetch(URL_APPS_SCRIPT, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-store',
+                    credentials: 'omit',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(paqueteEnviar)
+                });
 
-                try {
-                    const response = await fetch(URL_APPS_SCRIPT, {
-                        method: 'POST',
-                        redirect: 'follow',
-                        cache: 'no-store',
-                        credentials: 'omit',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: bodyStr
-                    });
+                // Retira de la cola al completarse el envío único
+                colaEnviosSheets.splice(0, cantidadConsumida);
+                guardarColaPersistente();
+                procesandoColaSheets = false;
 
-                    if (response && (response.ok || response.type === 'opaque')) {
-                        enviadoConExito = true;
-                    }
-                } catch (errCors) {
-                    // Respaldo inmediato si el navegador bloquea la lectura del redirect CORS
-                    await fetch(URL_APPS_SCRIPT, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                        cache: 'no-store',
-                        credentials: 'omit',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                        body: bodyStr
-                    });
-                    enviadoConExito = true;
+                if (colaEnviosSheets.length > 0) {
+                    procesarColaSheets();
                 }
-
-                if (enviadoConExito) {
-                    colaEnviosSheets.splice(0, cantidadConsumida);
-                    guardarColaPersistente();
-                    procesandoColaSheets = false;
-
-                    if (colaEnviosSheets.length > 0) {
-                        procesarColaSheets();
-                    }
-                    return;
-                }
+                return;
             } catch (errorRed) {
-                console.warn('Reintentando envío a Google Sheets...', errorRed);
+                console.warn('Sin conexión temporal. Reintentando con el mismo idUnico...', errorRed);
             }
 
             procesandoColaSheets = false;
             if (colaEnviosSheets.length > 0) {
-                timerReintentoCola = setTimeout(procesarColaSheets, 1200);
+                timerReintentoCola = setTimeout(procesarColaSheets, 1500);
             }
         }
 
@@ -1829,25 +1867,32 @@
         // Contexto principal activo ('caja' o 'cierre') persistente
         let contextoPrincipal = localStorage.getItem('bcp_contexto_activo') || 'caja';
 
-        // Estado del Switch de Guardado de Movimientos en Hoja 1 (Activo por defecto para evitar omisiones)
+        // Estado del Switch de Guardado de Movimientos en Hoja 1 (Activo por defecto)
         const syncGuardadoStorage = localStorage.getItem('bcp_sync_movimientos');
         let guardarMovimientosActivo = syncGuardadoStorage === null ? true : (syncGuardadoStorage === 'true');
 
         // Capital Base persistente en localStorage (Por defecto: 26729.00)
         let capitalBaseActual = parseFloat(localStorage.getItem('bcp_capital_base')) || 26729.00;
 
-        // Estado de Caja Principal
+        // Estado de Caja Principal (10 cuadros por bloque: b1..b10 y p1..p10)
         let modoOperacion = localStorage.getItem('bcp_modo_operacion') || 'recibo'; 
         let ultimoEstadoResultadoCaja = '';
+
+        function crearMapa10Cuadros(prefijo) {
+            const obj = {};
+            for (let i = 1; i <= 10; i++) obj[prefijo + i] = '';
+            return obj;
+        }
+
         let datosSuperior = {
-            recibo: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' },
-            retiro: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' },
-            deposito: { b1: '', b2: '', b3: '', b4: '', b5: '', b6: '', b7: '', b8: '' }
+            recibo: crearMapa10Cuadros('b'),
+            retiro: crearMapa10Cuadros('b'),
+            deposito: crearMapa10Cuadros('b')
         };
         let datosInferior = {
-            recibo: { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' },
-            retiro: { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' },
-            deposito: { p1: '', p2: '', p3: '', p4: '', p5: '', p6: '', p7: '', p8: '' }
+            recibo: crearMapa10Cuadros('p'),
+            retiro: crearMapa10Cuadros('p'),
+            deposito: crearMapa10Cuadros('p')
         };
         let ultimoInputCajaActivo = null;
         let cuadroVinculado = null; 
@@ -1870,7 +1915,7 @@
         let esTransicionClickTab = false;
         let timerFinTransicion = null;
 
-        // Alto máximo real de la pantalla sin teclado para fijar la burbuja flotante
+        // Alto máximo real de la pantalla sin teclado para fijar elementos inferiores
         let altoPantallaSinTeclado = Math.max(window.innerHeight || 640, 520);
 
         /* ===============================================================
@@ -1890,7 +1935,7 @@
                     cantF1000,
                     inputSistema: document.getElementById('input-sistema') ? document.getElementById('input-sistema').value : ''
                 };
-                localStorage.setItem('bcp_estado_blindado_v2', JSON.stringify(estado));
+                localStorage.setItem('bcp_estado_blindado_v3', JSON.stringify(estado));
             } catch (e) {
                 console.warn('No se pudo guardar estado en localStorage:', e);
             }
@@ -1898,12 +1943,28 @@
 
         function restaurarEstadoDesdeStorage() {
             try {
-                const raw = localStorage.getItem('bcp_estado_blindado_v2');
+                const raw = localStorage.getItem('bcp_estado_blindado_v3') || localStorage.getItem('bcp_estado_blindado_v2');
                 if (!raw) return;
                 const est = JSON.parse(raw);
                 if (est.modoOperacion) modoOperacion = est.modoOperacion;
-                if (est.datosSuperior) datosSuperior = est.datosSuperior;
-                if (est.datosInferior) datosInferior = est.datosInferior;
+                if (est.datosSuperior) {
+                    ['recibo', 'retiro', 'deposito'].forEach(m => {
+                        if (est.datosSuperior[m]) {
+                            for (let i = 1; i <= 10; i++) {
+                                datosSuperior[m]['b' + i] = est.datosSuperior[m]['b' + i] || '';
+                            }
+                        }
+                    });
+                }
+                if (est.datosInferior) {
+                    ['recibo', 'retiro', 'deposito'].forEach(m => {
+                        if (est.datosInferior[m]) {
+                            for (let i = 1; i <= 10; i++) {
+                                datosInferior[m]['p' + i] = est.datosInferior[m]['p' + i] || '';
+                            }
+                        }
+                    });
+                }
                 if (est.cuadroVinculado) cuadroVinculado = est.cuadroVinculado;
                 if (est.billetesCaja) billetesCaja = est.billetesCaja;
                 if (est.monedasCaja) monedasCaja = est.monedasCaja;
@@ -1942,7 +2003,7 @@
         document.getElementById('btnFajoUp').innerHTML = ICON_SUBIR;
 
         /* ===============================================================
-           SEÑALES SIMÉTRICAS DE ALTA PRECISIÓN (ESTÁTICAS Y CLARAS)
+           SEÑALES SIMÉTRICAS DE ALTA PRECISIÓN
            =============================================================== */
         const SIGNALS = {
             esperando: {
@@ -2006,8 +2067,124 @@
         document.addEventListener('focusin', () => window.scrollTo(0, 0));
 
         /* ===============================================================
-           BURBUJA FLOTANTE 2D: ARRASTRE ARRIBA/ABAJO/IZQ/DER Y OCULTA BAJO TECLADO
+           BOTONES ESTÁTICOS REUBICABLES DE CAJA ("BORRAR" Y "ANULAR")
+           + BURBUJA FLOTANTE 2D Y OCULTAMIENTO BAJO EL TECLADO
            =============================================================== */
+        function posicionarBotonesAuxiliaresCajaPorDefecto() {
+            const btnBorrar = document.getElementById('btnCajaBorrar');
+            const btnAnular = document.getElementById('btnCajaAnular');
+            const refDep = document.getElementById('btn-modo-deposito');
+            const refRet = document.getElementById('btn-modo-retiro');
+            if (!btnBorrar || !btnAnular) return;
+
+            if (refDep && refDep.offsetWidth > 0) {
+                const rectDep = refDep.getBoundingClientRect();
+                const rectRet = refRet.getBoundingClientRect();
+                btnBorrar.style.width = rectDep.width + 'px';
+                btnAnular.style.width = rectRet.width + 'px';
+
+                const savedBorrarX = localStorage.getItem('bcp_btn_borrar_x');
+                const savedBorrarY = localStorage.getItem('bcp_btn_borrar_y');
+                const topDefecto = Math.min(altoPantallaSinTeclado - 48, Math.round(rectDep.bottom + 8));
+
+                if (savedBorrarX !== null && savedBorrarY !== null) {
+                    btnBorrar.style.left = savedBorrarX;
+                    btnBorrar.style.top = savedBorrarY;
+                } else {
+                    btnBorrar.style.left = Math.round(rectDep.left) + 'px';
+                    btnBorrar.style.top = topDefecto + 'px';
+                }
+
+                const savedAnularX = localStorage.getItem('bcp_btn_anular_x');
+                const savedAnularY = localStorage.getItem('bcp_btn_anular_y');
+                if (savedAnularX !== null && savedAnularY !== null) {
+                    btnAnular.style.left = savedAnularX;
+                    btnAnular.style.top = savedAnularY;
+                } else {
+                    btnAnular.style.left = Math.round(rectRet.left) + 'px';
+                    btnAnular.style.top = topDefecto + 'px';
+                }
+            }
+        }
+
+        function configurarBotonEstaticoReubicable(btnId, storageKeyX, storageKeyY, callbackClickAccion) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+
+            let startX = 0, startY = 0;
+            let initialLeft = 0, initialTop = 0;
+            let modoMoverActivo = false;
+            let timerLongPress = null;
+
+            btn.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = btn.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                modoMoverActivo = false;
+
+                btn.setPointerCapture(e.pointerId);
+
+                // Solo se desbloquea para mover si se mantiene presionado 380 ms
+                timerLongPress = setTimeout(() => {
+                    modoMoverActivo = true;
+                    btn.classList.add('modo-reubicacion');
+                    vibrarRapido(25);
+                }, 380);
+            });
+
+            btn.addEventListener('pointermove', (e) => {
+                if (!btn.hasPointerCapture(e.pointerId)) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                if (!modoMoverActivo && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+                    clearTimeout(timerLongPress);
+                }
+
+                if (modoMoverActivo) {
+                    const w = btn.offsetWidth || 110;
+                    const h = btn.offsetHeight || 43;
+                    const minX = 4;
+                    const maxX = window.innerWidth - w - 4;
+                    const minY = 4;
+                    const maxY = altoPantallaSinTeclado - h - 4;
+
+                    const nuevoLeft = Math.round(Math.max(minX, Math.min(maxX, initialLeft + dx)));
+                    const nuevoTop = Math.round(Math.max(minY, Math.min(maxY, initialTop + dy)));
+
+                    btn.style.left = nuevoLeft + 'px';
+                    btn.style.top = nuevoTop + 'px';
+                }
+            });
+
+            const finalizarToque = (e) => {
+                clearTimeout(timerLongPress);
+                if (btn.hasPointerCapture(e.pointerId)) {
+                    btn.releasePointerCapture(e.pointerId);
+                }
+                if (modoMoverActivo) {
+                    btn.classList.remove('modo-reubicacion');
+                    localStorage.setItem(storageKeyX, btn.style.left);
+                    localStorage.setItem(storageKeyY, btn.style.top);
+                    verificarSiTecladoTapaElementosFijos();
+                    vibrarRapido(12);
+                } else {
+                    callbackClickAccion();
+                }
+                modoMoverActivo = false;
+            };
+
+            btn.addEventListener('pointerup', finalizarToque);
+            btn.addEventListener('pointercancel', () => {
+                clearTimeout(timerLongPress);
+                btn.classList.remove('modo-reubicacion');
+                modoMoverActivo = false;
+            });
+        }
+
         function inicializarGoogleSwitcher() {
             const btn = document.getElementById('btnGoogleSwitcher');
             if (!btn) return;
@@ -2068,36 +2245,101 @@
                 if (movioArrastre) {
                     localStorage.setItem('bcp_switcher_x_px', btn.style.left);
                     localStorage.setItem('bcp_switcher_y_px', btn.style.top);
-                    verificarSiTecladoTapaBurbuja();
+                    verificarSiTecladoTapaElementosFijos();
                     vibrarRapido(10);
                 } else {
                     conmutarEntreCajaYCierre();
                 }
             });
 
+            configurarBotonEstaticoReubicable('btnCajaBorrar', 'bcp_btn_borrar_x', 'bcp_btn_borrar_y', ejecutarBotonBorrarCaja);
+            configurarBotonEstaticoReubicable('btnCajaAnular', 'bcp_btn_anular_x', 'bcp_btn_anular_y', ejecutarBotonAnularUltimaOperacion);
+
             if (window.visualViewport) {
-                window.visualViewport.addEventListener('resize', verificarSiTecladoTapaBurbuja);
+                window.visualViewport.addEventListener('resize', verificarSiTecladoTapaElementosFijos);
             }
-            window.addEventListener('resize', verificarSiTecladoTapaBurbuja);
+            window.addEventListener('resize', () => {
+                posicionarBotonesAuxiliaresCajaPorDefecto();
+                verificarSiTecladoTapaElementosFijos();
+            });
         }
 
-        function verificarSiTecladoTapaBurbuja() {
-            const btn = document.getElementById('btnGoogleSwitcher');
-            if (!btn) return;
-
+        function verificarSiTecladoTapaElementosFijos() {
             const alturaVisibleActual = window.visualViewport ? window.visualViewport.height : window.innerHeight;
             if (alturaVisibleActual > altoPantallaSinTeclado) {
                 altoPantallaSinTeclado = alturaVisibleActual;
             }
 
             const tecladoAbierto = alturaVisibleActual < (altoPantallaSinTeclado * 0.82);
-            const posTopBurbuja = parseFloat(btn.style.top) || 480;
 
-            if (tecladoAbierto && (posTopBurbuja + 22 > alturaVisibleActual)) {
-                btn.classList.add('tapado-por-teclado');
-            } else {
-                btn.classList.remove('tapado-por-teclado');
+            const btnSwitcher = document.getElementById('btnGoogleSwitcher');
+            if (btnSwitcher) {
+                const posTopBurbuja = parseFloat(btnSwitcher.style.top) || 480;
+                btnSwitcher.classList.toggle('tapado-por-teclado', tecladoAbierto && (posTopBurbuja + 22 > alturaVisibleActual));
             }
+
+            ['btnCajaBorrar', 'btnCajaAnular'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const topPx = parseFloat(el.style.top) || 440;
+                    el.classList.toggle('tapado-por-teclado', tecladoAbierto && (topPx + 40 > alturaVisibleActual));
+                }
+            });
+        }
+
+        // Acción 1: Botón BORRAR (Limpia montos editados en Caja sin enviar nada a Google Sheets)
+        function ejecutarBotonBorrarCaja() {
+            vibrarRapido([15, 25, 15]);
+            limpiarCaja();
+
+            const btn = document.getElementById('btnCajaBorrar');
+            const lbl = document.getElementById('txtBtnCajaBorrar');
+            const badge = document.getElementById('badgeOperacion');
+
+            btn.classList.add('confirmado');
+            lbl.innerText = "LIMPIO";
+            badge.innerText = "🧹 OPERACIÓN CANCELADA / CAJA LIMPIA";
+
+            setTimeout(() => {
+                btn.classList.remove('confirmado');
+                lbl.innerText = "BORRAR";
+                actualizarEstiloVisualModo();
+            }, 700);
+        }
+
+        // Acción 2: Botón ANULAR (Anula la última operación registrada en la Hoja 1 de Google Sheets)
+        function ejecutarBotonAnularUltimaOperacion() {
+            vibrarRapido([25, 35, 25]);
+
+            // Si había un movimiento pendiente aún en la cola local sin salir, lo retira;
+            // de lo contrario envía la orden de anular la última fila en la Hoja 1.
+            let retiradaDeColaLocal = false;
+            for (let i = colaEnviosSheets.length - 1; i >= 0; i--) {
+                if (colaEnviosSheets[i].accion === 'registrar_movimiento') {
+                    colaEnviosSheets.splice(i, 1);
+                    guardarColaPersistente();
+                    retiradaDeColaLocal = true;
+                    break;
+                }
+            }
+
+            if (!retiradaDeColaLocal) {
+                enviarASheetsCeroLatencia({ accion: "anular_ultimo_movimiento" });
+            }
+
+            const btn = document.getElementById('btnCajaAnular');
+            const lbl = document.getElementById('txtBtnCajaAnular');
+            const badge = document.getElementById('badgeOperacion');
+
+            btn.classList.add('confirmado');
+            lbl.innerText = "ANULADO";
+            badge.innerText = "↩️ ÚLTIMA OPERACIÓN ANULADA EN HOJA 1";
+
+            setTimeout(() => {
+                btn.classList.remove('confirmado');
+                lbl.innerText = "ANULAR";
+                actualizarEstiloVisualModo();
+            }, 950);
         }
 
         function actualizarAparienciaGoogleSwitcher() {
@@ -2145,9 +2387,17 @@
                 btnSwitcher.classList.toggle('oculto', appId === 'app-multiplicador');
             }
 
+            const mostrarAuxCaja = (appId === 'app-caja');
+            const btnBorrar = document.getElementById('btnCajaBorrar');
+            const btnAnular = document.getElementById('btnCajaAnular');
+            if (btnBorrar) btnBorrar.classList.toggle('oculto', !mostrarAuxCaja);
+            if (btnAnular) btnAnular.classList.toggle('oculto', !mostrarAuxCaja);
+
             if (appId === 'app-caja') {
                 reaplicarEstiloSincronizacion();
+                setTimeout(posicionarBotonesAuxiliaresCajaPorDefecto, 20);
             }
+            verificarSiTecladoTapaElementosFijos();
         }
 
         function alternarConMultiplicador() {
@@ -2196,8 +2446,30 @@
         }
 
         /* ===============================================================
-           LÓGICA DE LA CAJA PRINCIPAL
+           LÓGICA DE LA CAJA PRINCIPAL Y EXPANSIÓN INTELIGENTE DE 4 A 6 CUADROS
            =============================================================== */
+        function actualizarExpansionInteligenteBloques() {
+            // Bloque Superior (b1..b4 llenos o b5/b6 con dato -> despliega b5 y b6)
+            const sup1a4Llenos = ['b1', 'b2', 'b3', 'b4'].every(id => document.getElementById(id).value.trim() !== '');
+            const sup5o6ConDato = ['b5', 'b6'].some(id => document.getElementById(id).value.trim() !== '');
+            const expandirSup = sup1a4Llenos || sup5o6ConDato;
+
+            const filaExtraSup = document.getElementById('filaExtraSup');
+            const cajaSup = document.getElementById('cajaSuperiorContenedor');
+            if (filaExtraSup) filaExtraSup.classList.toggle('activa', expandirSup);
+            if (cajaSup) cajaSup.classList.toggle('bloque-con-6', expandirSup);
+
+            // Bloque Inferior (p1..p4 llenos o p5/p6 con dato -> despliega p5 y p6)
+            const inf1a4Llenos = ['p1', 'p2', 'p3', 'p4'].every(id => document.getElementById(id).value.trim() !== '');
+            const inf5o6ConDato = ['p5', 'p6'].some(id => document.getElementById(id).value.trim() !== '');
+            const expandirInf = inf1a4Llenos || inf5o6ConDato;
+
+            const filaExtraInf = document.getElementById('filaExtraInf');
+            const cajaInf = document.getElementById('cajaInferiorContenedor');
+            if (filaExtraInf) filaExtraInf.classList.toggle('activa', expandirInf);
+            if (cajaInf) cajaInf.classList.toggle('bloque-con-6', expandirInf);
+        }
+
         function registrarFocoCaja(input) {
             if (input && !input.readOnly) ultimoInputCajaActivo = input.id;
         }
@@ -2207,7 +2479,7 @@
         }
 
         function guardarValoresModoActual() {
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 10; i++) {
                 datosSuperior[modoOperacion]['b' + i] = document.getElementById('b' + i).value;
                 datosInferior[modoOperacion]['p' + i] = document.getElementById('p' + i).value;
             }
@@ -2215,7 +2487,7 @@
         }
 
         function restaurarValoresModoActual() {
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 10; i++) {
                 let elB = document.getElementById('b' + i);
                 elB.value = datosSuperior[modoOperacion]['b' + i] || '';
                 formatInput(elB);
@@ -2224,6 +2496,7 @@
                 elP.value = datosInferior[modoOperacion]['p' + i] || '';
                 formatInput(elP);
             }
+            actualizarExpansionInteligenteBloques();
         }
 
         function actualizarEstiloVisualModo() {
@@ -2237,8 +2510,8 @@
 
             panelSuperior.className = 'panel-total';
             panelSecundario.className = 'panel-total';
-            cajaSup.className = 'caja-contenedor';
-            cajaInf.className = 'caja-contenedor';
+            cajaSup.classList.remove('tema-recibo-bg', 'tema-retiro-bg', 'tema-deposito-bg');
+            cajaInf.classList.remove('tema-recibo-bg', 'tema-retiro-bg', 'tema-deposito-bg');
 
             document.getElementById('btn-modo-deposito').classList.remove('active-modo');
             document.getElementById('btn-modo-servicio').classList.remove('active-modo');
@@ -2336,7 +2609,9 @@
         }
 
         const getValCentimos = (id) => {
-            const raw = document.getElementById(id).value.replace(/,/g, '').trim();
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            const raw = el.value.replace(/,/g, '').trim();
             const num = parseFloat(raw);
             return isNaN(num) ? 0 : Math.round(num * 100);
         };
@@ -2365,23 +2640,26 @@
         function handleInput(input) { 
             formatInput(input); 
             registrarFocoCaja(input);
+            actualizarExpansionInteligenteBloques();
             guardarValoresModoActual();
             calcularTodoCaja(); 
         }
 
         function calcularTodoCaja() {
+            actualizarExpansionInteligenteBloques();
+
             let centimosSuperior = 0, centimosSupPag2 = 0;
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 10; i++) {
                 let v = getValCentimos('b' + i);
                 centimosSuperior += v;
-                if (i >= 5) centimosSupPag2 += v;
+                if (i >= 7) centimosSupPag2 += v;
             }
             
             let centimosInferior = 0, centimosInfPag2 = 0;
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 10; i++) {
                 let v = getValCentimos('p' + i);
                 centimosInferior += v;
-                if (i >= 5) centimosInfPag2 += v;
+                if (i >= 7) centimosInfPag2 += v;
             }
 
             document.getElementById('dot-sup-2').classList.toggle('has-data', centimosSupPag2 > 0);
@@ -2491,17 +2769,23 @@
             }
         }
 
-        // ENTER EN CAJA: LIMPIA EN 0 MS Y ENCOLA EN MEMORIA SEGURA PARA ENVÍO GARANTIZADO
+        // ENTER EN CAJA: CON SELLO ÚNICO (idUnico) Y PROTECCIÓN ANTI-REBOTE
         function ejecutarAccionTecladoCaja(e) {
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
             }
 
+            const ahoraMs = Date.now();
+            if (ahoraMs - timestampUltimoEnterCaja < 280) {
+                return false;
+            }
+            timestampUltimoEnterCaja = ahoraMs;
+
             let centimosSup = 0;
-            for (let i = 1; i <= 8; i++) centimosSup += getValCentimos('b' + i);
+            for (let i = 1; i <= 10; i++) centimosSup += getValCentimos('b' + i);
             let centimosInf = 0;
-            for (let i = 1; i <= 8; i++) centimosInf += getValCentimos('p' + i);
+            for (let i = 1; i <= 10; i++) centimosInf += getValCentimos('p' + i);
 
             let payloadParaEnviar = null;
 
@@ -2523,6 +2807,7 @@
                 const ahora = new Date();
                 payloadParaEnviar = {
                     accion: "registrar_movimiento",
+                    idUnico: generarIdUnicoOperacion(detalleOp, montoOp),
                     fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
                     hora: ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
                     detalle: detalleOp,
@@ -2530,11 +2815,11 @@
                 };
             }
 
-            // 1° Limpieza instantánea en 0 ms
+            // 1° Limpieza instantánea en 0 ms (pliega automáticamente los cuadros 5 y 6)
             limpiarCaja();
             enfocarSiguienteInputVisible('app-caja');
 
-            // 2° Encolado garantizado sin pérdidas
+            // 2° Encolado único garantizado con idUnico
             if (payloadParaEnviar) {
                 const badge = document.getElementById('badgeOperacion');
                 badge.innerText = "✓ GUARDADO EN HOJA 1";
@@ -2559,7 +2844,7 @@
             });
 
             ['recibo', 'retiro', 'deposito'].forEach(m => {
-                for (let i = 1; i <= 8; i++) {
+                for (let i = 1; i <= 10; i++) {
                     datosSuperior[m]['b' + i] = '';
                     datosInferior[m]['p' + i] = '';
                 }
@@ -2576,6 +2861,7 @@
             document.getElementById('dot-inf-1').classList.add('active');
             document.getElementById('dot-inf-2').classList.remove('active', 'has-data');
 
+            actualizarExpansionInteligenteBloques();
             calculateAllCounter();
             calcularTodoCaja();
             guardarEstadoEnStorage();
@@ -2724,7 +3010,6 @@
             guardarEstadoEnStorage();
         }
 
-        // Botón debajo de Fajos Especiales: Limpia todo lo editado en la pantalla de Cierre
         function borrarTodoEditadoEnCierrePantalla() {
             vibrarRapido([20, 30, 20]);
             limpiarTodoElCierre();
@@ -2765,7 +3050,6 @@
             clearTimeout(timerConfirmacionCierre);
 
             if (tieneSistema) {
-                // MODO 2 (CON S. SISTEMA): LLENA TODOS LOS CUADROS DE LA HOJA 2 (JAMÁS TOCA HOJA 1)
                 const paqueteCierre = {
                     accion: "guardar_cierre",
                     f1000: cantF1000 || 0,
@@ -2790,7 +3074,6 @@
                 panelCierre.className = "panel-resultado estado-exacto";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ CIERRE GUARDADO EN HOJA 2", formatoMonedaConPrefijo(totalEfectivoFisico + numSistema));
             } else {
-                // MODO 1 (SIN S. SISTEMA): GUARDA SALDO INICIAL EN HOJA 1 Y ACTIVA GUARDADO DE CAJA
                 const payloadSaldoInicial = {
                     accion: "fijar_saldo_inicial",
                     saldoInicial: totalEfectivoFisico
@@ -3040,8 +3323,8 @@
             if (contextoPrincipal === 'caja') {
                 if (granTotalNumerico > 0) {
                     const listaOpciones = (modoOperacion === 'retiro' || modoOperacion === 'deposito') 
-                        ? ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8'] 
-                        : ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8'];
+                        ? ['p1', 'p2', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10'] 
+                        : ['b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10'];
 
                     if (!cuadroVinculado || !listaOpciones.includes(cuadroVinculado)) {
                         if (cuadroVinculado) {
@@ -3054,7 +3337,7 @@
                         cuadroVinculado = null;
                         for (let id of listaOpciones) {
                             let cajaFisica = document.getElementById(id);
-                            if (cajaFisica.value.trim() === '') {
+                            if (cajaFisica && cajaFisica.value.trim() === '') {
                                 cuadroVinculado = id;
                                 break;
                             }
@@ -3109,7 +3392,6 @@
             return false;
         }
 
-        // Engranaje visible únicamente en el panel de Monedas
         function actualizarVisibilidadEngranajeMonedas(esMonedas) {
             const btn = document.getElementById('btnAjustesMonedas');
             if (btn) {
@@ -3172,7 +3454,7 @@
             if (containerId === 'app-caja') {
                 if (ultimoInputCajaActivo) {
                     const inputRecordado = document.getElementById(ultimoInputCajaActivo);
-                    if (inputRecordado && !inputRecordado.readOnly) {
+                    if (inputRecordado && !inputRecordado.readOnly && inputRecordado.offsetParent !== null) {
                         inputRecordado.focus({ preventScroll: true });
                         return;
                     }
@@ -3180,7 +3462,7 @@
                 let selector = (modoOperacion === 'recibo') ? `#swipeRecibo input:not([readonly])` : `#swipeEfectivo input:not([readonly])`;
                 let inputsPrioridad = document.querySelectorAll(selector);
                 for (let i = 0; i < inputsPrioridad.length; i++) {
-                    if (inputsPrioridad[i].value === '' || inputsPrioridad[i].value === '0') {
+                    if (inputsPrioridad[i].offsetParent !== null && (inputsPrioridad[i].value === '' || inputsPrioridad[i].value === '0')) {
                         inputsPrioridad[i].focus({ preventScroll: true });
                         ultimoInputCajaActivo = inputsPrioridad[i].id;
                         return;
@@ -3253,6 +3535,7 @@
                 guardarEstadoEnStorage();
             } else {
                 registrarFocoCaja(input);
+                actualizarExpansionInteligenteBloques();
                 guardarValoresModoActual();
                 calcularTodoCaja();
             }
@@ -3345,7 +3628,7 @@
             if (dotMulti) dotMulti.classList.toggle('on', guardarMovimientosActivo);
             if (sub) {
                 sub.innerText = guardarMovimientosActivo 
-                    ? "ACTIVO: Cola garantizada registrando cada Enter en la Hoja 1" 
+                    ? "ACTIVO: Cola garantizada registrando cada Enter sin duplicados" 
                     : "DESACTIVADO: La Caja opera localmente sin enviar a la Hoja 1";
             }
         }
@@ -3473,7 +3756,7 @@
             reader.readAsDataURL(file);
         }
 
-        // Inicialización con restauración blindada y vaciado de cola pendiente
+        // Inicialización general
         cargarColaPersistente();
         renderizarListasVisuales();
         restaurarEstadoDesdeStorage();
@@ -3488,6 +3771,7 @@
         calcularCuadreCierre();
 
         window.onload = () => {
+            posicionarBotonesAuxiliaresCajaPorDefecto();
             if (contextoPrincipal === 'cierre') {
                 switchMainApp('app-cierre');
                 enfocarSiguienteInputVisible('app-cierre');
@@ -3495,7 +3779,7 @@
                 switchMainApp('app-caja');
                 enfocarSiguienteInputVisible('app-caja');
             }
-            verificarSiTecladoTapaBurbuja();
+            verificarSiTecladoTapaElementosFijos();
             procesarColaSheets();
         };
     </script>
