@@ -1,108 +1,90 @@
-# Mejoras Offline: Exportador .XLSX Binario Nativo, Borrado Contextual en Hojas y Limpieza de Ajustes
+# Consolidación Monolítica en `index.html` para GitHub Pages — Sistema Ágil Unificado Agente BCP
 
-Esta actualización incorpora un empaquetador OpenXML (`.xlsx`) binario 100% nativo en cliente con integración de Web Share API para Android, reestructura la barra superior de la vista de Hojas Locales con un control de borrado contextual instantáneo y simplifica el modal de configuración.
+Consolidación integral de toda la aplicación y sus tres mejoras operativas recientes dentro de un único archivo raíz `index.html` autocontenido en HTML, CSS y JavaScript vanilla puro, eliminando los archivos auxiliares de compilación para que el repositorio funcione directamente en GitHub Pages y de forma 100% offline.
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> Se han confirmado las decisiones de diseño e interacción para el control de borrado y el modal de ajustes:
+> Se han confirmado las decisiones clave para la estructura final del repositorio y la arquitectura del código embebido:
 
-- **Decisión Confirmada 1 (Selector Rápido en Hoja 1)**: Al pulsar `🗑️ BORRAR` estando en la Hoja 1 (Movimientos), se desplegará un **menú desplegable compacto (popover)** justo debajo del botón con dos acciones directas: *Borrar Solo Movimientos* (conservando el Efectivo Inicial) y *Borrar Efectivo Inicial* (conservando los movimientos). Estando en la Hoja 2 (Cierre General), el botón ejecutará la limpieza directa en `0.00 ms` con confirmación visual inmediata.
-- **Decisión Confirmada 2 (Limpieza del Modal de Configuración)**: Se removerán los botones de borrado de hojas de **ambas pestañas** del modal de ajustes (*Config. Caja* y *Config. Cierre*), centralizando toda la gestión de limpieza de registros directamente en la pantalla de Hojas BCP.
-- **Empaquetado OpenXML Nativo sin Dependencias Externas**: El archivo `BCP_Caja_y_Cierre.xlsx` se construirá en memoria mediante un empaquetador ZIP propio en TypeScript (cálculo CRC-32 IEEE 802.3, cabeceras Local File Header, Central Directory y End of Central Directory) con estructura OpenXML completa (`[Content_Types].xml`, `_rels/.rels`, `xl/workbook.xml`, `xl/_rels/workbook.xml.rels`, `xl/styles.xml`, `xl/worksheets/sheet1.xml` y `xl/worksheets/sheet2.xml`), garantizando compatibilidad nativa en Microsoft Excel Mobile y Google Sheets sin alertas de archivo dañado ni necesidad de conexión a internet.
+- **Decisión Confirmada 1 (Estructura del Repositorio)**: Se conservarán únicamente `index.html` y `README.md` en la raíz del proyecto, eliminando la carpeta de código fuente modular y los archivos de configuración de empaquetado (`src/`, `package.json`, `tsconfig.json`, `vite.config.ts`, `metadata.json` y `bun.lock`).
+- **Decisión Confirmada 2 (Arquitectura Monolítica Vanilla)**: El archivo `index.html` estará construido íntegramente con HTML5, CSS3 y JavaScript Vanilla puro (ES6+), sin dependencias externas ni enlaces a módulos externos, garantizando ejecución instantánea al abrir el archivo o desplegarlo en GitHub Pages.
 
 ---
 
 ## 1. Overview & Core Concept
 
-- **Qué Hace**: Permite exportar y compartir por WhatsApp, Excel o Google Sheets un libro `.xlsx` binario real desde cualquier dispositivo Android sin conexión a internet, además de ofrecer limpieza contextual ultrarrápida desde la vista de Hojas BCP.
-- **Audiencia Objetivo**: Cajeros y operadores de Agentes BCP que trabajan desde smartphones Android y requieren velocidad de respuesta de `0.00 ms`, legibilidad de alto contraste y exportación contable inmediata al cierre del turno.
-- **Valor Principal**: Elimina las advertencias de formato incompatible en aplicaciones móviles de hojas de cálculo al reemplazar el antiguo XML plano (`.xls`) por un contenedor ZIP OpenXML (`.xlsx`) estándar, y reduce los pasos necesarios para depurar movimientos o reiniciar el cierre.
+- **What It Does**: Proporciona a los operadores de Agente BCP una herramienta ultrarrápida en un solo archivo (`index.html`) para calcular cobros de servicios, depósitos y retiros, contabilizar fajos, billetes y monedas con imágenes personalizables, registrar movimientos en hojas locales (Hoja 1 y Hoja 2) y exportar reportes contables en formato binario `.xlsx` nativo.
+- **Target Audience / Persona**: Operadores y cajeros de Agentes BCP que trabajan desde dispositivos móviles Android o terminales con teclado numérico y requieren respuesta instantánea (`0.00 ms`), funcionamiento sin conexión a internet y despliegue directo en GitHub Pages.
+- **Key Value**: Portabilidad absoluta en un único archivo monolítico sin pasos de compilación, manteniendo intactos los blindajes táctiles, atajos de teclado físico y compatibilidad nativa con Microsoft Excel y Google Sheets en Android.
 
 ---
 
 ## 2. User Experience & Visual Design
 
-- **Flujos de Usuario Clave**:
-  1. **Exportación y Compartido Nativo (`.xlsx`)**:
-     - El operador toca el botón `📥 EXCEL` en la barra superior de `HOJAS BCP`.
-     - El sistema construye en milisegundos el archivo binario `BCP_Caja_y_Cierre.xlsx` con dos hojas formateadas (*Hoja 1 - Movimientos* y *Hoja 2 - Cierre General*).
-     - Si el navegador móvil soporta `navigator.canShare` con archivos, se abre la bandeja nativa de Android (compartir por WhatsApp, abrir directo en Excel/Google Sheets); en caso contrario (o en escritorio), se inicia la descarga directa del archivo `.xlsx`.
-  2. **Borrado Contextual en `HOJAS BCP`**:
-     - La barra superior muestra a la izquierda `← Volver`, al centro el título compacto `HOJAS BCP`, y a la derecha los botones `🗑️ BORRAR` y `📥 EXCEL`.
-     - **En Hoja 1 (Movimientos)**: Al tocar `🗑️ BORRAR`, se despliega un menú flotante compacto bajo el botón con las opciones:
-       - `🧹 Borrar Solo Movimientos` *(Conserva Efectivo Inicial)*
-       - `💰 Borrar Efectivo Inicial` *(Conserva Movimientos)*
-       Al elegir cualquiera, se ejecuta en `0.00 ms`, el botón muestra confirmación (`✅ ¡LIMPIO!`) y el menú se cierra automáticamente.
-     - **En Hoja 2 (Cierre General)**: Al tocar `🗑️ BORRAR`, se limpia inmediatamente el Cierre General guardado sin afectar la Hoja 1, mostrando el estado `✅ ¡LIMPIO!` en el botón durante `600 ms`.
-  3. **Menú de Configuración Simplificado (`⚙️`)**:
-     - En *Config. Caja*: Muestra exclusivamente el interruptor iOS para activar/desactivar el guardado automático de movimientos y la nota informativa de latencia cero.
-     - En *Config. Cierre*: Muestra únicamente el editor de Capital Base / Remesa Asignada y los selectores de fotografías personalizadas para billetes y monedas.
-
-- **Identidad Visual y Tema**:
-  - *Estética*: Utilitaria bancaria de alta precisión, manteniendo intacta la paleta oficial BCP (`--bcp-blue: #002A8D`, `--bcp-orange: #FF6A00`, verde éxito `#16a34a` y rojo alerta `#dc2626`).
-  - *Tipografía y Jerarquía*: Numerales tabulares (`font-variant-numeric: tabular-nums`) en todas las tablas y tarjetas de saldo; controles de una sola línea (`whitespace-nowrap`) en la cabecera para evitar desbordamientos en pantallas de `360px–430px`.
-  - *Blindaje Táctil*: Se conserva el bloqueo de scroll vertical global en operación, el ocultamiento total del teclado numérico dentro de `HOJAS BCP` y la respuesta háptica (`navigator.vibrate`).
+- **Key User Flows**:
+  1. **Operación de Caja (`SERVICIO`, `DEPÓSITO`, `RETIRO`)**: Ingreso veloz en grillas dinámicas de 4 a 6 casillas con formato automático de céntimos (`0.00`), cálculo en tiempo real de vuelto/faltante/comisión y registro directo en Hoja 1 al presionar `Enter`.
+  2. **Cierre de Caja y Multiplicador (`EFECTIVO`)**: Cuadre instantáneo frente al saldo del sistema y capital de trabajo, con desglose interactivo de billetes (`S/ 200` a `S/ 10`) y monedas (`S/ 5.00` a `S/ 0.10`), soporte de subida y compresión de imágenes reales y sonido sintético de conteo.
+  3. **Vista `HOJAS BCP` y Borrado Contextual (`🗑️ BORRAR`)**:
+     - En **Hoja 1 (Movimientos)**: Al pulsar `🗑️ BORRAR`, se despliega un menú flotante compacto bajo el botón con dos acciones directas: `🧹 Solo Movimientos` y `💵 Efectivo Inicial`, con confirmación de segundo toque.
+     - En **Hoja 2 (Cierre General)**: Al pulsar `🗑️ BORRAR` y confirmar con el segundo toque, se limpia en `0.00 ms` todo el conteo de billetes, monedas, fajos, efectivo manual y saldo del sistema sin alterar la Hoja 1.
+  4. **Exportación `.XLSX` Real y Web Share API (`📥 EXCEL`)**: Empaquetado binario OpenXML (`.xlsx`) en memoria que invoca el selector nativo de Android (`navigator.share` / `navigator.canShare`) para abrir o enviar directamente `BCP_Caja_y_Cierre.xlsx` por WhatsApp, Excel o Google Sheets, o descargarlo localmente si el navegador no soporta compartición de archivos.
+- **Visual Identity & Theme**:
+  - *Aesthetic Direction*: Diseño utilitario financiero de alta densidad, optimizado para operación con una sola mano y lectura inmediata bajo cualquier condición de luz.
+  - *Color Palette & Mood*: Identidad corporativa BCP (`--bcp-blue: #002A8D`, `--bcp-orange: #FF6A00`) combinada con codificación semántica por operación: Amarillo Recibo (`#eab308`), Turquesa Depósito (`#0d9488`) y Carmesí Retiro (`#e11d48`), sobre fondo neutro (`#F1F5F9`).
+  - *Typography & Hierarchy*: Tipografía de sistema sin serifa de renderizado nativo con disciplina numérica tabular estricta (`font-variant-numeric: tabular-nums`) y escalado fluido (`clamp()`) para importes totales.
+  - *Component Styling & Layout*: Blindaje vertical (`100dvh`, `overflow: hidden`) en vistas operativas para evitar desplazamientos accidentales, botones de toque rápido con áreas de impacto ergonómicas ($\ge 44\text{px}$) y navegación por gestos horizontales (`swipe`).
+- **Interactive Feedback & Motion**: Respuesta táctil (`navigator.vibrate`), síntesis de audio Web Audio API sin archivos externos, animaciones en compositor (`transform`, `opacity` en $\le 150\text{ms}$) y botón flotante arrastrable (`btnGoogleSwitcher`) con persistencia de coordenadas.
 
 ---
 
 ## 3. Key Product Decisions & Trade-Offs
 
-- **Decisión 1: Generador ZIP + OpenXML Nativo en Memoria vs. Librerías Pesadas**
-  - *Enfoque Elegido*: Implementar un motor ligero de empaquetado ZIP sin compresión (`STORE`, método `0`) con tabla CRC-32 precalculada y plantillas XML estrictas del estándar ECMA-376 OpenXML (`xl/styles.xml` con formatos numéricos `#,##0.00` y colores contables negro/rojo).
-  - *Por Qué*: Funciona 100% offline, pesa menos de 4 KB, se ejecuta de forma síncrona en pocos milisegundos y produce un binario `.xlsx` puro que tanto Excel para Android como Google Sheets abren sin ningún aviso de seguridad o corrupción.
-- **Decisión 2: Integración de Web Share API con Fallback Automático**
-  - *Enfoque Elegido*: Construir un objeto `File` con MIME type oficial `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`. Si `navigator.canShare && navigator.canShare({ files: [file] })` es verdadero, invocar `await navigator.share({ files: [file], title: 'BCP Caja y Cierre' })`; si el usuario cancela el diálogo no se dispara error, y si el navegador no soporta compartir archivos, se ejecuta el fallback de descarga directa por `URL.createObjectURL`.
-  - *Por Qué*: En dispositivos Android permite enviar el reporte por WhatsApp o abrirlo en Excel con un solo toque, manteniendo compatibilidad total en navegadores de escritorio.
+- **Decisión 1: Consolidación en HTML/CSS/JS Vanilla Monolítico**
+  - *Chosen Approach*: Integrar todos los estilos en `<style>`, la estructura de las 4 pantallas y el modal en `<body>`, y toda la lógica de negocio + generador ZIP/OpenXML en `<script>` dentro de `/index.html`.
+  - *Why*: Permite alojar el proyecto directamente en GitHub Pages desde la rama principal sin procesos de build ni dependencias de Node.js, además de permitir abrir `index.html` localmente en cualquier dispositivo.
+  - *Alternatives Considered*: Mantener la estructura React/Vite requería compilación previa o ramas de despliegue separadas (`gh-pages`), lo cual iba en contra del requisito de repositorio estático limpio.
+- **Decisión 2: Generador `.XLSX` OpenXML Nativo sin Librerías Externas**
+  - *Chosen Approach*: Construcción en JavaScript puro de los flujos XML (`[Content_Types].xml`, `_rels/.rels`, `xl/workbook.xml`, `xl/_rels/workbook.xml.rels`, `xl/styles.xml`, `xl/worksheets/sheet1.xml`, `xl/worksheets/sheet2.xml`) empaquetados en un contenedor binario ZIP válido con cálculo CRC-32 por tabla en `Uint8Array`.
+  - *Why*: Garantiza peso cero en librerías externas, funcionamiento 100% offline y compatibilidad total con las aplicaciones móviles de Microsoft Excel y Google Sheets en Android.
+- **Decisión 3: Centralización del Borrado de Hojas**
+  - *Chosen Approach*: Ubicar el control `🗑️ BORRAR` directamente en la barra superior de `HOJAS BCP` con comportamiento contextual según la pestaña activa, y eliminar los botones redundantes de borrado de hojas en ambas pestañas del modal de Configuración (`⚙️`).
+  - *Why*: Simplifica el modal de ajustes (dejándolo exclusivamente para parámetros como Efectivo Inicial, Capital Base y fotos de billetes/monedas) y permite limpiar registros viendo los datos en pantalla.
 
 ---
 
-## 4. Technical Architecture & Data Strategy
+## 4. Technical Architecture & Data Strategy *(Technical Reference)*
 
-### Architecture & Component Diagram
+- **Architecture & Component Diagram**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        App State & LocalStorage                         │
-│   • hoja1Data (Efectivo Inicial + Movimientos[])                        │
-│   • hoja2Data (Cierre General archivado o cálculo en vivo)              │
-│   • capitalBase, guardarMovimientosActivo                               │
-└───────────────────┬─────────────────────────────────┬───────────────────┘
-                    │                                 │
-                    ▼                                 ▼
-┌───────────────────────────────────────┐ ┌───────────────────────────────┐
-│            HojasLocalesView           │ │         AjustesModal          │
-│ ┌───────────────────────────────────┐ │ │ • Tab Config. Caja:           │
-│ │ Top Bar: [← Volver]  HOJAS BCP    │ │ │   - Switch Guardar Movs       │
-│ │          [🗑️ BORRAR] [📥 EXCEL]   │ │ │ • Tab Config. Cierre:         │
-│ └─────────┬─────────────────┬───────┘ │ │   - Editor Capital Base       │
-│           │                 │         │ │   - Fotos Billetes y Monedas  │
-│  (Contextual Delete)        │         │ │   (Sin botones de borrado)    │
-│           ▼                 ▼         │ └───────────────────────────────┘
-│ ┌───────────────────┐ ┌─────────────┐ │
-│ │ Hoja 1: Popover   │ │ Generador   │ │
-│ │ • Solo Movimientos│ │ Binario     │ │
-│ │ • Efectivo Inicial│ │ OpenXML ZIP │ │
-│ │                   │ │ (.xlsx)     │ │
-│ │ Hoja 2: Directo   │ │ + CRC32     │ │
-│ │ • Limpia Cierre   │ │ + Web Share │ │
-│ └───────────────────┘ └─────────────┘ │
-└───────────────────────────────────────┘
+│                     /index.html (Monolito Autocontenido)                │
+├───────────────────────┬─────────────────────────┬───────────────────────┤
+│   <style> Embebido    │     DOM Multi-Vista     │  <script> Vanilla JS  │
+│  • Variables BCP      │  • #app-caja            │  • Estado + Storage   │
+│  • Blindaje 100dvh    │  • #app-cierre          │  • Motor Aritmético   │
+│  • Temas Operativos   │  • #app-multiplicador   │  • Borrado Contextual │
+│  • Menú Borrar Popover│  • #app-movimientos     │  • Motor ZIP / .XLSX  │
+│  • Controles Flotantes│  • #modalAjustes        │  • Web Share API      │
+└───────────────────────┴───────────┬─────────────┴───────────┬───────────┘
+                                    │                         │
+                                    ▼                         ▼
+                        ┌───────────────────────┐ ┌───────────────────────┐
+                        │   localStorage BCP    │ │  BCP_Caja_y_Cierre    │
+                        │ • bcp_hoja1_data_v1   │ │        .xlsx          │
+                        │ • bcp_hoja2_data_v1   │ │ • Hoja 1: Movimientos │
+                        │ • bcp_caja_modos_v1   │ │ • Hoja 2: Cierre Gral │
+                        │ • bcp_billetes/monedas│ │ • navigator.share()   │
+                        └───────────────────────┘ └───────────────────────┘
 ```
 
-### Data Model & OpenXML Structure
-- **Estructura interna del archivo `BCP_Caja_y_Cierre.xlsx` (ZIP)**:
-  - `[Content_Types].xml`: Define los tipos MIME de relaciones, workbook, hojas y estilos.
-  - `_rels/.rels`: Relación raíz hacia `xl/workbook.xml`.
-  - `xl/workbook.xml` y `xl/_rels/workbook.xml.rels`: Declara las hojas `Hoja 1 - Movimientos` (`sheet1.xml`) y `Hoja 2 - Cierre General` (`sheet2.xml`) junto con `styles.xml`.
-  - `xl/styles.xml`: Define fuentes (calibri normal, negrita, texto blanco de cabecera, texto rojo `#DC2626` para retiros/faltantes), rellenos de cabecera y formato numérico `#,##0.00`.
-  - `xl/worksheets/sheet1.xml`: Contiene el resumen superior de Efectivo Inicial y Efectivo Actual, seguido de la tabla de movimientos con celdas tipadas (`t="n"` para montos y correlativos, `t="inlineStr"` para textos).
-  - `xl/worksheets/sheet2.xml`: Contiene el desglose de fajos, billetes, monedas y el bloque de cuadre final (Total Efectivo, Saldo Sistema, Capital Total E+S, Capital Base y Diferencia).
-
-### Interactive Component & State Mapping
-- **Cabecera de `HojasLocalesView`**:
-  - Título actualizado a `HOJAS BCP`.
-  - Estado local `menuBorrarAbierto: boolean` que se cierra automáticamente al cambiar entre Hoja 1 y Hoja 2 o al tocar fuera del menú.
-  - Estado local `confirmacionBorrado: boolean` para mostrar `✅ LIMPIO` en el botón `🗑️ BORRAR` tras ejecutar una limpieza.
-- **Limpieza en `AjustesModal`**:
-  - Eliminación de los botones de borrado de Hoja 1 y Hoja 2 en ambas pestañas del modal y limpieza de las propiedades innecesarias en el componente.
+- **Data Model & State**:
+  - `bcp_caja_modos_v1`: Estado independiente por modo (`recibo`, `deposito`, `retiro`) con arreglos de valores para las grillas izquierda y derecha.
+  - `bcp_hoja1_data_v1`: Efectivo inicial, efectivo actual en tiempo real y lista cronológica de movimientos (`fecha`, `tipo`, `descripcion`, `entradas`, `salidas`, `caja`).
+  - `bcp_hoja2_data_v1`: Instantánea sincronizada del Cierre General (desglose de billetes y monedas, fajos, efectivo manual, saldo sistema, capital base y diferencia).
+  - `bcp_billetes_v2` / `bcp_monedas_v1` y `bcp_img_billete_*` / `bcp_img_moneda_*`: Cantidades del multiplicador e imágenes personalizadas comprimidas en Base64.
+- **Interactive Component & State Mapping**:
+  - **Cabecera `HOJAS BCP`**: Muestra el título compacto `HOJAS BCP`, el botón `🗑️ BORRAR` (con menú desplegable en Hoja 1 y acción directa de doble toque en Hoja 2) y el botón `📥 EXCEL`.
+  - **Modal `⚙️ Configuración`**: Contiene únicamente los campos de Efectivo Inicial (pestaña Caja), Capital Base e imágenes personalizadas de billetes y monedas (pestaña Cierre), sin botones de borrado de hojas.
+  - **Atajos de Teclado Físico**: Tecla `-` para cambiar entre modos (`SERVICIO` → `DEPÓSITO` → `RETIRO`), tecla `,` para saltar entre columna de cobros y pagos, y tecla `Enter` para registrar la operación en Hoja 1 y limpiar la pantalla.
