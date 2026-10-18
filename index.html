@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>Sistema Ágil Unificado - Agente BCP</title>
-    <!-- Pre-conexión de alta velocidad para Cero Latencia con Google Sheets -->
-    <link rel="preconnect" href="https://script.google.com" crossorigin>
-    <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-    <link rel="dns-prefetch" href="https://script.google.com">
-    <link rel="dns-prefetch" href="https://script.googleusercontent.com">
     <style>
         :root {
             --bcp-blue: #002A8D;
@@ -55,7 +50,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* BLINDAJE VERTICAL COMPLETO: CERO SCROLL ARRIBA/ABAJO */
+        /* BLINDAJE VERTICAL COMPLETO EN OPERACIÓN: CERO SCROLL ARRIBA/ABAJO */
         html, body { 
             width: 100%;
             height: 100%;
@@ -79,7 +74,7 @@
             width: 100%;
             height: 100%;
             overflow-y: hidden;
-            animation: fadeInScreen 0.14s ease-out forwards;
+            animation: fadeInScreen 0.12s ease-out forwards;
         }
 
         .main-app-container.active-app {
@@ -251,7 +246,7 @@
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
 
-        /* Fila inteligente 5 y 6 en Página 1 (Oculta por defecto, se despliega al llenar 1..4) */
+        /* Fila inteligente 5 y 6 en Página 1 (Se despliega al llenar 1..4) */
         .fila-extra-expandible {
             display: none;
             grid-template-columns: 1fr 1fr;
@@ -276,7 +271,6 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.04); 
             transition: height 0.12s ease;
         }
-        /* Ajuste sutil de altura cuando el bloque tiene 6 cuadros activos en Pág. 1 para encajar perfecto */
         .caja-contenedor.bloque-con-6 input {
             height: 38px;
             font-size: clamp(21px, 6.2vw, 26px);
@@ -445,8 +439,22 @@
             justify-content: center;
             user-select: none;
             touch-action: manipulation;
+            position: relative;
         }
         .btn-modo-operacion:active { transform: scale(0.97); }
+
+        /* Indicador discreto cuando un modo inactivo tiene una operación enganchada lista para guardarse con Enter */
+        .btn-modo-operacion.tiene-operacion-pendiente::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            right: 5px;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background-color: var(--bcp-orange);
+            box-shadow: 0 0 4px rgba(255, 106, 0, 0.8);
+        }
 
         #btn-modo-deposito { background-color: #e6fffa; color: #0d9488; border-color: #99f6e4; }
         #btn-modo-deposito.active-modo {
@@ -467,8 +475,8 @@
         }
 
         /* ===============================================================
-           BOTONES ESTÁTICOS REUBICABLES: "BORRAR" Y "ANULAR" (MISMO TAMAÑO QUE MODOS)
-           Colores distintos a verde/amarillo/rojo · Ocultos bajo el teclado
+           BOTONES ESTÁTICOS REUBICABLES: "BORRAR", "MOVIMIENTOS" Y "ANULAR"
+           Tono gris pizarra neutro y desapercibido que no cansa la vista
            =============================================================== */
         .btn-aux-caja-fijo {
             position: fixed;
@@ -476,33 +484,36 @@
             height: 43px;
             width: calc((min(100vw, 520px) - 18px) / 3);
             border-radius: 7px;
-            font-size: 12.5px;
+            font-size: 11.5px;
             font-weight: 900;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.3px;
             text-transform: uppercase;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
             user-select: none;
             z-index: 940;
-            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.08);
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 2px solid #94a3b8;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
             touch-action: none;
         }
         .btn-aux-caja-fijo svg {
-            width: 15px;
-            height: 15px;
+            width: 14px;
+            height: 14px;
             flex-shrink: 0;
             pointer-events: none;
+            opacity: 0.85;
         }
         .btn-aux-caja-fijo:active {
             transform: scale(0.96);
         }
-        /* Estado cuando el usuario mantiene presionado 0.38s para reubicarlo */
         .btn-aux-caja-fijo.modo-reubicacion {
-            box-shadow: 0 0 0 3px var(--bcp-orange), 0 8px 18px rgba(0,0,0,0.25) !important;
-            transform: scale(1.04);
+            box-shadow: 0 0 0 3px #64748b, 0 8px 18px rgba(0,0,0,0.22) !important;
+            transform: scale(1.03);
             z-index: 990;
         }
         .btn-aux-caja-fijo.oculto {
@@ -513,33 +524,14 @@
             visibility: hidden !important;
             pointer-events: none !important;
         }
-
-        /* 1. Botón BORRAR (Gris Pizarra Acero - debajo de DEPÓSITO) */
-        #btnCajaBorrar {
-            background-color: #e2e8f0;
-            color: #1e293b;
-            border: 2px solid #94a3b8;
-        }
-        #btnCajaBorrar.confirmado {
+        .btn-aux-caja-fijo.confirmado {
             background-color: #334155 !important;
             color: #ffffff !important;
-            border-color: #0f172a !important;
-        }
-
-        /* 2. Botón ANULAR (Índigo Contable - debajo de RETIRO) */
-        #btnCajaAnular {
-            background-color: #e0e7ff;
-            color: #1e1b4b;
-            border: 2px solid #6366f1;
-        }
-        #btnCajaAnular.confirmado {
-            background-color: #312e81 !important;
-            color: #ffffff !important;
-            border-color: #1e1b4b !important;
+            border-color: #1e293b !important;
         }
 
         /* ===============================================================
-           CONMUTADOR CIRCULAR FLOTANTE 2D (SIN PUNTO VERDE Y FIJO BAJO TECLADO)
+           CONMUTADOR CIRCULAR FLOTANTE 2D
            =============================================================== */
         .google-account-switcher {
             position: fixed;
@@ -610,7 +602,7 @@
         }
 
         /* =========================================================
-           PANTALLA 2: CIERRE DE CAJA BCP (ORDEN JERÁRQUICO LIMPIO)
+           PANTALLA 2: CIERRE DE CAJA BCP (CON CONEXIÓN INTELIGENTE DE EFECTIVO)
            ========================================================= */
         .top-bar-cierre {
             display: flex;
@@ -672,7 +664,7 @@
         }
         .btn-config-cierre:active { transform: scale(0.92); }
 
-        /* 1° CUADRO DE RESUMEN CONTABLE */
+        /* 1° CUADRO DE RESUMEN CONTABLE CON SINCRONIZACIÓN DE MOVIMIENTOS */
         .summary-box {
             background: #ffffff;
             border: 2px solid var(--bcp-blue);
@@ -698,6 +690,21 @@
             border-radius: 8px;
         }
         .summary-row.row-efectivo:active { background-color: #f1f5f9; }
+
+        /* Fila adicional inteligente que aparece solo si hay Efectivo de Movimientos Y el cajero cuenta billetes manualmente */
+        .summary-row.row-efectivo-manual-extra {
+            display: none;
+            cursor: pointer;
+            user-select: none;
+            padding: 2px 6px;
+            margin: -2px -6px 4px -6px;
+            border-radius: 7px;
+            background-color: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+        }
+        .summary-row.row-efectivo-manual-extra.activa {
+            display: flex;
+        }
 
         .summary-row.row-total-es {
             margin-bottom: 0;
@@ -730,11 +737,22 @@
             font-weight: 900;
             color: #0f172a;
             letter-spacing: -0.5px;
+            padding: 1px 8px;
+            border-radius: 7px;
+            border: 2px solid transparent;
+        }
+
+        /* Estilo de sincronización cuando el Efectivo viene en vivo desde Movimientos */
+        .summary-value.efectivo-sync-movimientos {
+            background-color: #fefce8 !important;
+            border: 2px dashed #ca8a04 !important;
+            color: #854d0e !important;
         }
 
         .summary-value.val-es {
             color: var(--bcp-blue);
             font-size: clamp(21px, 6vw, 26px);
+            padding-right: 0;
         }
 
         .input-sistema {
@@ -855,21 +873,21 @@
 
         /* 5° BOTÓN DEBAJO DE FAJOS ESPECIALES PARA BORRAR TODO LO EDITADO EN CIERRE */
         .cierre-reset-zone {
-            margin-top: 10px;
+            margin-top: 8px;
             display: flex;
             justify-content: center;
         }
 
         .btn-borrar-todo-cierre {
             width: 100%;
-            height: 38px;
+            height: 37px;
             border-radius: 9px;
             border: 1.5px solid #cbd5e1;
             background: #ffffff;
             color: #475569;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 900;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.4px;
             text-transform: uppercase;
             cursor: pointer;
             display: flex;
@@ -1196,6 +1214,277 @@
         #containerMonedas .item-subtotal { font-size: clamp(23px, 6.4vw, 29px); letter-spacing: -0.6px; }
 
         /* =========================================================
+           PANTALLA 4: HOJAS LOCALES (HOJA 1: MOVIMIENTOS | HOJA 2: CIERRE)
+           100% Local · Deslizable Izquierda/Derecha · Sin Teclado · Exportable
+           ========================================================= */
+        .hojas-locales-wrapper {
+            background-color: var(--bg-light);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .top-bar-hojas {
+            background: var(--bcp-blue);
+            color: #ffffff;
+            padding: 7px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            box-shadow: 0 2px 6px rgba(0, 42, 141, 0.18);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .btn-volver-hojas {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            border-radius: 7px;
+            padding: 5px 10px;
+            font-size: 11.5px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-volver-hojas:active { transform: scale(0.95); }
+
+        .titulo-barra-hojas {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            text-align: center;
+            flex: 1;
+        }
+
+        .btn-descargar-excel {
+            background: #16a34a;
+            border: 1px solid #86efac;
+            color: #ffffff;
+            border-radius: 7px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-descargar-excel:active { transform: scale(0.95); background: #15803d; }
+
+        .tabs-hojas-locales {
+            background: #ffffff;
+            display: flex;
+            border-bottom: 1.5px solid #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        .tab-hoja-btn {
+            flex: 1;
+            padding: 8px 6px;
+            border: none;
+            background: none;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #64748b;
+            border-bottom: 3.5px solid transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            user-select: none;
+        }
+        .tab-hoja-btn.active {
+            color: var(--bcp-blue);
+            background-color: #f1f5f9;
+            border-bottom-color: var(--bcp-blue);
+            font-weight: 900;
+        }
+
+        .slider-hojas-locales {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            width: 100%;
+            flex: 1;
+            touch-action: pan-x;
+        }
+        .slider-hojas-locales::-webkit-scrollbar { display: none; }
+
+        .vista-hoja-individual {
+            flex: 0 0 100%;
+            min-width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            padding: 6px;
+            overflow-y: auto;
+            touch-action: pan-x pan-y !important;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Tarjetas superiores de Efectivo Inicial y Efectivo Actual en Hoja 1 */
+        .resumen-saldos-hoja1 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+
+        .card-saldo-hoja1 {
+            border-radius: 9px;
+            padding: 7px 10px;
+            border: 2px solid;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .card-saldo-inicial {
+            background-color: #ffffff;
+            border-color: #94a3b8;
+            color: #1e293b;
+        }
+        .card-saldo-actual {
+            background-color: #fef9c3;
+            border-color: #eab308;
+            color: #0f172a;
+        }
+        .lbl-card-hoja1 {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            opacity: 0.85;
+        }
+        .val-card-hoja1 {
+            font-size: clamp(18px, 5.2vw, 22px);
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            margin-top: 2px;
+            text-align: right;
+        }
+
+        /* Tabla profesional de Hoja 1 y Hoja 2 */
+        .contenedor-tabla-hoja {
+            background: #ffffff;
+            border-radius: 9px;
+            border: 1.5px solid #cbd5e1;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.05);
+        }
+
+        .tabla-bcp-local {
+            width: 100%;
+            border-collapse: collapse;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .tabla-bcp-local th {
+            background-color: #1e293b;
+            color: #ffffff;
+            font-size: 10.5px;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            padding: 7px 6px;
+            border-bottom: 2px solid #0f172a;
+        }
+
+        .tabla-bcp-local td {
+            padding: 6.5px 6px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13.5px;
+            font-weight: 400;
+            color: #000000;
+        }
+
+        .tabla-bcp-local tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        .col-num-op {
+            width: 34px;
+            text-align: center;
+            color: #64748b !important;
+            font-size: 12px !important;
+        }
+        .col-fecha-op {
+            text-align: center;
+            font-size: 12.5px !important;
+            white-space: nowrap;
+        }
+        .col-hora-op {
+            text-align: center;
+            font-size: 12.5px !important;
+            white-space: nowrap;
+        }
+        .col-detalle-op {
+            text-align: left;
+            font-size: 12.5px !important;
+            white-space: nowrap;
+        }
+        .col-monto-op {
+            text-align: right;
+            font-size: 14.5px !important;
+            font-weight: 400 !important;
+            padding-right: 8px !important;
+            white-space: nowrap;
+        }
+        .monto-positivo-negro {
+            color: #000000 !important;
+        }
+        .monto-negativo-rojo {
+            color: #dc2626 !important;
+        }
+
+        .fila-vacia-aviso {
+            text-align: center !important;
+            padding: 24px 10px !important;
+            color: #64748b !important;
+            font-size: 12.5px !important;
+        }
+
+        /* Estilos específicos de Hoja 2 (Cierre General) */
+        .subtitulo-seccion-hoja2 {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 5px 8px;
+            border-top: 1.5px solid #cbd5e1;
+            border-bottom: 1.5px solid #cbd5e1;
+        }
+
+        .tabla-hoja2 td {
+            padding: 5.5px 8px;
+            font-size: 13px;
+        }
+        .fila-cuadre-hoja2 td {
+            font-weight: 800;
+            font-size: 13.5px;
+            background-color: #f8fafc;
+        }
+        .fila-cuadre-destacada td {
+            background-color: #eff6ff !important;
+            color: var(--bcp-blue) !important;
+            font-weight: 900 !important;
+        }
+
+        /* =========================================================
            MODAL DE AJUSTES SEPARADO POR CONTEXTO (CAJA vs CIERRE)
            ========================================================= */
         .modal-config {
@@ -1208,6 +1497,7 @@
             background: white; border-radius: 16px; width: 100%; max-width: 420px;
             max-height: 88vh; overflow-y: auto; padding: 15px;
             box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+            touch-action: pan-y !important;
         }
         .modal-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -1479,17 +1769,24 @@
     </div>
 
     <!-- =========================================================
-         BOTONES ESTÁTICOS REUBICABLES DE CAJA: "BORRAR" Y "ANULAR"
-         (Mismo tamaño que los modos · Ocultos bajo el teclado · Mantener presionado para mover)
+         BOTONES ESTÁTICOS REUBICABLES DE CAJA: "BORRAR", "MOVIMIENTOS" Y "ANULAR"
+         (Mismo tono neutro desapercibido que no cansa la vista · Mantener presionado para mover)
          ========================================================= -->
-    <button type="button" id="btnCajaBorrar" class="btn-aux-caja-fijo" title="Toque: Borrar montos editados · Mantener presionado: Mover ubicación">
+    <button type="button" id="btnCajaBorrar" class="btn-aux-caja-fijo" title="Toque: Borrar montos editados en Caja · Mantener presionado: Mover ubicación">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
         </svg>
         <span id="txtBtnCajaBorrar">BORRAR</span>
     </button>
 
-    <button type="button" id="btnCajaAnular" class="btn-aux-caja-fijo" title="Toque: Anular última operación en Hoja 1 · Mantener presionado: Mover ubicación">
+    <button type="button" id="btnCajaMovimientos" class="btn-aux-caja-fijo" title="Toque: Ver Hoja de Movimientos y Cierre · Mantener presionado: Mover ubicación">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/>
+        </svg>
+        <span id="txtBtnCajaMovimientos">MOVIMIENTOS</span>
+    </button>
+
+    <button type="button" id="btnCajaAnular" class="btn-aux-caja-fijo" title="Toque: Anular última operación · Mantener presionado: Mover ubicación">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>
         </svg>
@@ -1497,7 +1794,7 @@
     </button>
 
     <!-- =========================================================
-         APLICACIÓN 2: CIERRE DE CAJA BCP
+         APLICACIÓN 2: CIERRE DE CAJA BCP (CONECTADA CON MOVIMIENTOS)
          ========================================================= -->
     <div id="app-cierre" class="main-app-container">
         <form id="formCierre" onsubmit="ejecutarGuardadoCierreConEnter(event)" action="javascript:void(0);">
@@ -1516,14 +1813,23 @@
                     </div>
                 </div>
 
-                <!-- 2. CUADRO DE RESUMEN PRINCIPAL: EFECTIVO -> S. SISTEMA -> E + S -->
+                <!-- 2. CUADRO DE RESUMEN PRINCIPAL: EFECTIVO -> (EFECTIVO MANUAL INTELIGENTE) -> S. SISTEMA -> E + S -->
                 <div class="summary-box">
                     <div class="summary-row row-efectivo" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="irAModoEfectivoCierre('tab-billetes')" title="Toca para detallar Billetes y Monedas">
                         <span class="summary-label">
-                            EFECTIVO
+                            <span id="lblTituloEfectivoCierre">EFECTIVO</span>
                             <span class="badge-touch-hint" id="badgeResumenBilletesMonedas">Billetes / Monedas ⇄</span>
                         </span>
                         <span class="summary-value" id="display-efectivo">S/ 0.00</span>
+                    </div>
+
+                    <!-- FILA INTELIGENTE ADICIONAL: Aparece solo si viene Efectivo de Movimientos Y el cajero cuenta manualmente en Cierre -->
+                    <div class="summary-row row-efectivo-manual-extra" id="rowEfectivoManualExtra" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="irAModoEfectivoCierre('tab-billetes')" title="Conteo físico manual activo para el cuadre">
+                        <span class="summary-label" style="font-size:12.5px; color:#0f172a;">
+                            EFECTIVO MANUAL
+                            <span class="badge-touch-hint" id="badgeDetalleConteoManual" style="background:#dcfce7; color:#15803d;">En mano ✓</span>
+                        </span>
+                        <span class="summary-value" id="display-efectivo-manual" style="font-size:clamp(18px, 5vw, 22px); color:#15803d;">S/ 0.00</span>
                     </div>
 
                     <div class="summary-row">
@@ -1545,7 +1851,7 @@
                     </span>
                 </div>
 
-                <!-- 4. PANEL DE RESPUESTA DEL CIERRE (SIN TEXTO SUPERIOR MOLESTO) -->
+                <!-- 4. PANEL DE RESPUESTA DEL CIERRE -->
                 <div class="panel-resultado estado-esperando" id="panelFinalCierre">
                     <div class="texto-final-expresivo" id="textoFinalCierre">ESPERANDO CONTEO...</div>
                     <span class="monto-final" id="montoFinalCierre">S/ 0.00</span>
@@ -1586,7 +1892,7 @@
                     </div>
                 </div>
 
-                <!-- 6. BOTÓN DEDICADO DEBAJO DE FAJOS ESPECIALES PARA BORRAR TODO LO EDITADO EN CIERRE -->
+                <!-- 6. BOTÓN DEDICADO DEBAJO DE FAJOS ESPECIALES PARA BORRAR SOLO LO EDITADO EN CIERRE -->
                 <div class="cierre-reset-zone">
                     <button type="button" class="btn-borrar-todo-cierre" id="btnBorrarTodoPantallaCierre" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="borrarTodoEditadoEnCierrePantalla()">
                         <span>🗑️ BORRAR DATOS EDITADOS DE CIERRE</span>
@@ -1638,7 +1944,81 @@
     </div>
 
     <!-- =========================================================
-         CONMUTADOR CIRCULAR FLOTANTE 2D (SIN PUNTO VERDE Y FIJO BAJO EL TECLADO)
+         APLICACIÓN 4: HOJAS LOCALES (HOJA 1: MOVIMIENTOS | HOJA 2: CIERRE GENERAL)
+         100% Local · Cero Latencia · Sin Teclado Numérico · Deslizable
+         ========================================================= -->
+    <div id="app-movimientos" class="main-app-container">
+        <div class="hojas-locales-wrapper">
+            <div class="top-bar-hojas">
+                <button type="button" class="btn-volver-hojas" onclick="cerrarVistaMovimientosLocal()">
+                    <span>← Volver</span>
+                </button>
+                <div class="titulo-barra-hojas">CONTROL LOCAL BCP</div>
+                <button type="button" class="btn-descargar-excel" onclick="descargarArchivoExcelLocal()">
+                    <span>📥 EXCEL</span>
+                </button>
+            </div>
+
+            <div class="tabs-hojas-locales">
+                <button type="button" class="tab-hoja-btn active" id="btnTabHoja1" onclick="irAPestanaHojaLocal(1)">
+                    <span>📊 Hoja 1: Movimientos</span>
+                </button>
+                <button type="button" class="tab-hoja-btn" id="btnTabHoja2" onclick="irAPestanaHojaLocal(2)">
+                    <span>📋 Hoja 2: Cierre General</span>
+                </button>
+            </div>
+
+            <div class="slider-hojas-locales" id="sliderHojasLocales" onscroll="handleScrollHojasLocales()">
+                <!-- PÁGINA 1: HOJA 1 (MOVIMIENTOS EN TIEMPO REAL) -->
+                <div class="vista-hoja-individual" id="vistaHoja1">
+                    <div class="resumen-saldos-hoja1">
+                        <div class="card-saldo-hoja1 card-saldo-inicial">
+                            <span class="lbl-card-hoja1">Efectivo Inicial</span>
+                            <span class="val-card-hoja1" id="lblHoja1EfectivoInicial">—</span>
+                        </div>
+                        <div class="card-saldo-hoja1 card-saldo-actual">
+                            <span class="lbl-card-hoja1">Efectivo Actual</span>
+                            <span class="val-card-hoja1" id="lblHoja1EfectivoActual">—</span>
+                        </div>
+                    </div>
+
+                    <div class="contenedor-tabla-hoja">
+                        <table class="tabla-bcp-local">
+                            <thead>
+                                <tr>
+                                    <th style="width:36px;">N°</th>
+                                    <th>FECHA</th>
+                                    <th>HORA</th>
+                                    <th style="text-align:left;">DETALLE</th>
+                                    <th style="text-align:right; padding-right:8px;">MOVIMIENTO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyMovimientosHoja1"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PÁGINA 2: HOJA 2 (DETALLE GENERAL DE CIERRE) -->
+                <div class="vista-hoja-individual" id="vistaHoja2">
+                    <div class="contenedor-tabla-hoja">
+                        <table class="tabla-bcp-local tabla-hoja2">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:left; padding-left:8px;">DENOMINACIÓN</th>
+                                    <th style="text-align:center;">CANTIDAD</th>
+                                    <th style="text-align:right; padding-right:8px;">RESULTADO</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyDetalleCierreHoja2"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         CONMUTADOR CIRCULAR FLOTANTE 2D
          ========================================================= -->
     <button type="button" id="btnGoogleSwitcher" class="google-account-switcher" title="Toca para cambiar Caja/Cierre · Arrastra hacia cualquier lugar">
         <div class="switcher-inner-circle">
@@ -1662,7 +2042,6 @@
                 <button type="button" class="btn-close-modal" onclick="cerrarModalAjustes()">✕</button>
             </div>
 
-            <!-- SELECTOR DE PESTAÑA DE CONFIGURACIÓN -->
             <div class="modal-context-tabs">
                 <button type="button" class="btn-tab-modal active" id="tabConfigCaja" onclick="cambiarPestanaModalConfig('caja')">
                     ⚡ Config. Caja (Hoja 1)
@@ -1672,14 +2051,12 @@
                 </button>
             </div>
 
-            <!-- =====================================================
-                 SECCIÓN A: CONFIGURACIÓN EXCLUSIVA DE CAJA PRINCIPAL
-                 ===================================================== -->
+            <!-- SECCIÓN A: CONFIGURACIÓN EXCLUSIVA DE CAJA PRINCIPAL -->
             <div id="panelConfigCaja" class="seccion-config-panel active">
                 <div class="switch-hero-card">
                     <div>
                         <div class="switch-info-title">Guardar Movimientos en Hoja 1</div>
-                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Escudo Anti-Duplicados y Cola Garantizada activos</div>
+                        <div class="switch-info-sub" id="txtSubEstadoSwitch">Registro local instantáneo (0.00 ms) sin fallas</div>
                     </div>
                     <label class="ios-switch">
                         <input type="checkbox" id="chkGuardarMovimientos" onchange="cambiarEstadoGuardadoMovimientos(this.checked)">
@@ -1690,18 +2067,16 @@
                 <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
                     🧹 Borrado Inteligente desde Caja (Hoja 1)
                 </div>
-                <button type="button" class="btn-accion-hoja" id="btnBorrarSoloMovimientos" onclick="ejecutarAccionHojaRemota('borrar_solo_movimientos', 'btnBorrarSoloMovimientos')" style="margin-bottom: 8px;">
+                <button type="button" class="btn-accion-hoja" id="btnBorrarSoloMovimientos" onclick="ejecutarLimpiezaLocalHoja('borrar_solo_movimientos', 'btnBorrarSoloMovimientos')" style="margin-bottom: 8px;">
                     🧹 Borrar Solo Movimientos de Caja (Hoja 1)<br>
-                    <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Saldo Inicial)</span>
+                    <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Efectivo Inicial)</span>
                 </button>
                 <div class="nota-explicativa-config">
-                    💡 <b>Doble Escudo Anti-Duplicados:</b> Cada operación viaja con huella única (<b>idUnico</b>) por un canal único sin doble disparo, impidiendo filas repetidas.
+                    💡 <b>100% Local y Cero Latencia:</b> Todas las operaciones (incluyendo operaciones enganchadas entre modos) se registran en <b>0.00 ms</b> en la memoria interna de tu celular.
                 </div>
             </div>
 
-            <!-- =====================================================
-                 SECCIÓN B: CONFIGURACIÓN EXCLUSIVA DE CIERRE DE CAJA
-                 ===================================================== -->
+            <!-- SECCIÓN B: CONFIGURACIÓN EXCLUSIVA DE CIERRE DE CAJA -->
             <div id="panelConfigCierre" class="seccion-config-panel">
                 <div class="bloque-base-config">
                     <label for="input-base-config">💰 Capital Base / Remesa Asignada (S/)</label>
@@ -1712,23 +2087,23 @@
                 </div>
 
                 <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
-                    🏦 Borrado Independiente en Google Sheets
+                    🏦 Borrado Independiente de Hojas Locales
                 </div>
                 <div class="grid-limpieza-hojas">
-                    <button type="button" class="btn-accion-hoja btn-danger-soft" id="btnBorrarSaldoInicial" onclick="ejecutarAccionHojaRemota('borrar_saldo_inicial', 'btnBorrarSaldoInicial')">
-                        🗑️ Borrar Saldo Inicial<br>
+                    <button type="button" class="btn-accion-hoja btn-danger-soft" id="btnBorrarSaldoInicial" onclick="ejecutarLimpiezaLocalHoja('borrar_saldo_inicial', 'btnBorrarSaldoInicial')">
+                        🗑️ Borrar Efectivo Inicial<br>
                         <span style="font-size:10px; font-weight:700;">(Solo en Hoja 1)</span>
                     </button>
-                    <button type="button" class="btn-accion-hoja" id="btnLimpiarCierreHojas" onclick="ejecutarAccionHojaRemota('limpiar_cierre', 'btnLimpiarCierreHojas')">
+                    <button type="button" class="btn-accion-hoja" id="btnLimpiarCierreHojas" onclick="ejecutarLimpiezaLocalHoja('limpiar_cierre', 'btnLimpiarCierreHojas')">
                         🧹 Borrar Cierre General<br>
                         <span style="font-size:10px; font-weight:700;">(Solo en Hoja 2)</span>
                     </button>
                 </div>
 
                 <div class="nota-explicativa-config">
-                    💡 <b>Envío inteligente con Enter en Cierre:</b><br>
-                    • <b>Sin S. Sistema:</b> Envía el <b>Saldo Inicial</b> a la <b>Hoja 1</b> y activa el guardado de Caja.<br>
-                    • <b>Con S. Sistema:</b> Llena todos los cuadros del <b>Cierre General</b> en la <b>Hoja 2</b>.
+                    💡 <b>Conexión inteligente con Enter en Cierre:</b><br>
+                    • <b>Sin S. Sistema:</b> Fija el <b>Efectivo Inicial</b> en la <b>Hoja 1</b> y activa el guardado de Caja.<br>
+                    • <b>Con S. Sistema:</b> Guarda todo el desglose del <b>Cierre General</b> en la <b>Hoja 2</b>.
                 </div>
             </div>
 
@@ -1743,126 +2118,82 @@
 
     <script>
         /* ===============================================================
-           CONEXIÓN EN TIEMPO REAL CON GOOGLE SHEETS (CANAL ÚNICO SIN DUPLICIDAD)
-           Cero Latencia en Pantalla (0 ms) + Cero Operaciones Duplicadas
+           BASE DE DATOS 100% LOCAL DE GRADO BANCARIO (0.00 MS DE LATENCIA)
+           Hoja 1 (Efectivo Inicial, Efectivo Actual y Movimientos)
+           Hoja 2 (Detalle General del Cierre de Caja)
            =============================================================== */
-        const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbw_Q-m30QWBeFla5rnIz8-ldGWykMJgAXntjrArQs3yn5ladFZD-6UDL543kaQEwEkgJQ/exec";
-
-        let colaEnviosSheets = [];
-        let procesandoColaSheets = false;
-        let timerReintentoCola = null;
-        let timestampUltimoEnterCaja = 0;
-
-        function generarIdUnicoOperacion(detalle, monto) {
-            const rand = Math.random().toString(36).substring(2, 8).toUpperCase();
-            return `OP-${Date.now()}-${Math.round(Math.abs(monto) * 100)}-${rand}`;
-        }
-
-        function cargarColaPersistente() {
-            try {
-                const guardada = localStorage.getItem('bcp_cola_envios_v4');
-                if (guardada) {
-                    const parsed = JSON.parse(guardada);
-                    if (Array.isArray(parsed)) colaEnviosSheets = parsed;
-                }
-            } catch (e) {
-                colaEnviosSheets = [];
-            }
-        }
-
-        function guardarColaPersistente() {
-            try {
-                localStorage.setItem('bcp_cola_envios_v4', JSON.stringify(colaEnviosSheets));
-            } catch (e) {
-                console.warn('Error guardando cola en localStorage:', e);
-            }
-        }
-
-        // Encola en 0 ms y despacha por UN SOLO CANAL para evitar cualquier disparo doble
-        function enviarASheetsCeroLatencia(payload) {
-            if (payload.accion === 'borrar_solo_movimientos' || payload.accion === 'aperturar') {
-                colaEnviosSheets = colaEnviosSheets.filter(item => item.accion !== 'registrar_movimiento');
-            }
-
-            colaEnviosSheets.push(payload);
-            guardarColaPersistente();
-            procesarColaSheets();
-        }
-
-        async function procesarColaSheets() {
-            if (procesandoColaSheets || colaEnviosSheets.length === 0) return;
-            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-                timerReintentoCola = setTimeout(procesarColaSheets, 1500);
-                return;
-            }
-
-            procesandoColaSheets = true;
-            clearTimeout(timerReintentoCola);
-
-            try {
-                const primerItem = colaEnviosSheets[0];
-                let paqueteEnviar = primerItem;
-                let cantidadConsumida = 1;
-
-                // Agrupación en lote si hay múltiples movimientos seguidos en espera
-                if (primerItem.accion === 'registrar_movimiento') {
-                    const loteMovs = [];
-                    for (let i = 0; i < colaEnviosSheets.length; i++) {
-                        if (colaEnviosSheets[i].accion === 'registrar_movimiento') {
-                            loteMovs.push(colaEnviosSheets[i]);
-                        } else {
-                            break;
-                        }
-                    }
-                    cantidadConsumida = loteMovs.length;
-                    if (cantidadConsumida > 1) {
-                        paqueteEnviar = {
-                            accion: 'registrar_lote_movimientos',
-                            movimientos: loteMovs
-                        };
-                    }
-                }
-
-                // ENVÍO ÚNICO DIRECTO: Sin doble disparo en catch (elimina de raíz las filas duplicadas)
-                await fetch(URL_APPS_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    cache: 'no-store',
-                    credentials: 'omit',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(paqueteEnviar)
-                });
-
-                // Retira de la cola al completarse el envío único
-                colaEnviosSheets.splice(0, cantidadConsumida);
-                guardarColaPersistente();
-                procesandoColaSheets = false;
-
-                if (colaEnviosSheets.length > 0) {
-                    procesarColaSheets();
-                }
-                return;
-            } catch (errorRed) {
-                console.warn('Sin conexión temporal. Reintentando con el mismo idUnico...', errorRed);
-            }
-
-            procesandoColaSheets = false;
-            if (colaEnviosSheets.length > 0) {
-                timerReintentoCola = setTimeout(procesarColaSheets, 1500);
-            }
-        }
-
-        window.addEventListener('online', () => procesarColaSheets());
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden) procesarColaSheets();
-        });
-
         const formatoSoles = (num) => Math.abs(num).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         const formatoEntero = (num) => Math.round(num).toLocaleString('en-US');
         const formatoMonedaConPrefijo = (valor) => {
             const absStr = formatoSoles(valor);
             return valor < 0 ? "- S/ " + absStr : "S/ " + absStr;
         };
+        const formatoNumeroPuroHoja1 = (valor) => {
+            const absStr = formatoSoles(valor);
+            return valor < 0 ? "-" + absStr : absStr;
+        };
+
+        // Memoria persistente de Hoja 1 y Hoja 2 en el almacenamiento interno del celular
+        let hoja1DatosLocal = {
+            tieneEfectivoInicial: false,
+            efectivoInicialCentimos: 0,
+            movimientos: [] // [{ fecha, hora, detalle, montoCentimos }]
+        };
+
+        let hoja2DatosLocal = null; // Objeto con el último Cierre General guardado
+
+        function cargarBaseDatosLocal() {
+            try {
+                const rawH1 = localStorage.getItem('bcp_local_hoja1_v1');
+                if (rawH1) {
+                    const parsed = JSON.parse(rawH1);
+                    if (parsed && typeof parsed === 'object') {
+                        hoja1DatosLocal.tieneEfectivoInicial = !!parsed.tieneEfectivoInicial;
+                        hoja1DatosLocal.efectivoInicialCentimos = parseInt(parsed.efectivoInicialCentimos) || 0;
+                        hoja1DatosLocal.movimientos = Array.isArray(parsed.movimientos) ? parsed.movimientos : [];
+                    }
+                }
+                const rawH2 = localStorage.getItem('bcp_local_hoja2_v1');
+                if (rawH2) {
+                    hoja2DatosLocal = JSON.parse(rawH2);
+                }
+            } catch (e) {
+                console.warn('Error cargando base local:', e);
+            }
+        }
+
+        function guardarBaseDatosLocal() {
+            try {
+                localStorage.setItem('bcp_local_hoja1_v1', JSON.stringify(hoja1DatosLocal));
+                if (hoja2DatosLocal) {
+                    localStorage.setItem('bcp_local_hoja2_v1', JSON.stringify(hoja2DatosLocal));
+                } else {
+                    localStorage.removeItem('bcp_local_hoja2_v1');
+                }
+            } catch (e) {
+                console.warn('Error guardando base local:', e);
+            }
+        }
+
+        // Devuelve si la Hoja 1 tiene un Efectivo Actual activo (ya sea por Efectivo Inicial o por movimientos registrados)
+        function obtenerEstadoEfectivoActualHoja1() {
+            const hayMovs = hoja1DatosLocal.movimientos.length > 0;
+            const activo = hoja1DatosLocal.tieneEfectivoInicial || hayMovs;
+            let sumaMovsCentimos = 0;
+            for (let i = 0; i < hoja1DatosLocal.movimientos.length; i++) {
+                sumaMovsCentimos += (parseInt(hoja1DatosLocal.movimientos[i].montoCentimos) || 0);
+            }
+            const inicialCent = hoja1DatosLocal.tieneEfectivoInicial ? hoja1DatosLocal.efectivoInicialCentimos : 0;
+            const actualCentimos = inicialCent + sumaMovsCentimos;
+            return {
+                activo,
+                tieneInicial: hoja1DatosLocal.tieneEfectivoInicial,
+                inicialCentimos: inicialCent,
+                sumaMovsCentimos,
+                actualCentimos,
+                actualSoles: actualCentimos / 100
+            };
+        }
 
         // Contexto principal activo ('caja' o 'cierre') persistente
         let contextoPrincipal = localStorage.getItem('bcp_contexto_activo') || 'caja';
@@ -1877,6 +2208,15 @@
         // Estado de Caja Principal (10 cuadros por bloque: b1..b10 y p1..p10)
         let modoOperacion = localStorage.getItem('bcp_modo_operacion') || 'recibo'; 
         let ultimoEstadoResultadoCaja = '';
+
+        // Registro del orden en que el usuario edita los distintos modos ('recibo', 'deposito', 'retiro')
+        // para guardar todas las operaciones enganchadas cuando presione Enter
+        let ordenModosConDatos = ['recibo', 'deposito', 'retiro'];
+
+        function registrarModoEnOrden(modo) {
+            ordenModosConDatos = ordenModosConDatos.filter(m => m !== modo);
+            ordenModosConDatos.push(modo);
+        }
 
         function crearMapa10Cuadros(prefijo) {
             const obj = {};
@@ -1896,6 +2236,7 @@
         };
         let ultimoInputCajaActivo = null;
         let cuadroVinculado = null; 
+        let timestampUltimoEnterCaja = 0;
 
         // Estado de Cierre de Caja
         let cantF1000 = 0;
@@ -1914,6 +2255,8 @@
 
         let esTransicionClickTab = false;
         let timerFinTransicion = null;
+        let esTransicionHojaLocal = false;
+        let timerFinTransicionHoja = null;
 
         // Alto máximo real de la pantalla sin teclado para fijar elementos inferiores
         let altoPantallaSinTeclado = Math.max(window.innerHeight || 640, 520);
@@ -1925,6 +2268,7 @@
             try {
                 const estado = {
                     modoOperacion,
+                    ordenModosConDatos,
                     datosSuperior,
                     datosInferior,
                     cuadroVinculado,
@@ -1935,7 +2279,7 @@
                     cantF1000,
                     inputSistema: document.getElementById('input-sistema') ? document.getElementById('input-sistema').value : ''
                 };
-                localStorage.setItem('bcp_estado_blindado_v3', JSON.stringify(estado));
+                localStorage.setItem('bcp_estado_blindado_v4', JSON.stringify(estado));
             } catch (e) {
                 console.warn('No se pudo guardar estado en localStorage:', e);
             }
@@ -1943,10 +2287,11 @@
 
         function restaurarEstadoDesdeStorage() {
             try {
-                const raw = localStorage.getItem('bcp_estado_blindado_v3') || localStorage.getItem('bcp_estado_blindado_v2');
+                const raw = localStorage.getItem('bcp_estado_blindado_v4') || localStorage.getItem('bcp_estado_blindado_v3');
                 if (!raw) return;
                 const est = JSON.parse(raw);
                 if (est.modoOperacion) modoOperacion = est.modoOperacion;
+                if (Array.isArray(est.ordenModosConDatos)) ordenModosConDatos = est.ordenModosConDatos;
                 if (est.datosSuperior) {
                     ['recibo', 'retiro', 'deposito'].forEach(m => {
                         if (est.datosSuperior[m]) {
@@ -2067,32 +2412,47 @@
         document.addEventListener('focusin', () => window.scrollTo(0, 0));
 
         /* ===============================================================
-           BOTONES ESTÁTICOS REUBICABLES DE CAJA ("BORRAR" Y "ANULAR")
+           BOTONES ESTÁTICOS REUBICABLES DE CAJA ("BORRAR", "MOVIMIENTOS", "ANULAR")
            + BURBUJA FLOTANTE 2D Y OCULTAMIENTO BAJO EL TECLADO
            =============================================================== */
         function posicionarBotonesAuxiliaresCajaPorDefecto() {
             const btnBorrar = document.getElementById('btnCajaBorrar');
+            const btnMovs = document.getElementById('btnCajaMovimientos');
             const btnAnular = document.getElementById('btnCajaAnular');
             const refDep = document.getElementById('btn-modo-deposito');
+            const refServ = document.getElementById('btn-modo-servicio');
             const refRet = document.getElementById('btn-modo-retiro');
-            if (!btnBorrar || !btnAnular) return;
+            if (!btnBorrar || !btnMovs || !btnAnular) return;
 
             if (refDep && refDep.offsetWidth > 0) {
                 const rectDep = refDep.getBoundingClientRect();
+                const rectServ = refServ.getBoundingClientRect();
                 const rectRet = refRet.getBoundingClientRect();
+
                 btnBorrar.style.width = rectDep.width + 'px';
+                btnMovs.style.width = rectServ.width + 'px';
                 btnAnular.style.width = rectRet.width + 'px';
+
+                const topDefecto = Math.min(altoPantallaSinTeclado - 48, Math.round(rectDep.bottom + 8));
 
                 const savedBorrarX = localStorage.getItem('bcp_btn_borrar_x');
                 const savedBorrarY = localStorage.getItem('bcp_btn_borrar_y');
-                const topDefecto = Math.min(altoPantallaSinTeclado - 48, Math.round(rectDep.bottom + 8));
-
                 if (savedBorrarX !== null && savedBorrarY !== null) {
                     btnBorrar.style.left = savedBorrarX;
                     btnBorrar.style.top = savedBorrarY;
                 } else {
                     btnBorrar.style.left = Math.round(rectDep.left) + 'px';
                     btnBorrar.style.top = topDefecto + 'px';
+                }
+
+                const savedMovsX = localStorage.getItem('bcp_btn_movs_x');
+                const savedMovsY = localStorage.getItem('bcp_btn_movs_y');
+                if (savedMovsX !== null && savedMovsY !== null) {
+                    btnMovs.style.left = savedMovsX;
+                    btnMovs.style.top = savedMovsY;
+                } else {
+                    btnMovs.style.left = Math.round(rectServ.left) + 'px';
+                    btnMovs.style.top = topDefecto + 'px';
                 }
 
                 const savedAnularX = localStorage.getItem('bcp_btn_anular_x');
@@ -2127,7 +2487,6 @@
 
                 btn.setPointerCapture(e.pointerId);
 
-                // Solo se desbloquea para mover si se mantiene presionado 380 ms
                 timerLongPress = setTimeout(() => {
                     modoMoverActivo = true;
                     btn.classList.add('modo-reubicacion');
@@ -2200,7 +2559,7 @@
                 savedX = Math.round(window.innerWidth / 2);
             }
             if (isNaN(savedY) || savedY < 26 || savedY > altoPantallaSinTeclado - 24) {
-                savedY = Math.min(altoPantallaSinTeclado - 30, 480);
+                savedY = Math.min(altoPantallaSinTeclado - 30, 505);
             }
 
             btn.style.left = savedX + 'px';
@@ -2253,6 +2612,7 @@
             });
 
             configurarBotonEstaticoReubicable('btnCajaBorrar', 'bcp_btn_borrar_x', 'bcp_btn_borrar_y', ejecutarBotonBorrarCaja);
+            configurarBotonEstaticoReubicable('btnCajaMovimientos', 'bcp_btn_movs_x', 'bcp_btn_movs_y', abrirVistaMovimientosLocal);
             configurarBotonEstaticoReubicable('btnCajaAnular', 'bcp_btn_anular_x', 'bcp_btn_anular_y', ejecutarBotonAnularUltimaOperacion);
 
             if (window.visualViewport) {
@@ -2278,7 +2638,7 @@
                 btnSwitcher.classList.toggle('tapado-por-teclado', tecladoAbierto && (posTopBurbuja + 22 > alturaVisibleActual));
             }
 
-            ['btnCajaBorrar', 'btnCajaAnular'].forEach(id => {
+            ['btnCajaBorrar', 'btnCajaMovimientos', 'btnCajaAnular'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     const topPx = parseFloat(el.style.top) || 440;
@@ -2287,7 +2647,7 @@
             });
         }
 
-        // Acción 1: Botón BORRAR (Limpia montos editados en Caja sin enviar nada a Google Sheets)
+        // Acción 1: Botón BORRAR (Limpia exclusivamente la Caja Principal sin afectar Cierre ni Movimientos)
         function ejecutarBotonBorrarCaja() {
             vibrarRapido([15, 25, 15]);
             limpiarCaja();
@@ -2298,48 +2658,65 @@
 
             btn.classList.add('confirmado');
             lbl.innerText = "LIMPIO";
-            badge.innerText = "🧹 OPERACIÓN CANCELADA / CAJA LIMPIA";
+            badge.innerText = "🧹 CAJA PRINCIPAL LIMPIA";
 
             setTimeout(() => {
                 btn.classList.remove('confirmado');
                 lbl.innerText = "BORRAR";
                 actualizarEstiloVisualModo();
-            }, 700);
+            }, 650);
+            enfocarSiguienteInputVisible('app-caja');
         }
 
-        // Acción 2: Botón ANULAR (Anula la última operación registrada en la Hoja 1 de Google Sheets)
+        // Acción 2: Botón MOVIMIENTOS (Oculta el teclado numérico y abre Hoja 1 y Hoja 2 locales)
+        function abrirVistaMovimientosLocal() {
+            vibrarRapido(16);
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+            renderizarHojasLocales();
+            switchMainApp('app-movimientos');
+        }
+
+        function cerrarVistaMovimientosLocal() {
+            vibrarRapido(14);
+            if (contextoPrincipal === 'cierre') {
+                switchMainApp('app-cierre');
+                enfocarSiguienteInputVisible('app-cierre');
+            } else {
+                switchMainApp('app-caja');
+                enfocarSiguienteInputVisible('app-caja');
+            }
+        }
+
+        // Acción 3: Botón ANULAR (Anula en 0 ms la última operación registrada en Hoja 1 y actualiza Efectivo Actual)
         function ejecutarBotonAnularUltimaOperacion() {
             vibrarRapido([25, 35, 25]);
-
-            // Si había un movimiento pendiente aún en la cola local sin salir, lo retira;
-            // de lo contrario envía la orden de anular la última fila en la Hoja 1.
-            let retiradaDeColaLocal = false;
-            for (let i = colaEnviosSheets.length - 1; i >= 0; i--) {
-                if (colaEnviosSheets[i].accion === 'registrar_movimiento') {
-                    colaEnviosSheets.splice(i, 1);
-                    guardarColaPersistente();
-                    retiradaDeColaLocal = true;
-                    break;
-                }
-            }
-
-            if (!retiradaDeColaLocal) {
-                enviarASheetsCeroLatencia({ accion: "anular_ultimo_movimiento" });
-            }
-
             const btn = document.getElementById('btnCajaAnular');
             const lbl = document.getElementById('txtBtnCajaAnular');
             const badge = document.getElementById('badgeOperacion');
 
-            btn.classList.add('confirmado');
-            lbl.innerText = "ANULADO";
-            badge.innerText = "↩️ ÚLTIMA OPERACIÓN ANULADA EN HOJA 1";
+            if (hoja1DatosLocal.movimientos.length > 0) {
+                hoja1DatosLocal.movimientos.pop();
+                guardarBaseDatosLocal();
+                calcularCuadreCierre();
+                renderizarHojasLocales();
+
+                btn.classList.add('confirmado');
+                lbl.innerText = "ANULADO";
+                badge.innerText = "↩️ ÚLTIMA OPERACIÓN ANULADA (0 ms)";
+            } else {
+                btn.classList.add('confirmado');
+                lbl.innerText = "VACÍO";
+                badge.innerText = "SIN OPERACIONES PARA ANULAR";
+            }
 
             setTimeout(() => {
                 btn.classList.remove('confirmado');
                 lbl.innerText = "ANULAR";
                 actualizarEstiloVisualModo();
-            }, 950);
+            }, 850);
+            enfocarSiguienteInputVisible('app-caja');
         }
 
         function actualizarAparienciaGoogleSwitcher() {
@@ -2365,6 +2742,7 @@
                 localStorage.setItem('bcp_contexto_activo', 'cierre');
                 actualizarAparienciaGoogleSwitcher();
                 sincronizarInputsMultiplicadorSegunContexto();
+                calcularCuadreCierre();
                 switchMainApp('app-cierre');
                 enfocarSiguienteInputVisible('app-cierre');
             } else {
@@ -2382,16 +2760,17 @@
             document.getElementById(appId).classList.add('active-app');
             window.scrollTo(0, 0);
 
+            const ocultarFlotantes = (appId === 'app-multiplicador' || appId === 'app-movimientos');
             const btnSwitcher = document.getElementById('btnGoogleSwitcher');
             if (btnSwitcher) {
-                btnSwitcher.classList.toggle('oculto', appId === 'app-multiplicador');
+                btnSwitcher.classList.toggle('oculto', ocultarFlotantes);
             }
 
             const mostrarAuxCaja = (appId === 'app-caja');
-            const btnBorrar = document.getElementById('btnCajaBorrar');
-            const btnAnular = document.getElementById('btnCajaAnular');
-            if (btnBorrar) btnBorrar.classList.toggle('oculto', !mostrarAuxCaja);
-            if (btnAnular) btnAnular.classList.toggle('oculto', !mostrarAuxCaja);
+            ['btnCajaBorrar', 'btnCajaMovimientos', 'btnCajaAnular'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('oculto', !mostrarAuxCaja);
+            });
 
             if (appId === 'app-caja') {
                 reaplicarEstiloSincronizacion();
@@ -2446,10 +2825,39 @@
         }
 
         /* ===============================================================
-           LÓGICA DE LA CAJA PRINCIPAL Y EXPANSIÓN INTELIGENTE DE 4 A 6 CUADROS
+           LÓGICA DE LA CAJA PRINCIPAL Y OPERACIONES ENGANCHADAS ENTRE MODOS
            =============================================================== */
+        function parseValorCentimosTexto(str) {
+            if (!str) return 0;
+            const raw = String(str).replace(/,/g, '').trim();
+            const num = parseFloat(raw);
+            return isNaN(num) ? 0 : Math.round(num * 100);
+        }
+
+        function calcularCentimosGuardadosPorModo(modo) {
+            let centSup = 0, centInf = 0;
+            for (let i = 1; i <= 10; i++) {
+                centSup += parseValorCentimosTexto(datosSuperior[modo]['b' + i]);
+                centInf += parseValorCentimosTexto(datosInferior[modo]['p' + i]);
+            }
+            return { centSup, centInf, tieneDatos: (centSup > 0 || centInf > 0) };
+        }
+
+        function actualizarIndicadoresModosEnganchados() {
+            const mapaBtn = {
+                deposito: 'btn-modo-deposito',
+                recibo: 'btn-modo-servicio',
+                retiro: 'btn-modo-retiro'
+            };
+            ['deposito', 'recibo', 'retiro'].forEach(m => {
+                const btn = document.getElementById(mapaBtn[m]);
+                if (!btn) return;
+                const { tieneDatos } = calcularCentimosGuardadosPorModo(m);
+                btn.classList.toggle('tiene-operacion-pendiente', m !== modoOperacion && tieneDatos);
+            });
+        }
+
         function actualizarExpansionInteligenteBloques() {
-            // Bloque Superior (b1..b4 llenos o b5/b6 con dato -> despliega b5 y b6)
             const sup1a4Llenos = ['b1', 'b2', 'b3', 'b4'].every(id => document.getElementById(id).value.trim() !== '');
             const sup5o6ConDato = ['b5', 'b6'].some(id => document.getElementById(id).value.trim() !== '');
             const expandirSup = sup1a4Llenos || sup5o6ConDato;
@@ -2459,7 +2867,6 @@
             if (filaExtraSup) filaExtraSup.classList.toggle('activa', expandirSup);
             if (cajaSup) cajaSup.classList.toggle('bloque-con-6', expandirSup);
 
-            // Bloque Inferior (p1..p4 llenos o p5/p6 con dato -> despliega p5 y p6)
             const inf1a4Llenos = ['p1', 'p2', 'p3', 'p4'].every(id => document.getElementById(id).value.trim() !== '');
             const inf5o6ConDato = ['p5', 'p6'].some(id => document.getElementById(id).value.trim() !== '');
             const expandirInf = inf1a4Llenos || inf5o6ConDato;
@@ -2479,10 +2886,16 @@
         }
 
         function guardarValoresModoActual() {
+            let agregoDatos = false;
             for (let i = 1; i <= 10; i++) {
-                datosSuperior[modoOperacion]['b' + i] = document.getElementById('b' + i).value;
-                datosInferior[modoOperacion]['p' + i] = document.getElementById('p' + i).value;
+                const valB = document.getElementById('b' + i).value;
+                const valP = document.getElementById('p' + i).value;
+                datosSuperior[modoOperacion]['b' + i] = valB;
+                datosInferior[modoOperacion]['p' + i] = valP;
+                if (valB.trim() !== '' || valP.trim() !== '') agregoDatos = true;
             }
+            if (agregoDatos) registrarModoEnOrden(modoOperacion);
+            actualizarIndicadoresModosEnganchados();
             guardarEstadoEnStorage();
         }
 
@@ -2497,6 +2910,7 @@
                 formatInput(elP);
             }
             actualizarExpansionInteligenteBloques();
+            actualizarIndicadoresModosEnganchados();
         }
 
         function actualizarEstiloVisualModo() {
@@ -2545,6 +2959,7 @@
                 badge.innerText = 'DEPÓSITO EN CUENTA';
                 document.getElementById('btn-modo-deposito').classList.add('active-modo');
             }
+            actualizarIndicadoresModosEnganchados();
         }
 
         function handleScrollIndicators(scrollId, dot1Id, dot2Id) {
@@ -2611,9 +3026,7 @@
         const getValCentimos = (id) => {
             const el = document.getElementById(id);
             if (!el) return 0;
-            const raw = el.value.replace(/,/g, '').trim();
-            const num = parseFloat(raw);
-            return isNaN(num) ? 0 : Math.round(num * 100);
+            return parseValorCentimosTexto(el.value);
         };
 
         function formatInput(input) {
@@ -2769,7 +3182,7 @@
             }
         }
 
-        // ENTER EN CAJA: CON SELLO ÚNICO (idUnico) Y PROTECCIÓN ANTI-REBOTE
+        // ENTER EN CAJA: GUARDA EN 0.00 MS TODAS LAS OPERACIONES ENGANCHADAS EN EL ORDEN EN QUE FUERON EDITADAS
         function ejecutarAccionTecladoCaja(e) {
             if (e) {
                 e.preventDefault();
@@ -2777,54 +3190,72 @@
             }
 
             const ahoraMs = Date.now();
-            if (ahoraMs - timestampUltimoEnterCaja < 280) {
+            if (ahoraMs - timestampUltimoEnterCaja < 220) {
                 return false;
             }
             timestampUltimoEnterCaja = ahoraMs;
 
-            let centimosSup = 0;
-            for (let i = 1; i <= 10; i++) centimosSup += getValCentimos('b' + i);
-            let centimosInf = 0;
-            for (let i = 1; i <= 10; i++) centimosInf += getValCentimos('p' + i);
+            guardarValoresModoActual();
 
-            let payloadParaEnviar = null;
+            const ahora = new Date();
+            const fechaStr = ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            const horaStr = ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
 
-            if ((centimosSup > 0 || centimosInf > 0) && guardarMovimientosActivo) {
-                let detalleOp = "PAGO SERVICIO";
-                let montoOp = 0;
+            // Asegura que todos los modos sean evaluados respetando el orden en que el cajero los editó
+            const secuenciaModos = [...ordenModosConDatos];
+            ['recibo', 'deposito', 'retiro'].forEach(m => {
+                if (!secuenciaModos.includes(m)) secuenciaModos.push(m);
+            });
 
-                if (modoOperacion === 'recibo') {
-                    detalleOp = "PAGO SERVICIO";
-                    montoOp = (centimosInf > 0 ? centimosInf : centimosSup) / 100;
-                } else if (modoOperacion === 'deposito') {
-                    detalleOp = "DEPÓSITO";
-                    montoOp = (centimosSup > 0 ? centimosSup : centimosInf) / 100;
-                } else if (modoOperacion === 'retiro') {
-                    detalleOp = "RETIRO";
-                    montoOp = -((centimosSup > 0 ? centimosSup : centimosInf) / 100);
+            let cantidadGuardadas = 0;
+
+            if (guardarMovimientosActivo) {
+                for (let m of secuenciaModos) {
+                    const { centSup, centInf, tieneDatos } = calcularCentimosGuardadosPorModo(m);
+                    if (!tieneDatos) continue;
+
+                    let detalleOp = "PAGO SERVICIO";
+                    let montoCentimos = 0;
+
+                    if (m === 'recibo') {
+                        detalleOp = "PAGO SERVICIO";
+                        montoCentimos = (centInf > 0 ? centInf : centSup);
+                    } else if (m === 'deposito') {
+                        detalleOp = "DEPÓSITO";
+                        montoCentimos = (centSup > 0 ? centSup : centInf);
+                    } else if (m === 'retiro') {
+                        detalleOp = "RETIRO";
+                        montoCentimos = -((centSup > 0 ? centSup : centInf));
+                    }
+
+                    if (montoCentimos !== 0) {
+                        hoja1DatosLocal.movimientos.push({
+                            fecha: fechaStr,
+                            hora: horaStr,
+                            detalle: detalleOp,
+                            montoCentimos: montoCentimos
+                        });
+                        cantidadGuardadas++;
+                    }
                 }
 
-                const ahora = new Date();
-                payloadParaEnviar = {
-                    accion: "registrar_movimiento",
-                    idUnico: generarIdUnicoOperacion(detalleOp, montoOp),
-                    fecha: ahora.toLocaleDateString('es-PE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-                    hora: ahora.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
-                    detalle: detalleOp,
-                    monto: montoOp
-                };
+                if (cantidadGuardadas > 0) {
+                    guardarBaseDatosLocal();
+                    calcularCuadreCierre();
+                    renderizarHojasLocales();
+                }
             }
 
-            // 1° Limpieza instantánea en 0 ms (pliega automáticamente los cuadros 5 y 6)
+            // Limpieza instantánea en 0.00 ms
             limpiarCaja();
             enfocarSiguienteInputVisible('app-caja');
 
-            // 2° Encolado único garantizado con idUnico
-            if (payloadParaEnviar) {
+            if (cantidadGuardadas > 0) {
                 const badge = document.getElementById('badgeOperacion');
-                badge.innerText = "✓ GUARDADO EN HOJA 1";
-                enviarASheetsCeroLatencia(payloadParaEnviar);
-                setTimeout(() => actualizarEstiloVisualModo(), 550);
+                badge.innerText = cantidadGuardadas > 1
+                    ? `✓ ${cantidadGuardadas} OPERACIONES GUARDADAS (0 ms)`
+                    : `✓ GUARDADO EN MOVIMIENTOS (#${hoja1DatosLocal.movimientos.length})`;
+                setTimeout(() => actualizarEstiloVisualModo(), 650);
             }
 
             return false;
@@ -2862,6 +3293,7 @@
             document.getElementById('dot-inf-2').classList.remove('active', 'has-data');
 
             actualizarExpansionInteligenteBloques();
+            actualizarIndicadoresModosEnganchados();
             calculateAllCounter();
             calcularTodoCaja();
             guardarEstadoEnStorage();
@@ -2869,7 +3301,7 @@
         }
 
         /* ===============================================================
-           LÓGICA DE CIERRE DE CAJA BCP: GUARDADO INTELIGENTE (HOJA 1 vs HOJA 2)
+           LÓGICA DE CIERRE DE CAJA BCP CONECTADA CON MOVIMIENTOS (HOJA 1 Y HOJA 2)
            =============================================================== */
         function handleInputSistema(input) {
             formatInput(input);
@@ -2927,7 +3359,8 @@
         }
 
         function calcularCuadreCierre() {
-            const { centB, centM, centFajo, totalCentimos } = obtenerEfectivoFisicoCierreCentimos();
+            const { centB, centM, centFajo, totalCentimos: totalCentimosManual } = obtenerEfectivoFisicoCierreCentimos();
+            const estadoMovs = obtenerEstadoEfectivoActualHoja1();
 
             const subFajoEl = document.getElementById('sub-f1000');
             const cardFajoEl = document.getElementById('card-f1000');
@@ -2937,22 +3370,54 @@
                 cardFajoEl.classList.toggle('fila-negativa', cantF1000 < 0);
             }
 
-            const totalBilletesYMonedas = (centB + centM) / 100;
-            const totalEfectivoFisico = totalCentimos / 100;
-
+            const totalBilletesYMonedasManual = (centB + centM) / 100;
+            const displayEfectivoEl = document.getElementById('display-efectivo');
+            const rowManualExtraEl = document.getElementById('rowEfectivoManualExtra');
+            const displayEfectivoManualEl = document.getElementById('display-efectivo-manual');
             const hintEl = document.getElementById('badgeResumenBilletesMonedas');
-            if (centB !== 0 || centM !== 0) {
-                hintEl.innerText = `B+M: S/ ${formatoSoles(totalBilletesYMonedas)} ⇄`;
+
+            let centimosEfectivoParaCuadre = 0;
+
+            if (estadoMovs.activo) {
+                // La fila principal EFECTIVO muestra el Efectivo Actual sincronizado en tiempo real desde Movimientos
+                displayEfectivoEl.innerText = formatoMonedaConPrefijo(estadoMovs.actualSoles);
+                displayEfectivoEl.classList.add('efectivo-sync-movimientos');
+                hintEl.innerText = `Movimientos (#${hoja1DatosLocal.movimientos.length}) ⇄`;
+
+                // Si el cajero además realiza un conteo manual en Cierre (Billetes, Monedas o Fajos),
+                // se despliega automáticamente debajo la fila EFECTIVO MANUAL y manda para el cuadre E + S
+                if (totalCentimosManual !== 0) {
+                    rowManualExtraEl.classList.add('activa');
+                    displayEfectivoManualEl.innerText = formatoMonedaConPrefijo(totalCentimosManual / 100);
+                    const badgeManual = document.getElementById('badgeDetalleConteoManual');
+                    if (badgeManual) {
+                        badgeManual.innerText = (centB !== 0 || centM !== 0)
+                            ? `B+M: S/ ${formatoSoles(totalBilletesYMonedasManual)} ⇄`
+                            : `En mano ✓`;
+                    }
+                    centimosEfectivoParaCuadre = totalCentimosManual;
+                } else {
+                    rowManualExtraEl.classList.remove('activa');
+                    centimosEfectivoParaCuadre = estadoMovs.actualCentimos;
+                }
             } else {
-                hintEl.innerText = `Billetes / Monedas ⇄`;
+                // Sin Efectivo Inicial activo en Movimientos: funciona con el conteo manual directo
+                rowManualExtraEl.classList.remove('activa');
+                displayEfectivoEl.classList.remove('efectivo-sync-movimientos');
+                displayEfectivoEl.innerText = formatoMonedaConPrefijo(totalCentimosManual / 100);
+                if (centB !== 0 || centM !== 0) {
+                    hintEl.innerText = `B+M: S/ ${formatoSoles(totalBilletesYMonedasManual)} ⇄`;
+                } else {
+                    hintEl.innerText = `Billetes / Monedas ⇄`;
+                }
+                centimosEfectivoParaCuadre = totalCentimosManual;
             }
 
-            document.getElementById('display-efectivo').innerText = formatoMonedaConPrefijo(totalEfectivoFisico);
             document.getElementById('lblBaseActiva').innerText = formatoSoles(capitalBaseActual);
 
             const { centimosSistema, tieneSistema } = obtenerEstadoCampoSistema();
 
-            const centimosSumaES = totalCentimos + centimosSistema;
+            const centimosSumaES = centimosEfectivoParaCuadre + centimosSistema;
             const sumaTotalES = centimosSumaES / 100;
             document.getElementById('display-suma').innerText = formatoMonedaConPrefijo(sumaTotalES);
 
@@ -2964,15 +3429,16 @@
 
             const panel = document.getElementById('panelFinalCierre');
             let estadoClave = '';
-            const tieneEfectivo = totalCentimos !== 0;
+            const tieneEfectivoActivo = centimosEfectivoParaCuadre !== 0;
 
-            if (!tieneEfectivo && !tieneSistema) {
+            if (!tieneEfectivoActivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-esperando";
                 setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'esperando', "ESPERANDO CONTEO...", "S/ 0.00");
                 estadoClave = 'esperando';
-            } else if (tieneEfectivo && !tieneSistema) {
+            } else if (tieneEfectivoActivo && !tieneSistema) {
                 panel.className = "panel-resultado estado-vuelto";
-                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'mano', "EFECTIVO PARA SALDO INICIAL", formatoMonedaConPrefijo(totalEfectivoFisico));
+                const msg = (totalCentimosManual !== 0) ? "ENTER = FIJAR EFECTIVO INICIAL" : "EFECTIVO ACTUAL EN TIEMPO REAL";
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'mano', msg, formatoMonedaConPrefijo(centimosEfectivoParaCuadre / 100));
                 estadoClave = 'saldo-inicial';
             } else if (Math.abs(diferenciaSoles) <= 0.05) {
                 panel.className = "panel-resultado estado-exacto";
@@ -2995,6 +3461,8 @@
             }
         }
 
+        // Limpia únicamente lo editado en Cierre (Billetes Cierre, Monedas Cierre, Fajo y S. Sistema),
+        // jamás borra el Efectivo Actual que viene de la hoja de Movimientos
         function limpiarTodoElCierre() {
             cantF1000 = 0;
             document.getElementById('f1000').value = '';
@@ -3019,7 +3487,7 @@
             btn.style.background = "#dcfce7";
             btn.style.borderColor = "#16a34a";
             btn.style.color = "#15803d";
-            btn.innerHTML = "<span>✅ DATOS DE CIERRE BORRADOS</span>";
+            btn.innerHTML = "<span>✅ CONTEO MANUAL DE CIERRE BORRADO</span>";
 
             setTimeout(() => {
                 btn.style.background = "";
@@ -3036,12 +3504,15 @@
                 e.stopPropagation();
             }
 
-            const { totalCentimos } = obtenerEfectivoFisicoCierreCentimos();
-            const totalEfectivoFisico = totalCentimos / 100;
-            const { numSistema, tieneSistema } = obtenerEstadoCampoSistema();
-            const tieneEfectivo = totalCentimos !== 0;
+            const { totalCentimos: totalCentimosManual } = obtenerEfectivoFisicoCierreCentimos();
+            const estadoMovs = obtenerEstadoEfectivoActualHoja1();
+            const { numSistema, centimosSistema, tieneSistema } = obtenerEstadoCampoSistema();
 
-            if (!tieneEfectivo && !tieneSistema) {
+            const centimosEfectivoUsar = (totalCentimosManual !== 0)
+                ? totalCentimosManual
+                : (estadoMovs.activo ? estadoMovs.actualCentimos : 0);
+
+            if (centimosEfectivoUsar === 0 && !tieneSistema) {
                 enfocarInputActivoActual();
                 return false;
             }
@@ -3050,8 +3521,9 @@
             clearTimeout(timerConfirmacionCierre);
 
             if (tieneSistema) {
-                const paqueteCierre = {
-                    accion: "guardar_cierre",
+                // MODO 2 (CON S. SISTEMA): GUARDA EL CIERRE GENERAL EN LA HOJA 2 LOCAL (SIN ALTERAR LA HOJA 1)
+                hoja2DatosLocal = {
+                    fechaHora: new Date().toLocaleString('es-PE'),
                     f1000: cantF1000 || 0,
                     b200: billetesCierre[200] || 0,
                     b100: billetesCierre[100] || 0,
@@ -3064,39 +3536,332 @@
                     m050: monedasCierre[0.5] || 0,
                     m020: monedasCierre[0.2] || 0,
                     m010: monedasCierre[0.1] || 0,
-                    saldoSistema: numSistema,
-                    capitalBase: capitalBaseActual.toFixed(2)
+                    totalEfectivoSoles: centimosEfectivoUsar / 100,
+                    saldoSistemaSoles: numSistema,
+                    capitalTotalSoles: (centimosEfectivoUsar + centimosSistema) / 100,
+                    capitalBaseSoles: capitalBaseActual,
+                    diferenciaSoles: ((centimosEfectivoUsar + centimosSistema) - Math.round(capitalBaseActual * 100)) / 100
                 };
 
+                guardarBaseDatosLocal();
+                renderizarHojasLocales();
                 vibrarRapido([18, 25, 18]);
-                enviarASheetsCeroLatencia(paqueteCierre);
 
                 panelCierre.className = "panel-resultado estado-exacto";
-                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ CIERRE GUARDADO EN HOJA 2", formatoMonedaConPrefijo(totalEfectivoFisico + numSistema));
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ CIERRE GUARDADO EN HOJA 2", formatoMonedaConPrefijo(hoja2DatosLocal.capitalTotalSoles));
             } else {
-                const payloadSaldoInicial = {
-                    accion: "fijar_saldo_inicial",
-                    saldoInicial: totalEfectivoFisico
-                };
+                // MODO 1 (SIN S. SISTEMA): FIJA EL EFECTIVO INICIAL EN LA HOJA 1 LOCAL Y ACTIVA EL GUARDADO DE CAJA
+                const centimosNuevoInicial = (totalCentimosManual !== 0) ? totalCentimosManual : centimosEfectivoUsar;
+                hoja1DatosLocal.tieneEfectivoInicial = true;
+                hoja1DatosLocal.efectivoInicialCentimos = centimosNuevoInicial;
 
                 if (!guardarMovimientosActivo) {
                     cambiarEstadoGuardadoMovimientos(true);
                 }
 
+                // Al quedar fijado como Efectivo Inicial en Movimientos, limpiamos el conteo manual de Cierre
+                // para que la fila principal muestre el Efectivo Actual sincronizado
+                cantF1000 = 0;
+                document.getElementById('f1000').value = '';
+                denominacionesBilletes.forEach(d => billetesCierre[d] = 0);
+                denominacionesMonedas.forEach(d => monedasCierre[d] = 0);
+                if (contextoPrincipal === 'cierre') {
+                    document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
+                }
+
+                guardarBaseDatosLocal();
+                guardarEstadoEnStorage();
+                calculateAllCounter();
+                renderizarHojasLocales();
                 vibrarRapido([18, 25, 18]);
-                enviarASheetsCeroLatencia(payloadSaldoInicial);
 
                 panelCierre.className = "panel-resultado estado-exacto";
-                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ SALDO INICIAL GUARDADO EN HOJA 1", formatoMonedaConPrefijo(totalEfectivoFisico));
+                setResultadoPanel('textoFinalCierre', 'montoFinalCierre', 'exacto', "✓ EFECTIVO INICIAL FIJADO EN HOJA 1", formatoMonedaConPrefijo(centimosNuevoInicial / 100));
             }
 
             timerConfirmacionCierre = setTimeout(() => {
                 timerConfirmacionCierre = null;
                 calcularCuadreCierre();
-            }, 1300);
+            }, 1200);
 
             enfocarInputActivoActual();
             return false;
+        }
+
+        /* ===============================================================
+           RENDERIZADO DE HOJA 1 Y HOJA 2 LOCALES + EXPORTACIÓN A EXCEL (.XLS)
+           =============================================================== */
+        function renderizarHojasLocales() {
+            // 1. Renderizar Hoja 1 (Movimientos y Efectivo Inicial / Actual)
+            const estadoMovs = obtenerEstadoEfectivoActualHoja1();
+            const lblIni = document.getElementById('lblHoja1EfectivoInicial');
+            const lblAct = document.getElementById('lblHoja1EfectivoActual');
+
+            if (lblIni) {
+                lblIni.innerText = estadoMovs.tieneInicial
+                    ? formatoMonedaConPrefijo(estadoMovs.inicialCentimos / 100)
+                    : "S/ 0.00";
+            }
+            if (lblAct) {
+                lblAct.innerText = estadoMovs.activo
+                    ? formatoMonedaConPrefijo(estadoMovs.actualSoles)
+                    : "S/ 0.00";
+            }
+
+            const tbodyH1 = document.getElementById('tbodyMovimientosHoja1');
+            if (tbodyH1) {
+                if (hoja1DatosLocal.movimientos.length === 0) {
+                    tbodyH1.innerHTML = `<tr><td colspan="5" class="fila-vacia-aviso">Aún no hay operaciones registradas en la Hoja 1.</td></tr>`;
+                } else {
+                    let htmlFilas = '';
+                    for (let i = 0; i < hoja1DatosLocal.movimientos.length; i++) {
+                        const mov = hoja1DatosLocal.movimientos[i];
+                        const montoSoles = (parseInt(mov.montoCentimos) || 0) / 100;
+                        const claseColor = montoSoles < 0 ? 'monto-negativo-rojo' : 'monto-positivo-negro';
+                        htmlFilas += `
+                            <tr>
+                                <td class="col-num-op">${i + 1}</td>
+                                <td class="col-fecha-op">${mov.fecha}</td>
+                                <td class="col-hora-op">${mov.hora}</td>
+                                <td class="col-detalle-op">${mov.detalle}</td>
+                                <td class="col-monto-op ${claseColor}">${formatoNumeroPuroHoja1(montoSoles)}</td>
+                            </tr>`;
+                    }
+                    tbodyH1.innerHTML = htmlFilas;
+                }
+            }
+
+            // 2. Renderizar Hoja 2 (Detalle General de Cierre)
+            const tbodyH2 = document.getElementById('tbodyDetalleCierreHoja2');
+            if (tbodyH2) {
+                // Si ya se guardó un cierre con Enter, muestra ese cierre; si no, muestra en vivo los datos actuales
+                const { totalCentimos: centManual } = obtenerEfectivoFisicoCierreCentimos();
+                const { numSistema } = obtenerEstadoCampoSistema();
+                const efecUsadoSoles = (centManual !== 0)
+                    ? (centManual / 100)
+                    : (estadoMovs.activo ? estadoMovs.actualSoles : 0);
+
+                const src = hoja2DatosLocal || {
+                    f1000: cantF1000 || 0,
+                    b200: billetesCierre[200] || 0,
+                    b100: billetesCierre[100] || 0,
+                    b50: billetesCierre[50] || 0,
+                    b20: billetesCierre[20] || 0,
+                    b10: billetesCierre[10] || 0,
+                    m5: monedasCierre[5] || 0,
+                    m2: monedasCierre[2] || 0,
+                    m1: monedasCierre[1] || 0,
+                    m050: monedasCierre[0.5] || 0,
+                    m020: monedasCierre[0.2] || 0,
+                    m010: monedasCierre[0.1] || 0,
+                    totalEfectivoSoles: efecUsadoSoles,
+                    saldoSistemaSoles: numSistema,
+                    capitalTotalSoles: efecUsadoSoles + numSistema,
+                    capitalBaseSoles: capitalBaseActual,
+                    diferenciaSoles: (efecUsadoSoles + numSistema) - capitalBaseActual
+                };
+
+                const filaDenom = (etiqueta, cant, mult) => {
+                    const res = cant * mult;
+                    return `
+                        <tr>
+                            <td style="font-weight:700;">${etiqueta}</td>
+                            <td style="text-align:center;">${cant}</td>
+                            <td style="text-align:right; padding-right:8px;">${formatoMonedaConPrefijo(res)}</td>
+                        </tr>`;
+                };
+
+                const difColor = src.diferenciaSoles < -0.05 ? '#dc2626' : (src.diferenciaSoles > 0.05 ? '#ea580c' : '#15803d');
+
+                tbodyH2.innerHTML = `
+                    <tr><td colspan="3" class="subtitulo-seccion-hoja2">📦 FAJOS DE S/ 1,000</td></tr>
+                    ${filaDenom('Fajos de S/ 1,000', src.f1000, 1000)}
+                    <tr><td colspan="3" class="subtitulo-seccion-hoja2">💵 BILLETES SUELTOS</td></tr>
+                    ${filaDenom('Billetes de S/ 200', src.b200, 200)}
+                    ${filaDenom('Billetes de S/ 100', src.b100, 100)}
+                    ${filaDenom('Billetes de S/ 50', src.b50, 50)}
+                    ${filaDenom('Billetes de S/ 20', src.b20, 20)}
+                    ${filaDenom('Billetes de S/ 10', src.b10, 10)}
+                    <tr><td colspan="3" class="subtitulo-seccion-hoja2">🪙 MONEDAS</td></tr>
+                    ${filaDenom('Monedas de S/ 5.00', src.m5, 5)}
+                    ${filaDenom('Monedas de S/ 2.00', src.m2, 2)}
+                    ${filaDenom('Monedas de S/ 1.00', src.m1, 1)}
+                    ${filaDenom('Monedas de S/ 0.50', src.m050, 0.5)}
+                    ${filaDenom('Monedas de S/ 0.20', src.m020, 0.2)}
+                    ${filaDenom('Monedas de S/ 0.10', src.m010, 0.1)}
+                    <tr><td colspan="3" class="subtitulo-seccion-hoja2">🏦 CUADRE FINAL DE CIERRE</td></tr>
+                    <tr class="fila-cuadre-hoja2">
+                        <td colspan="2">TOTAL EFECTIVO</td>
+                        <td style="text-align:right; padding-right:8px;">${formatoMonedaConPrefijo(src.totalEfectivoSoles)}</td>
+                    </tr>
+                    <tr class="fila-cuadre-hoja2">
+                        <td colspan="2">SALDO DEL SISTEMA</td>
+                        <td style="text-align:right; padding-right:8px;">${formatoMonedaConPrefijo(src.saldoSistemaSoles)}</td>
+                    </tr>
+                    <tr class="fila-cuadre-hoja2 fila-cuadre-destacada">
+                        <td colspan="2">CAPITAL TOTAL (E + S)</td>
+                        <td style="text-align:right; padding-right:8px;">${formatoMonedaConPrefijo(src.capitalTotalSoles)}</td>
+                    </tr>
+                    <tr class="fila-cuadre-hoja2">
+                        <td colspan="2">CAPITAL BASE REQUERIDO</td>
+                        <td style="text-align:right; padding-right:8px;">${formatoMonedaConPrefijo(src.capitalBaseSoles)}</td>
+                    </tr>
+                    <tr class="fila-cuadre-hoja2">
+                        <td colspan="2" style="color:${difColor}; font-weight:900;">DIFERENCIA (FALTA / SOBRA)</td>
+                        <td style="text-align:right; padding-right:8px; color:${difColor}; font-weight:900;">${formatoMonedaConPrefijo(src.diferenciaSoles)}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        function irAPestanaHojaLocal(numHoja) {
+            const slider = document.getElementById('sliderHojasLocales');
+            if (!slider) return;
+            vibrarRapido(12);
+            esTransicionHojaLocal = true;
+            clearTimeout(timerFinTransicionHoja);
+
+            const esHoja1 = (numHoja === 1);
+            document.getElementById('btnTabHoja1').classList.toggle('active', esHoja1);
+            document.getElementById('btnTabHoja2').classList.toggle('active', !esHoja1);
+
+            slider.scrollTo({ left: esHoja1 ? 0 : slider.clientWidth, behavior: 'smooth' });
+            timerFinTransicionHoja = setTimeout(() => { esTransicionHojaLocal = false; }, 260);
+        }
+
+        function handleScrollHojasLocales() {
+            if (esTransicionHojaLocal) return;
+            const slider = document.getElementById('sliderHojasLocales');
+            if (!slider) return;
+            const esHoja2 = slider.scrollLeft > (slider.clientWidth / 2);
+            document.getElementById('btnTabHoja1').classList.toggle('active', !esHoja2);
+            document.getElementById('btnTabHoja2').classList.toggle('active', esHoja2);
+        }
+
+        // Exportación en 1 clic a archivo Excel (.xls) con Hoja 1 y Hoja 2 completas
+        function descargarArchivoExcelLocal() {
+            vibrarRapido([18, 25, 18]);
+            const estadoMovs = obtenerEstadoEfectivoActualHoja1();
+            const ahora = new Date();
+            const fechaArchivo = ahora.toISOString().slice(0, 10);
+
+            const inicialNum = (estadoMovs.inicialCentimos / 100).toFixed(2);
+            const actualNum = estadoMovs.actualSoles.toFixed(2);
+
+            let filasXmlHoja1 = `
+                <Row>
+                    <Cell><Data ss:Type="String">EFECTIVO INICIAL</Data></Cell>
+                    <Cell><Data ss:Type="Number">${inicialNum}</Data></Cell>
+                    <Cell><Data ss:Type="String">EFECTIVO ACTUAL</Data></Cell>
+                    <Cell><Data ss:Type="Number">${actualNum}</Data></Cell>
+                </Row>
+                <Row></Row>
+                <Row>
+                    <Cell><Data ss:Type="String">N°</Data></Cell>
+                    <Cell><Data ss:Type="String">FECHA</Data></Cell>
+                    <Cell><Data ss:Type="String">HORA</Data></Cell>
+                    <Cell><Data ss:Type="String">DETALLE</Data></Cell>
+                    <Cell><Data ss:Type="String">MOVIMIENTO</Data></Cell>
+                </Row>`;
+
+            for (let i = 0; i < hoja1DatosLocal.movimientos.length; i++) {
+                const m = hoja1DatosLocal.movimientos[i];
+                const valNum = ((parseInt(m.montoCentimos) || 0) / 100).toFixed(2);
+                const estId = (parseInt(m.montoCentimos) || 0) < 0 ? ' ss:StyleID="sRojo"' : ' ss:StyleID="sNegro"';
+                filasXmlHoja1 += `
+                <Row>
+                    <Cell><Data ss:Type="Number">${i + 1}</Data></Cell>
+                    <Cell><Data ss:Type="String">${m.fecha}</Data></Cell>
+                    <Cell><Data ss:Type="String">${m.hora}</Data></Cell>
+                    <Cell><Data ss:Type="String">${m.detalle}</Data></Cell>
+                    <Cell${estId}><Data ss:Type="Number">${valNum}</Data></Cell>
+                </Row>`;
+            }
+
+            const { totalCentimos: centManual } = obtenerEfectivoFisicoCierreCentimos();
+            const { numSistema } = obtenerEstadoCampoSistema();
+            const efecUsadoSoles = (centManual !== 0) ? (centManual / 100) : (estadoMovs.activo ? estadoMovs.actualSoles : 0);
+
+            const src = hoja2DatosLocal || {
+                f1000: cantF1000 || 0,
+                b200: billetesCierre[200] || 0,
+                b100: billetesCierre[100] || 0,
+                b50: billetesCierre[50] || 0,
+                b20: billetesCierre[20] || 0,
+                b10: billetesCierre[10] || 0,
+                m5: monedasCierre[5] || 0,
+                m2: monedasCierre[2] || 0,
+                m1: monedasCierre[1] || 0,
+                m050: monedasCierre[0.5] || 0,
+                m020: monedasCierre[0.2] || 0,
+                m010: monedasCierre[0.1] || 0,
+                totalEfectivoSoles: efecUsadoSoles,
+                saldoSistemaSoles: numSistema,
+                capitalTotalSoles: efecUsadoSoles + numSistema,
+                capitalBaseSoles: capitalBaseActual,
+                diferenciaSoles: (efecUsadoSoles + numSistema) - capitalBaseActual
+            };
+
+            const xmlFilaH2 = (denom, cant, mult) => `
+                <Row>
+                    <Cell><Data ss:Type="String">${denom}</Data></Cell>
+                    <Cell><Data ss:Type="Number">${cant}</Data></Cell>
+                    <Cell><Data ss:Type="Number">${(cant * mult).toFixed(2)}</Data></Cell>
+                </Row>`;
+
+            const filasXmlHoja2 = `
+                <Row>
+                    <Cell><Data ss:Type="String">DENOMINACIÓN</Data></Cell>
+                    <Cell><Data ss:Type="String">CANTIDAD</Data></Cell>
+                    <Cell><Data ss:Type="String">RESULTADO</Data></Cell>
+                </Row>
+                ${xmlFilaH2('Fajos de S/ 1,000', src.f1000, 1000)}
+                ${xmlFilaH2('Billetes de S/ 200', src.b200, 200)}
+                ${xmlFilaH2('Billetes de S/ 100', src.b100, 100)}
+                ${xmlFilaH2('Billetes de S/ 50', src.b50, 50)}
+                ${xmlFilaH2('Billetes de S/ 20', src.b20, 20)}
+                ${xmlFilaH2('Billetes de S/ 10', src.b10, 10)}
+                ${xmlFilaH2('Monedas de S/ 5.00', src.m5, 5)}
+                ${xmlFilaH2('Monedas de S/ 2.00', src.m2, 2)}
+                ${xmlFilaH2('Monedas de S/ 1.00', src.m1, 1)}
+                ${xmlFilaH2('Monedas de S/ 0.50', src.m050, 0.5)}
+                ${xmlFilaH2('Monedas de S/ 0.20', src.m020, 0.2)}
+                ${xmlFilaH2('Monedas de S/ 0.10', src.m010, 0.1)}
+                <Row></Row>
+                <Row><Cell><Data ss:Type="String">TOTAL EFECTIVO</Data></Cell><Cell></Cell><Cell><Data ss:Type="Number">${src.totalEfectivoSoles.toFixed(2)}</Data></Cell></Row>
+                <Row><Cell><Data ss:Type="String">SALDO DEL SISTEMA</Data></Cell><Cell></Cell><Cell><Data ss:Type="Number">${src.saldoSistemaSoles.toFixed(2)}</Data></Cell></Row>
+                <Row><Cell><Data ss:Type="String">CAPITAL TOTAL (E + S)</Data></Cell><Cell></Cell><Cell><Data ss:Type="Number">${src.capitalTotalSoles.toFixed(2)}</Data></Cell></Row>
+                <Row><Cell><Data ss:Type="String">CAPITAL BASE REQUERIDO</Data></Cell><Cell></Cell><Cell><Data ss:Type="Number">${src.capitalBaseSoles.toFixed(2)}</Data></Cell></Row>
+                <Row><Cell><Data ss:Type="String">DIFERENCIA (FALTA/SOBRA)</Data></Cell><Cell></Cell><Cell><Data ss:Type="Number">${src.diferenciaSoles.toFixed(2)}</Data></Cell></Row>
+            `;
+
+            const xmlWorkbook = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="sNegro"><Font ss:Color="#000000"/><NumberFormat ss:Format="#,##0.00"/></Style>
+  <Style ss:ID="sRojo"><Font ss:Color="#DC2626"/><NumberFormat ss:Format="#,##0.00;-#,##0.00"/></Style>
+ </Styles>
+ <Worksheet ss:Name="Hoja 1 - Movimientos">
+  <Table>${filasXmlHoja1}</Table>
+ </Worksheet>
+ <Worksheet ss:Name="Hoja 2 - Cierre General">
+  <Table>${filasXmlHoja2}</Table>
+ </Worksheet>
+</Workbook>`;
+
+            const blob = new Blob([xmlWorkbook], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BCP_Caja_y_Cierre_${fechaArchivo}.xls`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1500);
         }
 
         /* ===============================================================
@@ -3353,6 +4118,7 @@
                     else if (modoOperacion === 'deposito') datosInferior.deposito[cuadroVinculado] = targetInput.value;
                     else datosSuperior.recibo[cuadroVinculado] = targetInput.value;
 
+                    registrarModoEnOrden(modoOperacion);
                     reaplicarEstiloSincronizacion();
                 } else if (cuadroVinculado) {
                     let targetInput = document.getElementById(cuadroVinculado);
@@ -3438,8 +4204,13 @@
 
         /* ===============================================================
            FOCO INTELIGENTE Y TECLAS ESPECIALES (- / , / ENTER)
+           En #app-movimientos el teclado numérico permanece 100% oculto
            =============================================================== */
         function enfocarInputActivoActual() {
+            if (document.getElementById('app-movimientos').classList.contains('active-app')) {
+                if (document.activeElement) document.activeElement.blur();
+                return;
+            }
             if (document.getElementById('app-caja').classList.contains('active-app')) {
                 enfocarSiguienteInputVisible('app-caja');
             } else if (document.getElementById('app-cierre').classList.contains('active-app')) {
@@ -3544,6 +4315,7 @@
 
         function procesarTeclasEspeciales(e) {
             if (document.getElementById('modalAjustes').classList.contains('active')) return;
+            if (document.getElementById('app-movimientos').classList.contains('active-app')) return;
 
             if (e.key === '-' || e.key === 'Minus' || e.code === 'NumpadSubtract' || e.code === 'Minus') {
                 e.preventDefault();
@@ -3574,7 +4346,7 @@
                     ejecutarAccionTecladoCaja(e);
                 } else if (document.getElementById('app-cierre').classList.contains('active-app')) {
                     ejecutarGuardadoCierreConEnter(e);
-                } else {
+                } else if (document.getElementById('app-multiplicador').classList.contains('active-app')) {
                     ejecutarAccionTecladoMulti(e);
                 }
             }
@@ -3583,6 +4355,7 @@
         document.addEventListener('keydown', procesarTeclasEspeciales, true);
         document.addEventListener('beforeinput', (e) => {
             if (document.getElementById('modalAjustes').classList.contains('active')) return;
+            if (document.getElementById('app-movimientos').classList.contains('active-app')) return;
             if (e.data === '-') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -3628,8 +4401,8 @@
             if (dotMulti) dotMulti.classList.toggle('on', guardarMovimientosActivo);
             if (sub) {
                 sub.innerText = guardarMovimientosActivo 
-                    ? "ACTIVO: Cola garantizada registrando cada Enter sin duplicados" 
-                    : "DESACTIVADO: La Caja opera localmente sin enviar a la Hoja 1";
+                    ? "ACTIVO: Cada Enter guarda en la Hoja 1 Local en 0.00 ms" 
+                    : "DESACTIVADO: La Caja opera sin registrar en la Hoja 1";
             }
         }
 
@@ -3693,6 +4466,7 @@
                 capitalBaseActual = num;
                 localStorage.setItem('bcp_capital_base', capitalBaseActual.toFixed(2));
                 calcularCuadreCierre();
+                renderizarHojasLocales();
 
                 const btn = document.getElementById('btnGuardarBase');
                 btn.innerText = "✓ Listo";
@@ -3706,17 +4480,31 @@
             }
         }
 
-        function ejecutarAccionHojaRemota(accionRemota, btnId) {
+        function ejecutarLimpiezaLocalHoja(tipoAccion, btnId) {
             vibrarRapido([20, 30, 20]);
             const btn = document.getElementById(btnId);
             const textoOriginal = btn.innerHTML;
 
-            enviarASheetsCeroLatencia({ accion: accionRemota });
+            if (tipoAccion === 'borrar_solo_movimientos') {
+                // Borra solo las filas de movimientos de la Hoja 1, conservando intacto el Efectivo Inicial
+                hoja1DatosLocal.movimientos = [];
+            } else if (tipoAccion === 'borrar_saldo_inicial') {
+                // Borra únicamente el Efectivo Inicial de la Hoja 1
+                hoja1DatosLocal.tieneEfectivoInicial = false;
+                hoja1DatosLocal.efectivoInicialCentimos = 0;
+            } else if (tipoAccion === 'limpiar_cierre') {
+                // Borra únicamente el Cierre General guardado en la Hoja 2
+                hoja2DatosLocal = null;
+            }
+
+            guardarBaseDatosLocal();
+            calcularCuadreCierre();
+            renderizarHojasLocales();
 
             btn.style.background = "#dcfce7";
             btn.style.borderColor = "#16a34a";
             btn.style.color = "#15803d";
-            btn.innerHTML = "✅ ¡Ejecutado en Google Sheets!";
+            btn.innerHTML = "✅ ¡Borrado en 0.00 ms!";
 
             setTimeout(() => {
                 btn.style.background = "";
@@ -3724,7 +4512,7 @@
                 btn.style.color = "";
                 btn.innerHTML = textoOriginal;
                 cerrarModalAjustes();
-            }, 550);
+            }, 500);
         }
 
         function guardarFotoEnStorage(event, tipo, denom) {
@@ -3756,8 +4544,8 @@
             reader.readAsDataURL(file);
         }
 
-        // Inicialización general
-        cargarColaPersistente();
+        // Inicialización general 100% Local
+        cargarBaseDatosLocal();
         renderizarListasVisuales();
         restaurarEstadoDesdeStorage();
         inicializarGoogleSwitcher();
@@ -3769,6 +4557,7 @@
         sincronizarInputsMultiplicadorSegunContexto();
         calcularTodoCaja();
         calcularCuadreCierre();
+        renderizarHojasLocales();
 
         window.onload = () => {
             posicionarBotonesAuxiliaresCajaPorDefecto();
@@ -3780,7 +4569,6 @@
                 enfocarSiguienteInputVisible('app-caja');
             }
             verificarSiTecladoTapaElementosFijos();
-            procesarColaSheets();
         };
     </script>
 </body>
