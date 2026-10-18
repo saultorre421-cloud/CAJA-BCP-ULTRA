@@ -1,0 +1,6 @@
+{
+  "name": "Sistema Ágil Unificado - Agente BCP",
+  "description": "Sistema ágil de caja y cierre de operaciones para Agente BCP con cálculo instantáneo, desglose de billetes y monedas, hojas locales de movimientos y exportación a Excel.",
+  "permissions": [],
+  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,6 @@
+{
+  "summary": "Plan de implementación para las 3 mejoras offline del sistema Agente BCP: (1) Generador binario nativo .xlsx OpenXML con CRC32 y soporte Web Share API en Android, (2) Ajuste de cabecera a 'HOJAS BCP' con botón contextual '🗑️ BORRAR' (menú desplegable compacto en Hoja 1 y borrado directo en 0.00 ms en Hoja 2), y (3) Limpieza de los botones de borrado del modal de ajustes.",
+  "updatedAt": "2026-10-18T22:32:35.459304004Z",
+  "requestFeedback": true,
+  "userFacing": true
+}
