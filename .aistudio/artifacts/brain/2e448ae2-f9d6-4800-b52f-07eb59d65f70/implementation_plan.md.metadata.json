@@ -1,6 +1,0 @@
-{
-  "summary": "Plan de consolidación monolítica en index.html con código vanilla puro (HTML, CSS y JS sin librerías externas) para despliegue directo en GitHub Pages, incluyendo las 3 mejoras funcionales (exportador nativo binario .xlsx con Web Share API, cabecera HOJAS BCP con borrado contextual y limpieza del modal de configuración) y limpieza del repositorio dejando únicamente index.html y README.md.",
-  "updatedAt": "2026-10-18T23:26:29.465361128Z",
-  "requestFeedback": true,
-  "userFacing": true
-}
