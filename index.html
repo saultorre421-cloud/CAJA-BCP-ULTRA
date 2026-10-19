@@ -1264,12 +1264,18 @@
             flex: 1;
         }
 
+        ..acciones-top-hojas {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .btn-descargar-excel {
             background: #16a34a;
             border: 1px solid #86efac;
             color: #ffffff;
             border-radius: 7px;
-            padding: 5px 10px;
+            padding: 5px 9px;
             font-size: 11px;
             font-weight: 900;
             letter-spacing: 0.3px;
@@ -1279,6 +1285,92 @@
             gap: 4px;
         }
         .btn-descargar-excel:active { transform: scale(0.95); background: #15803d; }
+
+        .btn-borrar-hoja-top {
+            background: #dc2626;
+            border: 1px solid #fca5a5;
+            color: #ffffff;
+            border-radius: 7px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-borrar-hoja-top:active { transform: scale(0.95); background: #b91c1c; }
+
+        /* Mini-modal flotante rápido para elegir qué borrar cuando estás en la Hoja 1 */
+        .modal-borrar-hoja1 {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.72);
+            z-index: 2100;
+            padding: 16px;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-borrar-hoja1.active {
+            display: flex;
+        }
+        .card-borrar-hoja1 {
+            background: #ffffff;
+            border-radius: 14px;
+            width: 100%;
+            max-width: 340px;
+            padding: 14px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+            border: 2px solid var(--bcp-blue);
+            text-align: center;
+        }
+        .titulo-card-borrar-h1 {
+            font-size: 13.5px;
+            font-weight: 900;
+            color: var(--bcp-blue);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.4px;
+        }
+        .btn-opcion-borrar-h1 {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 9px;
+            border: 1.5px solid #cbd5e1;
+            background: #f8fafc;
+            color: #0f172a;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            margin-bottom: 8px;
+            line-height: 1.25;
+            display: block;
+        }
+        .btn-opcion-borrar-h1:active { transform: scale(0.97); }
+        .btn-opcion-borrar-h1.op-movs {
+            border-color: #93c5fd;
+            background: #eff6ff;
+            color: var(--bcp-blue);
+        }
+        .btn-opcion-borrar-h1.op-inicial {
+            border-color: #fecaca;
+            background: #fff1f2;
+            color: #be123c;
+        }
+        .btn-cancelar-borrar-h1 {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 11.5px;
+            font-weight: 900;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
 
         .tabs-hojas-locales {
             background: #ffffff;
@@ -1950,13 +2042,37 @@
     <div id="app-movimientos" class="main-app-container">
         <div class="hojas-locales-wrapper">
             <div class="top-bar-hojas">
+               <div class="top-bar-hojas">
                 <button type="button" class="btn-volver-hojas" onclick="cerrarVistaMovimientosLocal()">
                     <span>← Volver</span>
                 </button>
-                <div class="titulo-barra-hojas">CONTROL LOCAL BCP</div>
-                <button type="button" class="btn-descargar-excel" onclick="descargarArchivoExcelLocal()">
-                    <span>📥 EXCEL</span>
-                </button>
+                <div class="titulo-barra-hojas">HOJAS BCP</div>
+                <div class="acciones-top-hojas">
+                    <button type="button" class="btn-descargar-excel" onclick="descargarArchivoExcelLocal()">
+                        <span>📥 EXCEL</span>
+                    </button>
+                    <button type="button" class="btn-borrar-hoja-top" id="btnBorrarHojaTop" onclick="ejecutarBorrarDirectoHojaActiva()">
+                        <span>🗑️ BORRAR</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Selector flotante rápido exclusivo cuando se toca BORRAR estando en la Hoja 1 -->
+            <div class="modal-borrar-hoja1" id="modalSelectorBorrarHoja1" onclick="cerrarSelectorBorrarHoja1()">
+                <div class="card-borrar-hoja1" onclick="event.stopPropagation()">
+                    <div class="titulo-card-borrar-h1">🗑️ ¿Qué deseas borrar en Hoja 1?</div>
+                    <button type="button" class="btn-opcion-borrar-h1 op-movs" onclick="confirmarBorradoHoja1('movimientos')">
+                        🧹 Borrar solo Movimientos<br>
+                        <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Efectivo Inicial)</span>
+                    </button>
+                    <button type="button" class="btn-opcion-borrar-h1 op-inicial" onclick="confirmarBorradoHoja1('inicial')">
+                        💵 Borrar Efectivo Inicial<br>
+                        <span style="font-size:10px; font-weight:700;">(Restablece el Efectivo Inicial a S/ 0.00)</span>
+                    </button>
+                    <button type="button" class="btn-cancelar-borrar-h1" onclick="cerrarSelectorBorrarHoja1()">
+                        Cancelar
+                    </button>
+                </div>
             </div>
 
             <div class="tabs-hojas-locales">
@@ -2064,13 +2180,6 @@
                     </label>
                 </div>
 
-                <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
-                    🧹 Borrado Inteligente desde Caja (Hoja 1)
-                </div>
-                <button type="button" class="btn-accion-hoja" id="btnBorrarSoloMovimientos" onclick="ejecutarLimpiezaLocalHoja('borrar_solo_movimientos', 'btnBorrarSoloMovimientos')" style="margin-bottom: 8px;">
-                    🧹 Borrar Solo Movimientos de Caja (Hoja 1)<br>
-                    <span style="font-size:10px; font-weight:700; color:#15803d;">(Conserva intacto el Efectivo Inicial)</span>
-                </button>
                 <div class="nota-explicativa-config">
                     💡 <b>100% Local y Cero Latencia:</b> Todas las operaciones (incluyendo operaciones enganchadas entre modos) se registran en <b>0.00 ms</b> en la memoria interna de tu celular.
                 </div>
@@ -2084,20 +2193,6 @@
                         <input type="text" id="input-base-config" class="input-base-modal" inputmode="decimal" oninput="formatInput(this)" placeholder="26,729.00">
                         <button type="button" class="btn-save-base" id="btnGuardarBase" onclick="guardarCapitalBase()">Guardar</button>
                     </div>
-                </div>
-
-                <div style="font-size: 11px; font-weight: 900; color: var(--bcp-blue); text-transform: uppercase; margin-bottom: 6px;">
-                    🏦 Borrado Independiente de Hojas Locales
-                </div>
-                <div class="grid-limpieza-hojas">
-                    <button type="button" class="btn-accion-hoja btn-danger-soft" id="btnBorrarSaldoInicial" onclick="ejecutarLimpiezaLocalHoja('borrar_saldo_inicial', 'btnBorrarSaldoInicial')">
-                        🗑️ Borrar Efectivo Inicial<br>
-                        <span style="font-size:10px; font-weight:700;">(Solo en Hoja 1)</span>
-                    </button>
-                    <button type="button" class="btn-accion-hoja" id="btnLimpiarCierreHojas" onclick="ejecutarLimpiezaLocalHoja('limpiar_cierre', 'btnLimpiarCierreHojas')">
-                        🧹 Borrar Cierre General<br>
-                        <span style="font-size:10px; font-weight:700;">(Solo en Hoja 2)</span>
-                    </button>
                 </div>
 
                 <div class="nota-explicativa-config">
@@ -4480,41 +4575,58 @@
             }
         }
 
-        function ejecutarLimpiezaLocalHoja(tipoAccion, btnId) {
-            vibrarRapido([20, 30, 20]);
-            const btn = document.getElementById(btnId);
-            const textoOriginal = btn.innerHTML;
-
-            if (tipoAccion === 'borrar_solo_movimientos') {
-                // Borra solo las filas de movimientos de la Hoja 1, conservando intacto el Efectivo Inicial
-                hoja1DatosLocal.movimientos = [];
-            } else if (tipoAccion === 'borrar_saldo_inicial') {
-                // Borra únicamente el Efectivo Inicial de la Hoja 1
-                hoja1DatosLocal.tieneEfectivoInicial = false;
-                hoja1DatosLocal.efectivoInicialCentimos = 0;
-            } else if (tipoAccion === 'limpiar_cierre') {
-                // Borra únicamente el Cierre General guardado en la Hoja 2
-                hoja2DatosLocal = null;
-            }
-
-            guardarBaseDatosLocal();
-            calcularCuadreCierre();
-            renderizarHojasLocales();
-
-            btn.style.background = "#dcfce7";
-            btn.style.borderColor = "#16a34a";
-            btn.style.color = "#15803d";
-            btn.innerHTML = "✅ ¡Borrado en 0.00 ms!";
-
+       function mostrarConfirmacionBotonBorrarTop(mensajeCorto) {
+            const btn = document.getElementById('btnBorrarHojaTop');
+            if (!btn) return;
+            btn.style.background = "#16a34a";
+            btn.style.borderColor = "#86efac";
+            btn.innerHTML = `<span>${mensajeCorto}</span>`;
             setTimeout(() => {
                 btn.style.background = "";
                 btn.style.borderColor = "";
-                btn.style.color = "";
-                btn.innerHTML = textoOriginal;
-                cerrarModalAjustes();
-            }, 500);
+                btn.innerHTML = `<span>🗑️ BORRAR</span>`;
+            }, 700);
         }
 
+        function ejecutarBorrarDirectoHojaActiva() {
+            const tabHoja1 = document.getElementById('btnTabHoja1');
+            const estaEnHoja1 = tabHoja1 && tabHoja1.classList.contains('active');
+
+            if (estaEnHoja1) {
+                vibrarRapido(14);
+                const modalH1 = document.getElementById('modalSelectorBorrarHoja1');
+                if (modalH1) modalH1.classList.add('active');
+            } else {
+                // Está en Hoja 2 (Cierre General): borra directamente el Cierre guardado en Hoja 2
+                vibrarRapido([20, 30, 20]);
+                hoja2DatosLocal = null;
+                guardarBaseDatosLocal();
+                calcularCuadreCierre();
+                renderizarHojasLocales();
+                mostrarConfirmacionBotonBorrarTop("✅ H2 LIMPIA");
+            }
+        }
+
+        function cerrarSelectorBorrarHoja1() {
+            const modalH1 = document.getElementById('modalSelectorBorrarHoja1');
+            if (modalH1) modalH1.classList.remove('active');
+        }
+
+        function confirmarBorradoHoja1(tipoBorrado) {
+            vibrarRapido([20, 30, 20]);
+            if (tipoBorrado === 'movimientos') {
+                hoja1DatosLocal.movimientos = [];
+                mostrarConfirmacionBotonBorrarTop("✅ MOVS BORRADOS");
+            } else if (tipoBorrado === 'inicial') {
+                hoja1DatosLocal.tieneEfectivoInicial = false;
+                hoja1DatosLocal.efectivoInicialCentimos = 0;
+                mostrarConfirmacionBotonBorrarTop("✅ INICIAL BORRADO");
+            }
+            guardarBaseDatosLocal();
+            calcularCuadreCierre();
+            renderizarHojasLocales();
+            cerrarSelectorBorrarHoja1();
+        }
         function guardarFotoEnStorage(event, tipo, denom) {
             const file = event.target.files[0];
             if (!file) return;
