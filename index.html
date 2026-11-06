@@ -95,7 +95,7 @@
         }
 
         /* =========================================
-           PANELES DE CABECERA DE CAJA PRINCIPAL (100% LIMPIOS)
+           PANELES DE CABECERA DE CAJA PRINCIPAL (100% LIMPIOS + DOBLE TOQUE)
            ========================================= */
         .panel-total { 
             display: flex; 
@@ -108,9 +108,11 @@
             text-transform: uppercase; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.06); 
             user-select: none;
+            cursor: pointer;
+            touch-action: manipulation;
             gap: 6px;
         }
-        
+
         .panel-title-area {
             display: flex;
             align-items: center;
@@ -218,7 +220,7 @@
             touch-action: pan-x;
         }
         .contenedor-deslizable::-webkit-scrollbar { display: none; }
-        
+
         .pagina-deslizable { 
             flex: 0 0 100%; 
             scroll-snap-align: start; 
@@ -476,7 +478,7 @@
         }
 
         /* ===============================================================
-           BOTONES ESTÁTICOS REUBICABLES: "BORRAR", "MOVIMIENTOS" Y "ANULAR"
+           BOTONES ESTÁTICOS REUBICABLES: "MOVIMIENTOS" Y "ANULAR"
            Mismo tamaño que modos · Colores neutros distintos a Dep/Serv/Ret
            =============================================================== */
         .btn-aux-caja-fijo {
@@ -522,19 +524,7 @@
             pointer-events: none !important;
         }
 
-        /* 1. Botón BORRAR (Gris Pizarra Acero - debajo de DEPÓSITO) */
-        #btnCajaBorrar {
-            background-color: #e2e8f0;
-            color: #1e293b;
-            border: 2px solid #94a3b8;
-        }
-        #btnCajaBorrar.confirmado {
-            background-color: #334155 !important;
-            color: #ffffff !important;
-            border-color: #0f172a !important;
-        }
-
-        /* 2. Botón MOVIMIENTOS (Acero Azulado Contable - debajo de SERVICIO) */
+        /* Botón MOVIMIENTOS (Acero Azulado Contable - debajo de SERVICIO) */
         #btnCajaMovimientos {
             background-color: #dbeafe;
             color: #1e3a8a;
@@ -544,7 +534,7 @@
             background-color: #bfdbfe;
         }
 
-        /* 3. Botón ANULAR (Índigo Contable - debajo de RETIRO) */
+        /* Botón ANULAR (Índigo Contable - debajo de RETIRO) */
         #btnCajaAnular {
             background-color: #e0e7ff;
             color: #1e1b4b;
@@ -973,7 +963,7 @@
             cursor: pointer;
             user-select: none;
         }
-        
+
         .main-total-centered { 
             font-size: clamp(36px, 9.5vw, 52px); 
             font-weight: 900; 
@@ -1033,7 +1023,7 @@
             z-index: 999;
             flex-shrink: 0;
         }
-        
+
         .sub-tab-btn {
             flex: 1; 
             padding: 8px 4px; 
@@ -1052,7 +1042,7 @@
             justify-content: center;
             gap: 6px;
         }
-        
+
         .sub-tab-btn.active {
             color: var(--bcp-blue);
             background-color: #edf2f7;
@@ -1224,7 +1214,7 @@
         .btn-step-down:active { background: #e2e8f0; transform: scale(0.93); }
         .btn-step-up:active { background: #dbeafe; color: var(--bcp-orange); transform: scale(0.93); }
         .btn-step svg { width: 21px; height: 21px; pointer-events: none; display: block; }
-        
+
         .input-qty {
             border: 2px solid var(--border-color);
             text-align: center; font-weight: 900; color: var(--bcp-blue); background-color: #FAFAFA;
@@ -1791,19 +1781,19 @@
     <div id="app-caja" class="main-app-container active-app">
         <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
             <div class="caja-wrapper">
-                
-                <!-- BLOQUE SUPERIOR -->
-                <div class="panel-total tema-recibo-header" id="panelSuperior">
+
+                <!-- BLOQUE SUPERIOR (Doble toque: Borra Todo en Depósito/Retiro · Borra solo Efectivo Recibido en Servicio) -->
+                <div class="panel-total tema-recibo-header" id="panelSuperior" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="manejarToqueCabeceraCaja(event, 'superior')" ondblclick="manejarDobleClickCabeceraCaja(event, 'superior')">
                     <div class="panel-title-area">
                         <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
-                        <div class="header-dots">
+                        <div class="header-dots" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
                             <div class="h-dot active" id="dot-sup-1" onclick="scrollPaginacionDirecta('swipeEfectivo', 1)"></div>
                             <div class="h-dot" id="dot-sup-2" onclick="scrollPaginacionDirecta('swipeEfectivo', 2)"></div>
                         </div>
                     </div>
                     <span id="lblEfectivo">0.00</span>
                 </div>
-                
+
                 <div class="caja-contenedor tema-recibo-bg" id="cajaSuperiorContenedor">
                     <div class="contenedor-deslizable" id="swipeEfectivo" onscroll="handleScrollIndicators('swipeEfectivo', 'dot-sup-1', 'dot-sup-2')">
                         <!-- PÁGINA 1: 4 cuadros base + 2 cuadros inteligentes (b5, b6) -->
@@ -1832,18 +1822,18 @@
                     </div>
                 </div>
 
-                <!-- BLOQUE INFERIOR -->
-                <div class="panel-total tema-recibo-header" id="panelModoSecundario">
+                <!-- BLOQUE INFERIOR (Doble toque: Borra solo Efectivo en Depósito/Retiro · Borra Todo en Servicio) -->
+                <div class="panel-total tema-recibo-header" id="panelModoSecundario" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="manejarToqueCabeceraCaja(event, 'inferior')" ondblclick="manejarDobleClickCabeceraCaja(event, 'inferior')">
                     <div class="panel-title-area">
                         <span id="lblTituloModo">RECIBO POR PAGAR</span>
-                        <div class="header-dots">
+                        <div class="header-dots" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
                             <div class="h-dot active" id="dot-inf-1" onclick="scrollPaginacionDirecta('swipeRecibo', 1)"></div>
                             <div class="h-dot" id="dot-inf-2" onclick="scrollPaginacionDirecta('swipeRecibo', 2)"></div>
                         </div>
                     </div>
                     <span id="lblRecibo">0.00</span>
                 </div>
-                
+
                 <div class="caja-contenedor tema-recibo-bg" id="cajaInferiorContenedor">
                     <div class="contenedor-deslizable" id="swipeRecibo" onscroll="handleScrollIndicators('swipeRecibo', 'dot-inf-1', 'dot-inf-2')">
                         <!-- PÁGINA 1: 4 cuadros base + 2 cuadros inteligentes (p5, p6) -->
@@ -1897,16 +1887,9 @@
     </div>
 
     <!-- =========================================================
-         3 BOTONES ESTÁTICOS REUBICABLES DE CAJA: "BORRAR", "MOVIMIENTOS" Y "ANULAR"
+         BOTONES ESTÁTICOS REUBICABLES DE CAJA: "MOVIMIENTOS" Y "ANULAR"
          (Mismo tamaño e inmóviles al tocar · Mantener presionado 0.38s para reubicar)
          ========================================================= -->
-    <button type="button" id="btnCajaBorrar" class="btn-aux-caja-fijo" title="Toque: Borrar montos de Caja · Mantener presionado: Mover">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
-        </svg>
-        <span id="txtBtnCajaBorrar">BORRAR</span>
-    </button>
-
     <button type="button" id="btnCajaMovimientos" class="btn-aux-caja-fijo" title="Toque: Abrir Movimientos y Cierre (Sin teclado) · Mantener presionado: Mover">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/>
@@ -1927,7 +1910,7 @@
     <div id="app-cierre" class="main-app-container">
         <form id="formCierre" onsubmit="ejecutarGuardadoCierreConEnter(event)" action="javascript:void(0);">
             <div class="cierre-wrapper">
-                
+
                 <!-- 1. CABECERA SUPERIOR -->
                 <div class="top-bar-cierre">
                     <div class="top-bar-title">
@@ -2043,7 +2026,7 @@
     <div id="app-multiplicador" class="main-app-container">
         <form id="formMultiplicador" onsubmit="ejecutarAccionTecladoMulti(event)" action="javascript:void(0);">
             <div class="multiplicador-wrapper">
-                
+
                 <div class="sticky-header-compact" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="alternarConMultiplicador()" title="Toca o presiona (-) para regresar">
                     <div class="main-total-centered" id="txtGranTotal">0.00</div>
                     <button type="button" id="btnAjustesMonedas" class="btn-config-monedas oculto-en-billetes" onpointerdown="event.preventDefault(); event.stopPropagation();" onmousedown="event.preventDefault(); event.stopPropagation();" onclick="abrirModalAjustesDesdeMulti(event)" title="Configuración">
@@ -2067,7 +2050,7 @@
                     <div id="tab-billetes" class="view-content">
                         <div id="containerBilletes"></div>
                     </div>
-                    
+
                     <div id="tab-monedas" class="view-content">
                         <div id="containerMonedas"></div>
                     </div>
@@ -2083,7 +2066,7 @@
          ========================================================= -->
     <div id="app-hojas" class="main-app-container">
         <div class="hojas-wrapper">
-            
+
             <!-- BARRA SUPERIOR REDISEÑADA -->
             <div class="top-bar-hojas">
                 <button type="button" class="btn-top-hojas" onclick="cerrarPantallaHojas()">
@@ -2131,7 +2114,7 @@
 
             <!-- CONTENEDOR DESLIZABLE HORIZONTAL (HOJA 1 ⇄ HOJA 2) -->
             <div class="hojas-slider" id="sliderHojasBcp" onscroll="handleScrollHojasBcp()">
-                
+
                 <!-- PÁGINA 1: HOJA 1 - MOVIMIENTOS (ORDEN BANCA MÓVIL: ÚLTIMAS ARRIBA) -->
                 <div class="hoja-page-view" id="vista-hoja-1">
                     <div class="hoja1-saldos-grid">
@@ -2165,7 +2148,7 @@
                 <!-- PÁGINA 2: HOJA 2 - CIERRE GENERAL DETALLADO -->
                 <div class="hoja-page-view" id="vista-hoja-2">
                     <div class="hoja2-scroll-body">
-                        
+
                         <div class="h2-card-bloque">
                             <div class="h2-card-header">
                                 <span>📊 RESUMEN DEL CIERRE TOTAL</span>
@@ -2272,8 +2255,7 @@
             <div id="listaSubidaMonedas" style="margin-top: 10px;"></div>
         </div>
     </div>
-<!-- ==================== FIN PARTE 1 ==================== -->
-  <script>
+<!-- ==================== FIN PARTE 1 ==================== -->                     <script>
         /* ===============================================================
            MOTOR 100% LOCAL DE CERO LATENCIA (HOJA 1 MOVIMIENTOS + HOJA 2 CIERRE)
            =============================================================== */
@@ -3036,6 +3018,10 @@ ${sheetDataXml}
         let timerFinTransicion = null;
         let altoPantallaSinTeclado = Math.max(window.innerHeight || 640, 520);
 
+        // Variables de control para el Doble Toque en las cabeceras de Caja
+        let ultimoToqueCabeceraMs = { superior: 0, inferior: 0 };
+        let timestampUltimoBorradoCabecera = 0;
+
         function guardarEstadoEnStorage() {
             try {
                 const estado = {
@@ -3178,38 +3164,24 @@ ${sheetDataXml}
         document.addEventListener('focusin', () => window.scrollTo(0, 0));
 
         /* ===============================================================
-           3 BOTONES ESTÁTICOS REUBICABLES DE CAJA ("BORRAR", "MOVIMIENTOS", "ANULAR")
+           BOTONES ESTÁTICOS REUBICABLES DE CAJA ("MOVIMIENTOS" Y "ANULAR")
            =============================================================== */
         function posicionarBotonesAuxiliaresCajaPorDefecto() {
-            const btnBorrar = document.getElementById('btnCajaBorrar');
             const btnMovs = document.getElementById('btnCajaMovimientos');
             const btnAnular = document.getElementById('btnCajaAnular');
 
-            const refDep = document.getElementById('btn-modo-deposito');
             const refServ = document.getElementById('btn-modo-servicio');
             const refRet = document.getElementById('btn-modo-retiro');
-            if (!btnBorrar || !btnMovs || !btnAnular) return;
+            if (!btnMovs || !btnAnular) return;
 
-            if (refDep && refDep.offsetWidth > 0) {
-                const rectDep = refDep.getBoundingClientRect();
+            if (refServ && refServ.offsetWidth > 0) {
                 const rectServ = refServ.getBoundingClientRect();
                 const rectRet = refRet.getBoundingClientRect();
 
-                btnBorrar.style.width = rectDep.width + 'px';
                 btnMovs.style.width = rectServ.width + 'px';
                 btnAnular.style.width = rectRet.width + 'px';
 
-                const topDefecto = Math.min(altoPantallaSinTeclado - 48, Math.round(rectDep.bottom + 7));
-
-                const savedBorrarX = localStorage.getItem('bcp_btn_borrar_x');
-                const savedBorrarY = localStorage.getItem('bcp_btn_borrar_y');
-                if (savedBorrarX !== null && savedBorrarY !== null) {
-                    btnBorrar.style.left = savedBorrarX;
-                    btnBorrar.style.top = savedBorrarY;
-                } else {
-                    btnBorrar.style.left = Math.round(rectDep.left) + 'px';
-                    btnBorrar.style.top = topDefecto + 'px';
-                }
+                const topDefecto = Math.min(altoPantallaSinTeclado - 48, Math.round(rectServ.bottom + 7));
 
                 const savedMovsX = localStorage.getItem('bcp_btn_movs_x');
                 const savedMovsY = localStorage.getItem('bcp_btn_movs_y');
@@ -3377,7 +3349,6 @@ ${sheetDataXml}
                 }
             });
 
-            configurarBotonEstaticoReubicable('btnCajaBorrar', 'bcp_btn_borrar_x', 'bcp_btn_borrar_y', ejecutarBotonBorrarCaja);
             configurarBotonEstaticoReubicable('btnCajaMovimientos', 'bcp_btn_movs_x', 'bcp_btn_movs_y', () => abrirPantallaHojas(1));
             configurarBotonEstaticoReubicable('btnCajaAnular', 'bcp_btn_anular_x', 'bcp_btn_anular_y', ejecutarBotonAnularUltimaOperacion);
 
@@ -3404,7 +3375,7 @@ ${sheetDataXml}
                 btnSwitcher.classList.toggle('tapado-por-teclado', tecladoAbierto && (posTopBurbuja + 22 > alturaVisibleActual));
             }
 
-            ['btnCajaBorrar', 'btnCajaMovimientos', 'btnCajaAnular'].forEach(id => {
+            ['btnCajaMovimientos', 'btnCajaAnular'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     const topPx = parseFloat(el.style.top) || 440;
@@ -3413,28 +3384,120 @@ ${sheetDataXml}
             });
         }
 
-        // Acción 1: Botón BORRAR (Exclusivo para Caja: jamás toca Cierre ni Movimientos)
-        function ejecutarBotonBorrarCaja() {
-            vibrarRapido([15, 25, 15]);
-            limpiarCaja();
-
-            const btn = document.getElementById('btnCajaBorrar');
-            const lbl = document.getElementById('txtBtnCajaBorrar');
-            const badge = document.getElementById('badgeOperacion');
-
-            btn.classList.add('confirmado');
-            lbl.innerText = "LIMPIO";
-            badge.innerText = "🧹 OPERACIÓN CANCELADA / CAJA LIMPIA";
-
-            setTimeout(() => {
-                btn.classList.remove('confirmado');
-                lbl.innerText = "BORRAR";
-                actualizarEstiloVisualModo();
-                enfocarSiguienteInputVisible('app-caja');
-            }, 650);
+        /* ===============================================================
+           BORRADO QUIRÚRGICO POR DOBLE TOQUE EN CABECERAS DE CAJA
+           - Doble toque en la META (Monto a Depositar / Recibo por Pagar / Monto por Retirar) -> Borra TODO
+           - Doble toque en EFECTIVO (Efectivo Recibido / Efectivo Retirado) -> Borra SOLO ese panel de efectivo
+           =============================================================== */
+        function manejarToqueCabeceraCaja(event, ubicacion) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            const ahora = Date.now();
+            if (ahora - ultimoToqueCabeceraMs[ubicacion] < 320) {
+                ultimoToqueCabeceraMs[ubicacion] = 0;
+                ejecutarBorradoPorCabeceraCaja(ubicacion);
+            } else {
+                ultimoToqueCabeceraMs[ubicacion] = ahora;
+            }
         }
 
-        // Acción 2: Botón ANULAR (Elimina al instante la última operación en Hoja 1 y recalcula Efectivo Actual)
+        function manejarDobleClickCabeceraCaja(event, ubicacion) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            ejecutarBorradoPorCabeceraCaja(ubicacion);
+        }
+
+        function ejecutarBorradoPorCabeceraCaja(ubicacion) {
+            const ahora = Date.now();
+            if (ahora - timestampUltimoBorradoCabecera < 280) return;
+            timestampUltimoBorradoCabecera = ahora;
+
+            // Identifica si la cabecera tocada corresponde a la META o al EFECTIVO según el modo activo:
+            // - En Depósito y Retiro: la META está arriba ('superior') y el EFECTIVO abajo ('inferior').
+            // - En Servicio (recibo): la META está abajo ('inferior') y el EFECTIVO arriba ('superior').
+            const esPanelMeta = (
+                (modoOperacion === 'deposito' && ubicacion === 'superior') ||
+                (modoOperacion === 'retiro' && ubicacion === 'superior') ||
+                (modoOperacion === 'recibo' && ubicacion === 'inferior')
+            );
+
+            const badge = document.getElementById('badgeOperacion');
+
+            if (esPanelMeta) {
+                // DOBLE TOQUE EN LA META -> BORRADO GENERAL DE TODA LA CAJA
+                vibrarRapido([15, 25, 15]);
+                limpiarCaja();
+                if (badge) badge.innerText = "🧹 OPERACIÓN CANCELADA / CAJA LIMPIA";
+                setTimeout(() => {
+                    actualizarEstiloVisualModo();
+                    enfocarSiguienteInputVisible('app-caja');
+                }, 650);
+            } else {
+                // DOBLE TOQUE EN EL PANEL DE EFECTIVO -> BORRA SOLO ESE PANEL DE EFECTIVO CONSERVANDO LA META
+                vibrarRapido([14, 20]);
+                limpiarSoloPanelEfectivoCaja(ubicacion);
+                if (badge) badge.innerText = "🧹 EFECTIVO LIMPIO (META INTACTA)";
+                setTimeout(() => {
+                    actualizarEstiloVisualModo();
+                }, 650);
+            }
+        }
+
+        function limpiarSoloPanelEfectivoCaja(ubicacion) {
+            // Reinicia el Multiplicador de Caja si estaba vinculado al bloque de efectivo
+            denominacionesBilletes.forEach(d => billetesCaja[d] = 0);
+            denominacionesMonedas.forEach(d => monedasCaja[d] = 0);
+            if (contextoPrincipal === 'caja') {
+                document.querySelectorAll('#app-multiplicador .input-qty').forEach(i => i.value = '');
+            }
+            cuadroVinculado = null;
+
+            if (ubicacion === 'inferior') {
+                for (let i = 1; i <= 10; i++) {
+                    const elP = document.getElementById('p' + i);
+                    if (elP) {
+                        elP.value = '';
+                        elP.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
+                        elP.readOnly = false;
+                    }
+                    datosInferior[modoOperacion]['p' + i] = '';
+                }
+                document.getElementById('swipeRecibo').scrollTo({ left: 0, behavior: 'instant' });
+                document.getElementById('dot-inf-1').classList.add('active');
+                document.getElementById('dot-inf-2').classList.remove('active', 'has-data');
+                ultimoInputCajaActivo = 'p1';
+            } else {
+                for (let i = 1; i <= 10; i++) {
+                    const elB = document.getElementById('b' + i);
+                    if (elB) {
+                        elB.value = '';
+                        elB.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
+                        elB.readOnly = false;
+                    }
+                    datosSuperior[modoOperacion]['b' + i] = '';
+                }
+                document.getElementById('swipeEfectivo').scrollTo({ left: 0, behavior: 'instant' });
+                document.getElementById('dot-sup-1').classList.add('active');
+                document.getElementById('dot-sup-2').classList.remove('active', 'has-data');
+                ultimoInputCajaActivo = 'b1';
+            }
+
+            ultimoEstadoResultadoCaja = '';
+            actualizarExpansionInteligenteBloques();
+            actualizarIndicadoresColaEnBotonesModo();
+            calculateAllCounter();
+            calcularTodoCaja();
+            guardarEstadoEnStorage();
+
+            const targetFocus = document.getElementById(ultimoInputCajaActivo);
+            if (targetFocus) targetFocus.focus({ preventScroll: true });
+        }
+
+        // Acción: Botón ANULAR (Elimina al instante la última operación en Hoja 1 y recalcula Efectivo Actual)
         function ejecutarBotonAnularUltimaOperacion() {
             vibrarRapido([25, 35, 25]);
             const btn = document.getElementById('btnCajaAnular');
@@ -3513,7 +3576,7 @@ ${sheetDataXml}
             }
 
             const mostrarAuxCaja = (appId === 'app-caja');
-            ['btnCajaBorrar', 'btnCajaMovimientos', 'btnCajaAnular'].forEach(id => {
+            ['btnCajaMovimientos', 'btnCajaAnular'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.classList.toggle('oculto', !mostrarAuxCaja);
             });
@@ -3827,7 +3890,7 @@ ${sheetDataXml}
                 centimosSuperior += v;
                 if (i >= 7) centimosSupPag2 += v;
             }
-            
+
             let centimosInferior = 0, centimosInfPag2 = 0;
             for (let i = 1; i <= 10; i++) {
                 let v = getValCentimos('p' + i);
@@ -4027,7 +4090,7 @@ ${sheetDataXml}
             cuadroVinculado = null; 
             ultimoInputCajaActivo = null;
             ultimoEstadoResultadoCaja = '';
-            
+
             document.getElementById('swipeEfectivo').scrollTo({ left: 0, behavior: 'instant' });
             document.getElementById('swipeRecibo').scrollTo({ left: 0, behavior: 'instant' });
             document.getElementById('dot-sup-1').classList.add('active');
@@ -4247,8 +4310,8 @@ ${sheetDataXml}
 
         function ejecutarGuardadoCierreConEnter(e) {
             if (e) {
-                event.preventDefault();
-                event.stopPropagation();
+                e.preventDefault();
+                e.stopPropagation();
             }
 
             const { totalCentimos: centManualTotal } = obtenerEfectivoFisicoCierreCentimos();
@@ -4587,7 +4650,7 @@ ${sheetDataXml}
                     let targetInput = document.getElementById(cuadroVinculado);
                     targetInput.value = granTotalNumerico.toFixed(2);
                     formatInput(targetInput);
-                    
+
                     if (modoOperacion === 'retiro') datosInferior.retiro[cuadroVinculado] = targetInput.value;
                     else if (modoOperacion === 'deposito') datosInferior.deposito[cuadroVinculado] = targetInput.value;
                     else datosSuperior.recibo[cuadroVinculado] = targetInput.value;
