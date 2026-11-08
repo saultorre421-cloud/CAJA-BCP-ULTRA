@@ -182,7 +182,8 @@
         }
 
         /* =========================================
-           CAJAS DE ENTRADA NUMÉRICA Y EXPANSIÓN PREDICTIVA PERFECTA (CERO HUECOS)
+           CAJAS DE ENTRADA NUMÉRICA Y EXPANSIÓN PREDICTIVA PERFECTA
+           (Mantiene siempre tamaño grande y baja naturalmente hacia el teclado)
            ========================================= */
         .caja-contenedor { 
             padding: 4px 5px 5px 5px; 
@@ -193,7 +194,6 @@
             border-right: 2px solid; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.04); 
             position: relative;
-            transition: padding 0.12s ease, margin 0.12s ease;
         }
 
         .caja-contenedor.tema-recibo-bg {
@@ -266,6 +266,7 @@
             display: grid;
         }
 
+        /* TAMAÑO ESTÁNDAR GRANDE ORIGINAL (Jamás baja de 38px) */
         .caja-contenedor input { 
             width: 100%; 
             height: 38px; 
@@ -278,7 +279,7 @@
             color: #0f172a; 
             background-color: #ffffff; 
             box-shadow: 0 1px 2px rgba(0,0,0,0.04); 
-            transition: height 0.12s ease, font-size 0.12s ease;
+            transition: height 0.12s ease;
         }
         .caja-contenedor input:not(:placeholder-shown) {
             border-color: #334155;
@@ -313,7 +314,7 @@
         }
 
         /* ===============================================================
-           CUADRO DE RESULTADOS PREDICTIVO CON DIVISIÓN 50/50 (M | CT / C | M)
+           CUADRO DE RESULTADOS (TAMAÑO MÍNIMO BLINDADO + CRECIMIENTO EN ESPACIO LIBRE)
            =============================================================== */
         .panel-resultado { 
             padding: 0 6px 5px 6px;
@@ -329,7 +330,7 @@
             user-select: none;
             cursor: pointer;
             touch-action: manipulation;
-            transition: padding 0.14s ease, margin 0.14s ease;
+            transition: padding 0.12s ease, margin 0.12s ease;
         }
 
         /* Iniciales discretas estandarizadas (C, M, CT) */
@@ -362,7 +363,6 @@
             background: #f1f5f9;
             color: #475569;
             line-height: 1.2;
-            transition: font-size 0.14s ease, padding 0.14s ease, margin 0.14s ease;
         }
 
         .texto-final-expresivo {
@@ -380,7 +380,7 @@
             gap: 7px;
             text-align: center;
             width: 100%;
-            transition: font-size 0.14s ease, padding 0.14s ease, margin 0.14s ease;
+            transition: font-size 0.12s ease, padding 0.12s ease, margin 0.12s ease;
         }
 
         #panelFinalCierre .texto-final-expresivo {
@@ -411,136 +411,67 @@
             margin-top: 1px; 
             line-height: 0.95; 
             letter-spacing: -2px;
-            transition: font-size 0.14s ease, line-height 0.14s ease, margin 0.14s ease;
+            transition: font-size 0.12s ease, line-height 0.12s ease, margin 0.12s ease;
         }
 
         /* ===============================================================
-           ESCALADO PREDICTIVO COORDINADO SEGÚN FILAS ACTIVAS (2 A 8 FILAS)
-           El mínimo de #panelFinal es el nivel de 6 filas (captura de pantalla)
+           CRECIMIENTO INTELIGENTE SOLO CUANDO HAY ESPACIO LIBRE (3 O 4 FILAS)
+           A partir de 5 filas hasta 8 filas, todo mantiene su tamaño grande
+           original (38px por cuadro y #panelFinal en su mínimo estándar)
+           avanzando hacia abajo sin achicar jamás los números ni los cuadros.
            =============================================================== */
-        /* 2 O 3 FILAS ACTIVAS (Estado inicial limpio: 2 cuadros en Meta + 4 en Efectivo) -> Cuadro de resultados MÁXIMO */
         .caja-wrapper.densidad-filas-2 .caja-contenedor input,
         .caja-wrapper.densidad-filas-3 .caja-contenedor input {
-            height: 44px;
-            font-size: clamp(23px, 6.8vw, 29px);
+            height: 43px;
+            font-size: clamp(22px, 6.6vw, 28px);
         }
         .caja-wrapper.densidad-filas-2 #panelFinal,
         .caja-wrapper.densidad-filas-3 #panelFinal {
-            padding: 3px 10px 18px 10px;
-            margin-bottom: 6px;
+            padding: 2px 8px 12px 8px;
+            margin-bottom: 5px;
         }
         .caja-wrapper.densidad-filas-2 #panelFinal .badge-operacion,
         .caja-wrapper.densidad-filas-3 #panelFinal .badge-operacion {
-            font-size: 10.5px;
-            padding: 3px 14px;
-            margin-bottom: 7px;
-        }
-        .caja-wrapper.densidad-filas-2 #panelFinal .texto-final-expresivo,
-        .caja-wrapper.densidad-filas-3 #panelFinal .texto-final-expresivo {
-            font-size: clamp(18.5px, 5.3vw, 23px);
-            padding: 7.5px 12px;
-            margin: 4px auto 8px auto;
-        }
-        .caja-wrapper.densidad-filas-2 #panelFinal .monto-final,
-        .caja-wrapper.densidad-filas-3 #panelFinal .monto-final {
-            font-size: clamp(58px, 15.5vw, 74px);
-            line-height: 1;
-            margin-top: 4px;
-        }
-
-        /* 4 FILAS ACTIVAS -> Cuadro de resultados GRANDE */
-        .caja-wrapper.densidad-filas-4 .caja-contenedor input {
-            height: 42px;
-            font-size: clamp(22px, 6.6vw, 28px);
-        }
-        .caja-wrapper.densidad-filas-4 #panelFinal {
-            padding: 2px 8px 11px 8px;
-            margin-bottom: 5px;
-        }
-        .caja-wrapper.densidad-filas-4 #panelFinal .badge-operacion {
             font-size: 10px;
             padding: 2px 12px;
             margin-bottom: 5px;
         }
-        .caja-wrapper.densidad-filas-4 #panelFinal .texto-final-expresivo {
+        .caja-wrapper.densidad-filas-2 #panelFinal .texto-final-expresivo,
+        .caja-wrapper.densidad-filas-3 #panelFinal .texto-final-expresivo {
             font-size: clamp(17.5px, 5vw, 22px);
             padding: 6px 10px;
             margin: 3px auto 5px auto;
         }
+        .caja-wrapper.densidad-filas-2 #panelFinal .monto-final,
+        .caja-wrapper.densidad-filas-3 #panelFinal .monto-final {
+            font-size: clamp(50px, 14vw, 66px);
+            line-height: 0.98;
+            margin-top: 3px;
+        }
+
+        /* 4 FILAS ACTIVAS -> Cuadros en su tamaño original de 43px y respuesta ligeramente ampliada */
+        .caja-wrapper.densidad-filas-4 .caja-contenedor input {
+            height: 43px;
+            font-size: clamp(22px, 6.6vw, 28px);
+        }
+        .caja-wrapper.densidad-filas-4 #panelFinal {
+            padding: 1px 7px 8px 7px;
+            margin-bottom: 4px;
+        }
+        .caja-wrapper.densidad-filas-4 #panelFinal .texto-final-expresivo {
+            font-size: clamp(16.8px, 4.8vw, 21.5px);
+            padding: 5px 10px;
+            margin: 2px auto 3px auto;
+        }
         .caja-wrapper.densidad-filas-4 #panelFinal .monto-final {
-            font-size: clamp(50px, 13.8vw, 65px);
-            line-height: 0.97;
+            font-size: clamp(46px, 13vw, 62px);
+            line-height: 0.96;
             margin-top: 2px;
         }
 
-        /* 5 FILAS ACTIVAS -> Cuadro de resultados MEDIO */
-        .caja-wrapper.densidad-filas-5 .caja-contenedor input {
-            height: 40px;
-            font-size: clamp(21.5px, 6.4vw, 27px);
-        }
-        .caja-wrapper.densidad-filas-5 #panelFinal {
-            padding: 0 6px 7px 6px;
-            margin-bottom: 4px;
-        }
-        .caja-wrapper.densidad-filas-5 #panelFinal .texto-final-expresivo {
-            font-size: clamp(16.5px, 4.8vw, 21px);
-            padding: 4.5px 10px;
-        }
-        .caja-wrapper.densidad-filas-5 #panelFinal .monto-final {
-            font-size: clamp(45px, 12.6vw, 60px);
-            line-height: 0.95;
-        }
-
-        /* 6 FILAS ACTIVAS (Tamaño MÍNIMO del cuadro de resultados) */
-        .caja-wrapper.densidad-filas-6 .caja-contenedor input {
-            height: 38px;
-            font-size: clamp(21px, 6.2vw, 26px);
-        }
-
-        /* 7 FILAS ACTIVAS -> #panelFinal mantiene su tamaño mínimo y los cuadros se compactan */
-        .caja-wrapper.densidad-filas-7 .panel-total {
-            padding: 3px 8px 3px 6px;
-        }
-        .caja-wrapper.densidad-filas-7 .caja-contenedor {
-            padding: 3px 4px 4px 4px;
-            margin-bottom: 3px;
-        }
-        .caja-wrapper.densidad-filas-7 .grid-2,
-        .caja-wrapper.densidad-filas-7 .fila-expandible {
-            gap: 3.5px;
-        }
-        .caja-wrapper.densidad-filas-7 .fila-expandible {
-            margin-top: 3.5px;
-        }
-        .caja-wrapper.densidad-filas-7 .caja-contenedor input {
-            height: 31px;
-            font-size: clamp(19px, 5.6vw, 23px);
-        }
-
-        /* 8 FILAS ACTIVAS (16 cuadros en una página) -> #panelFinal mantiene tamaño mínimo y cuadros ultra compactos */
-        .caja-wrapper.densidad-filas-8 .panel-total {
-            padding: 2.5px 8px 2.5px 6px;
-            font-size: 14px;
-        }
-        .caja-wrapper.densidad-filas-8 .panel-total > span:last-child {
-            font-size: clamp(20px, 5.6vw, 25px);
-        }
-        .caja-wrapper.densidad-filas-8 .caja-contenedor {
-            padding: 2.5px 4px 3px 4px;
-            margin-bottom: 2.5px;
-        }
-        .caja-wrapper.densidad-filas-8 .grid-2,
-        .caja-wrapper.densidad-filas-8 .fila-expandible {
-            gap: 2.5px;
-        }
-        .caja-wrapper.densidad-filas-8 .fila-expandible {
-            margin-top: 2.5px;
-        }
-        .caja-wrapper.densidad-filas-8 .caja-contenedor input {
-            height: 26.5px;
-            font-size: clamp(17.5px, 5.2vw, 21px);
-            border-radius: 5px;
-        }
+        /* DE 5 A 8 FILAS ACTIVAS:
+           No se reduce nada. Los cuadros conservan siempre height: 38px y font-size: clamp(21px, 6.2vw, 26px),
+           y #panelFinal conserva su tamaño mínimo original desplazándose hacia abajo naturalmente. */
 
         /* ESTADOS ESTÁTICOS DE ALTO CONTRASTE */
         .estado-esperando { background-color: #ffffff; border-color: #cbd5e1; color: #475569; }
@@ -2307,7 +2238,7 @@
             <div id="listaSubidaMonedas" style="margin-top: 10px;"></div>
         </div>
     </div>
-<!-- ==================== FIN PARTE 1 ==================== -->
+<!-- ==================== FIN PARTE 1 ==================== -->  
     <script>
         /* ===============================================================
            MOTOR 100% LOCAL DE CERO LATENCIA (HOJA 1 MOVIMIENTOS + HOJA 2 CIERRE)
