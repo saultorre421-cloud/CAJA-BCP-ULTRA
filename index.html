@@ -111,6 +111,7 @@
             cursor: pointer;
             touch-action: manipulation;
             gap: 6px;
+            transition: opacity 0.12s ease, box-shadow 0.12s ease;
         }
 
         .panel-title-area {
@@ -194,6 +195,7 @@
             border-right: 2px solid; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.04); 
             position: relative;
+            transition: box-shadow 0.12s ease;
         }
 
         .caja-contenedor.tema-recibo-bg {
@@ -209,6 +211,54 @@
             border-color: var(--retiro-caja-border);
         }
 
+        /* Marca de agua vectorial integrada detrás de los cuadros numéricos */
+        .bloque-watermark {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+            user-select: none;
+        }
+        .bloque-watermark svg {
+            height: 82%;
+            max-height: 115px;
+            width: auto;
+            opacity: 0.22;
+            display: block;
+        }
+        .caja-contenedor.tema-recibo-bg .bloque-watermark {
+            color: #713f12;
+        }
+        .caja-contenedor.tema-deposito-bg .bloque-watermark {
+            color: #115e59;
+        }
+        .caja-contenedor.tema-retiro-bg .bloque-watermark {
+            color: #9f1239;
+        }
+
+        /* Diferenciación tonal sutil y resaltado periférico por foco */
+        #panelModoSecundario.tema-recibo-header {
+            box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.10), 0 2px 4px rgba(0,0,0,0.06);
+        }
+        #panelModoSecundario.tema-deposito-header,
+        #panelModoSecundario.tema-retiro-header {
+            box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.16), 0 2px 4px rgba(0,0,0,0.06);
+        }
+        .caja-wrapper.foco-bloque-superior #panelModoSecundario {
+            opacity: 0.84;
+        }
+        .caja-wrapper.foco-bloque-inferior #panelSuperior {
+            opacity: 0.84;
+        }
+        .caja-wrapper.foco-bloque-superior #cajaSuperiorContenedor,
+        .caja-wrapper.foco-bloque-inferior #cajaInferiorContenedor {
+            box-shadow: 0 3px 9px rgba(15, 23, 42, 0.10);
+        }
+
         .contenedor-deslizable {
             display: flex; 
             align-items: flex-start;
@@ -220,6 +270,8 @@
             -ms-overflow-style: none;
             padding: 1px 0;
             touch-action: pan-x;
+            position: relative;
+            z-index: 1;
         }
         .contenedor-deslizable::-webkit-scrollbar { display: none; }
 
@@ -277,7 +329,7 @@
             box-sizing: border-box; 
             text-align: center; 
             color: #0f172a; 
-            background-color: #ffffff; 
+            background-color: rgba(255, 255, 255, 0.80); 
             box-shadow: 0 1px 2px rgba(0,0,0,0.04); 
             transition: height 0.12s ease;
         }
@@ -287,7 +339,7 @@
         .caja-contenedor input:focus { 
             outline: none; 
             border-color: var(--bcp-orange); 
-            background-color: #ffffff; 
+            background-color: rgba(255, 255, 255, 0.92); 
             box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.22);
         }
         .caja-contenedor input::placeholder { 
@@ -298,19 +350,31 @@
 
         /* ESTILO DE LÍNEA CONTINUA PARA MONTOS PROVENIENTES DE MULTIPLICADOR / MOVIMIENTOS */
         .caja-contenedor input.active-sync {
-            background-color: #fefce8 !important; 
+            background-color: rgba(254, 252, 232, 0.88) !important; 
             border: 2.5px solid #ca8a04 !important; 
             color: #854d0e !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16' fill='none' stroke='%23854d0e' stroke-opacity='0.52' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1.5' y='2' width='21' height='12' rx='2'/%3E%3Ccircle cx='12' cy='8' r='2.6'/%3E%3Cpath d='M5 5.5v5M19 5.5v5'/%3E%3C/svg%3E");
+            background-position: 8px center;
+            background-repeat: no-repeat;
+            background-size: 18px 13px;
         }
         .caja-contenedor input.active-sync-deposito {
-            background-color: #f0fdfa !important; 
+            background-color: rgba(240, 253, 250, 0.88) !important; 
             border: 2.5px solid #0d9488 !important; 
             color: #0f766e !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16' fill='none' stroke='%230f766e' stroke-opacity='0.52' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1.5' y='2' width='21' height='12' rx='2'/%3E%3Ccircle cx='12' cy='8' r='2.6'/%3E%3Cpath d='M5 5.5v5M19 5.5v5'/%3E%3C/svg%3E");
+            background-position: 8px center;
+            background-repeat: no-repeat;
+            background-size: 18px 13px;
         }
         .caja-contenedor input.active-sync-retiro {
-            background-color: #fff1f2 !important; 
+            background-color: rgba(255, 241, 242, 0.88) !important; 
             border: 2.5px solid var(--retiro-header) !important; 
             color: var(--retiro-header) !important;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 16' fill='none' stroke='%23e11d48' stroke-opacity='0.52' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='1.5' y='2' width='21' height='12' rx='2'/%3E%3Ccircle cx='12' cy='8' r='2.6'/%3E%3Cpath d='M5 5.5v5M19 5.5v5'/%3E%3C/svg%3E");
+            background-position: 8px center;
+            background-repeat: no-repeat;
+            background-size: 18px 13px;
         }
 
         /* ===============================================================
@@ -1794,7 +1858,7 @@
                 <!-- BLOQUE SUPERIOR -->
                 <div class="panel-total tema-recibo-header" id="panelSuperior" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="manejarToqueCabeceraCaja(event, 'superior')" ondblclick="manejarDobleClickCabeceraCaja(event, 'superior')">
                     <div class="panel-title-area">
-                        <span id="lblTituloSuperior">EFECTIVO RECIBIDO</span>
+                        <span id="lblTituloSuperior">RECIBO POR PAGAR</span>
                         <div class="header-dots" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
                             <div class="h-dot active" id="dot-sup-1" onclick="scrollPaginacionDirecta('swipeEfectivo', 1)"></div>
                             <div class="h-dot" id="dot-sup-2" onclick="scrollPaginacionDirecta('swipeEfectivo', 2)"></div>
@@ -1804,43 +1868,44 @@
                 </div>
 
                 <div class="caja-contenedor tema-recibo-bg" id="cajaSuperiorContenedor">
+                    <div class="bloque-watermark" id="wmSuperior" aria-hidden="true"></div>
                     <div class="contenedor-deslizable" id="swipeEfectivo" onscroll="handleScrollIndicators('swipeEfectivo', 'dot-sup-1', 'dot-sup-2')">
                         <!-- PÁGINA 1: Hasta 8 cuadros (b1..b8) con expansión predictiva de 2 en 2 -->
                         <div class="pagina-deslizable" id="pagSup1">
                             <div class="grid-2">
-                                <input type="text" id="b1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b2" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b2" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <div class="fila-expandible" id="filaSup2">
-                                <input type="text" id="b3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <div class="fila-expandible" id="filaSup3">
-                                <input type="text" id="b5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <div class="fila-expandible" id="filaSup4">
-                                <input type="text" id="b7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                         </div>
                         <!-- PÁGINA 2: También parte de 2 cuadros en Meta (b9, b10) y expande de 2 en 2 hasta 8 (b9..b16) -->
                         <div class="pagina-deslizable pagina-secundaria pagina-fuera-de-vista" id="pagSup2">
                             <div class="grid-2">
-                                <input type="text" id="b9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b10" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b10" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <div class="fila-expandible" id="filaSupP2_2">
-                                <input type="text" id="b11" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b12" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b11" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b12" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <div class="fila-expandible" id="filaSupP2_3">
-                                <input type="text" id="b13" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b14" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b13" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b14" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <div class="fila-expandible" id="filaSupP2_4">
-                                <input type="text" id="b15" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="b16" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="b15" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
+                                <input type="text" id="b16" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                             <span class="badge-pagina-dos">PÁG. 2</span>
                         </div>
@@ -1850,7 +1915,7 @@
                 <!-- BLOQUE INFERIOR -->
                 <div class="panel-total tema-recibo-header" id="panelModoSecundario" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="manejarToqueCabeceraCaja(event, 'inferior')" ondblclick="manejarDobleClickCabeceraCaja(event, 'inferior')">
                     <div class="panel-title-area">
-                        <span id="lblTituloModo">RECIBO POR PAGAR</span>
+                        <span id="lblTituloModo">EFECTIVO RECIBIDO</span>
                         <div class="header-dots" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation()" ondblclick="event.stopPropagation()">
                             <div class="h-dot active" id="dot-inf-1" onclick="scrollPaginacionDirecta('swipeRecibo', 1)"></div>
                             <div class="h-dot" id="dot-inf-2" onclick="scrollPaginacionDirecta('swipeRecibo', 2)"></div>
@@ -1860,43 +1925,44 @@
                 </div>
 
                 <div class="caja-contenedor tema-recibo-bg" id="cajaInferiorContenedor">
+                    <div class="bloque-watermark" id="wmInferior" aria-hidden="true"></div>
                     <div class="contenedor-deslizable" id="swipeRecibo" onscroll="handleScrollIndicators('swipeRecibo', 'dot-inf-1', 'dot-inf-2')">
                         <!-- PÁGINA 1: Hasta 8 cuadros (p1..p8) con expansión predictiva de 2 en 2 -->
                         <div class="pagina-deslizable" id="pagInf1">
                             <div class="grid-2">
-                                <input type="text" id="p1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p2" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p1" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p2" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <div class="fila-expandible" id="filaInf2">
-                                <input type="text" id="p3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p3" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p4" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <div class="fila-expandible" id="filaInf3">
-                                <input type="text" id="p5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p5" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p6" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <div class="fila-expandible" id="filaInf4">
-                                <input type="text" id="p7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p7" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                         </div>
                         <!-- PÁGINA 2: También parte de 2 cuadros en Meta (p9, p10) y expande de 2 en 2 hasta 8 (p9..p16) -->
                         <div class="pagina-deslizable pagina-secundaria pagina-fuera-de-vista" id="pagInf2">
                             <div class="grid-2">
-                                <input type="text" id="p9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p10" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p10" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <div class="fila-expandible" id="filaInfP2_2">
-                                <input type="text" id="p11" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p12" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p11" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p12" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <div class="fila-expandible" id="filaInfP2_3">
-                                <input type="text" id="p13" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p14" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p13" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p14" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <div class="fila-expandible" id="filaInfP2_4">
-                                <input type="text" id="p15" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
-                                <input type="text" id="p16" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="0.00">
+                                <input type="text" id="p15" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
+                                <input type="text" id="p16" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                             <span class="badge-pagina-dos">PÁG. 2</span>
                         </div>
@@ -2238,7 +2304,7 @@
             <div id="listaSubidaMonedas" style="margin-top: 10px;"></div>
         </div>
     </div>
-<!-- ==================== FIN PARTE 1 ==================== -->  
+
     <script>
         /* ===============================================================
            MOTOR 100% LOCAL DE CERO LATENCIA (HOJA 1 MOVIMIENTOS + HOJA 2 CIERRE)
@@ -2982,6 +3048,17 @@ ${sheetDataXml}
             const blob = generarBlobXlsxReal();
             const nombreArchivo = 'BCP_Caja_y_Cierre.xlsx';
 
+            if (window.AndroidExport && typeof window.AndroidExport.compartirExcelBase64 === 'function') {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const dataUrl = String(reader.result || '');
+                    const base64Data = dataUrl.includes(',') ? dataUrl.split(',')[1] : dataUrl;
+                    window.AndroidExport.compartirExcelBase64(base64Data, nombreArchivo);
+                };
+                reader.readAsDataURL(blob);
+                return;
+            }
+
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -3005,7 +3082,6 @@ ${sheetDataXml}
                 }
             } catch (errShare) {}
         }
-
         /* ===============================================================
            VARIABLES GENERALES DE OPERACIÓN (16 CUADROS POR BLOQUE: PÁG 1 = 8, PÁG 2 = 8)
            =============================================================== */
@@ -3076,7 +3152,7 @@ ${sheetDataXml}
                     cantF1000,
                     inputSistema: document.getElementById('input-sistema') ? document.getElementById('input-sistema').value : ''
                 };
-                localStorage.setItem('bcp_estado_blindado_v4', JSON.stringify(estado));
+                localStorage.setItem('bcp_estado_blindado_v5', JSON.stringify(estado));
             } catch (e) {
                 console.warn('No se pudo guardar estado en localStorage:', e);
             }
@@ -3084,8 +3160,11 @@ ${sheetDataXml}
 
         function restaurarEstadoDesdeStorage() {
             try {
-                const raw = localStorage.getItem('bcp_estado_blindado_v4') || localStorage.getItem('bcp_estado_blindado_v3');
+                const rawV5 = localStorage.getItem('bcp_estado_blindado_v5');
+                const rawLegacy = rawV5 ? null : (localStorage.getItem('bcp_estado_blindado_v4') || localStorage.getItem('bcp_estado_blindado_v3'));
+                const raw = rawV5 || rawLegacy;
                 if (!raw) return;
+                const esMigracionLegacy = !rawV5 && !!rawLegacy;
                 const est = JSON.parse(raw);
                 if (est.modoOperacion) modoOperacion = est.modoOperacion;
                 if (est.datosSuperior) {
@@ -3106,7 +3185,29 @@ ${sheetDataXml}
                         }
                     });
                 }
-                if (est.cuadroVinculado) cuadroVinculado = est.cuadroVinculado;
+                if (esMigracionLegacy) {
+                    const supReciboPrevio = {};
+                    const infReciboPrevio = {};
+                    let tieneDatosRecibo = false;
+                    for (let i = 1; i <= TOTAL_CUADROS_POR_BLOQUE; i++) {
+                        supReciboPrevio[i] = datosSuperior.recibo['b' + i] || '';
+                        infReciboPrevio[i] = datosInferior.recibo['p' + i] || '';
+                        if (supReciboPrevio[i] !== '' || infReciboPrevio[i] !== '') tieneDatosRecibo = true;
+                    }
+                    if (tieneDatosRecibo) {
+                        for (let i = 1; i <= TOTAL_CUADROS_POR_BLOQUE; i++) {
+                            datosSuperior.recibo['b' + i] = infReciboPrevio[i];
+                            datosInferior.recibo['p' + i] = supReciboPrevio[i];
+                        }
+                    }
+                }
+                if (est.cuadroVinculado) {
+                    if (esMigracionLegacy && String(est.cuadroVinculado).startsWith('b')) {
+                        cuadroVinculado = null;
+                    } else {
+                        cuadroVinculado = est.cuadroVinculado;
+                    }
+                }
                 if (est.billetesCaja) billetesCaja = est.billetesCaja;
                 if (est.monedasCaja) monedasCaja = est.monedasCaja;
                 if (est.billetesCierre) billetesCierre = est.billetesCierre;
@@ -3119,6 +3220,9 @@ ${sheetDataXml}
                 if (est.inputSistema !== undefined) {
                     const elSis = document.getElementById('input-sistema');
                     if (elSis) elSis.value = est.inputSistema;
+                }
+                if (esMigracionLegacy) {
+                    guardarEstadoEnStorage();
                 }
             } catch (e) {
                 console.warn('Error restaurando estado:', e);
@@ -3346,11 +3450,7 @@ ${sheetDataXml}
             if (ahora - timestampUltimoBorradoCabecera < 280) return;
             timestampUltimoBorradoCabecera = ahora;
 
-            const esPanelMeta = (
-                (modoOperacion === 'deposito' && ubicacion === 'superior') ||
-                (modoOperacion === 'retiro' && ubicacion === 'superior') ||
-                (modoOperacion === 'recibo' && ubicacion === 'inferior')
-            );
+            const esPanelMeta = (ubicacion === 'superior');
 
             const badge = document.getElementById('badgeOperacion');
 
@@ -3364,7 +3464,7 @@ ${sheetDataXml}
                 }, 650);
             } else {
                 vibrarRapido([14, 20]);
-                limpiarSoloPanelEfectivoCaja(ubicacion);
+                limpiarSoloPanelEfectivoCaja('inferior');
                 if (badge) badge.innerText = "🧹 EFECTIVO LIMPIO (META INTACTA)";
                 setTimeout(() => {
                     actualizarEstiloVisualModo();
@@ -3470,6 +3570,39 @@ ${sheetDataXml}
             }
         }
 
+        function obtenerTotalMultiplicadorCajaCentimos() {
+            let total = 0;
+            denominacionesBilletes.forEach(d => {
+                total += Math.round(d * 100) * (billetesCaja[d] || 0);
+            });
+            denominacionesMonedas.forEach(d => {
+                total += Math.round(d * 100) * (monedasCaja[d] || 0);
+            });
+            return total;
+        }
+
+        function enfocarPrimerInputLibreEfectivoCaja() {
+            const inputsEfectivo = document.querySelectorAll('#swipeRecibo input:not([readonly])');
+            for (let i = 0; i < inputsEfectivo.length; i++) {
+                const inp = inputsEfectivo[i];
+                if (inp.offsetParent !== null && (inp.value.trim() === '' || inp.value.trim() === '0')) {
+                    inp.focus({ preventScroll: true });
+                    ultimoInputCajaActivo = inp.id;
+                    actualizarResaltadoFocoCaja(inp);
+                    return;
+                }
+            }
+            for (let i = 0; i < inputsEfectivo.length; i++) {
+                const inp = inputsEfectivo[i];
+                if (inp.offsetParent !== null) {
+                    inp.focus({ preventScroll: true });
+                    ultimoInputCajaActivo = inp.id;
+                    actualizarResaltadoFocoCaja(inp);
+                    return;
+                }
+            }
+        }
+
         function alternarConMultiplicador() {
             if (document.getElementById('app-hojas').classList.contains('active-app')) {
                 irDirectoACajaPrincipal();
@@ -3485,8 +3618,15 @@ ${sheetDataXml}
                 enfocarSiguienteInputVisible(tabTarget);
             } else {
                 if (contextoPrincipal === 'caja') {
+                    const hayEfectivoEnMultiplicador =
+                        (obtenerTotalMultiplicadorCajaCentimos() > 0) ||
+                        (cuadroVinculado && cuadroVinculado.startsWith('p'));
                     switchMainApp('app-caja');
-                    enfocarSiguienteInputVisible('app-caja');
+                    if (hayEfectivoEnMultiplicador) {
+                        enfocarPrimerInputLibreEfectivoCaja();
+                    } else {
+                        enfocarSiguienteInputVisible('app-caja');
+                    }
                 } else {
                     switchMainApp('app-cierre');
                     enfocarSiguienteInputVisible('app-cierre');
@@ -3619,7 +3759,7 @@ ${sheetDataXml}
             let montoOp = 0;
             if (modo === 'recibo') {
                 detalleOp = 'PAGO SERVICIO';
-                montoOp = (centInf > 0 ? centInf : centSup) / 100;
+                montoOp = (centSup > 0 ? centSup : centInf) / 100;
             } else if (modo === 'deposito') {
                 detalleOp = 'DEPÓSITO';
                 montoOp = (centSup > 0 ? centSup : centInf) / 100;
@@ -3650,10 +3790,9 @@ ${sheetDataXml}
         }
 
         function actualizarExpansionInteligenteBloques() {
-            // En Servicio ('recibo'): Superior es Efectivo (parte de 4) e Inferior es Meta (parte de 2).
-            // En Depósito y Retiro: Superior es Meta (parte de 2) e Inferior es Efectivo (parte de 4).
-            const esSupEfectivo = (modoOperacion === 'recibo');
-            const esInfEfectivo = (modoOperacion !== 'recibo');
+            // Unificación estructural en los 3 modos: Superior SIEMPRE es Meta (parte de 2) e Inferior SIEMPRE es Efectivo (parte de 4).
+            const esSupEfectivo = false;
+            const esInfEfectivo = true;
 
             // --- BLOQUE SUPERIOR PÁGINA 1 (b1..b8) ---
             const sup1a2Llenos = ['b1', 'b2'].every(tieneTextoInput);
@@ -3760,8 +3899,23 @@ ${sheetDataXml}
             }
         }
 
+        function actualizarResaltadoFocoCaja(input) {
+            const wrapper = document.getElementById('cajaWrapperPrincipal');
+            if (!wrapper || !input || !input.id) return;
+            if (input.id.startsWith('b')) {
+                wrapper.classList.add('foco-bloque-superior');
+                wrapper.classList.remove('foco-bloque-inferior');
+            } else if (input.id.startsWith('p')) {
+                wrapper.classList.add('foco-bloque-inferior');
+                wrapper.classList.remove('foco-bloque-superior');
+            }
+        }
+
         function registrarFocoCaja(input) {
-            if (input && !input.readOnly) ultimoInputCajaActivo = input.id;
+            if (input) {
+                actualizarResaltadoFocoCaja(input);
+                if (!input.readOnly) ultimoInputCajaActivo = input.id;
+            }
         }
 
         function registrarFocoCierre(input) {
@@ -3791,6 +3945,13 @@ ${sheetDataXml}
             actualizarIndicadoresColaEnBotonesModo();
         }
 
+        const WATERMARK_SVGS = {
+            efectivo: `<svg viewBox="0 0 128 82" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><rect x="18" y="8" width="96" height="50" rx="8" fill="currentColor" fill-opacity="0.14" stroke-opacity="0.6"/><rect x="10" y="16" width="96" height="50" rx="8" fill="currentColor" fill-opacity="0.18" stroke-opacity="0.8"/><rect x="4" y="24" width="96" height="50" rx="8" fill="currentColor" fill-opacity="0.22"/><circle cx="52" cy="49" r="13"/><path d="M52 40v18M48.5 45.2c0-1.9 1.5-3.1 3.5-3.1s3.5 1.1 3.5 2.8c0 1.8-1.4 2.6-3.5 3.2-2.1.6-3.5 1.4-3.5 3.2 0 1.8 1.5 2.9 3.5 2.9s3.5-1.1 3.5-2.9"/><path d="M16 36v26M88 36v26"/></svg>`,
+            recibo: `<svg viewBox="0 0 88 96" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 10h56a4 4 0 0 1 4 4v72l-10-6-10 6-12-6-12 6-10-6-10 6V14a4 4 0 0 1 4-4Z" fill="currentColor" fill-opacity="0.20"/><line x1="26" y1="28" x2="62" y2="28"/><line x1="26" y1="42" x2="62" y2="42"/><line x1="26" y1="56" x2="48" y2="56"/><line x1="56" y1="56" x2="62" y2="56"/><line x1="26" y1="68" x2="40" y2="68"/></svg>`,
+            deposito: `<svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 58v16a10 10 0 0 0 10 10h44a10 10 0 0 0 10-10V58" fill="currentColor" fill-opacity="0.20"/><path d="M48 12v46"/><path d="M30 40l18 18 18-18"/><line x1="28" y1="72" x2="68" y2="72" stroke-opacity="0.8"/></svg>`,
+            retiro: `<svg viewBox="0 0 96 96" fill="none" stroke="currentColor" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M16 58v16a10 10 0 0 0 10 10h44a10 10 0 0 0 10-10V58" fill="currentColor" fill-opacity="0.20"/><path d="M48 64V18"/><path d="M30 36l18-18 18 18"/><line x1="28" y1="72" x2="68" y2="72" stroke-opacity="0.8"/></svg>`
+        };
+
         function actualizarEstiloVisualModo() {
             const panelSecundario = document.getElementById('panelModoSecundario');
             const tituloSecundario = document.getElementById('lblTituloModo');
@@ -3799,6 +3960,8 @@ ${sheetDataXml}
             const cajaSup = document.getElementById('cajaSuperiorContenedor');
             const cajaInf = document.getElementById('cajaInferiorContenedor');
             const badge = document.getElementById('badgeOperacion');
+            const wmSup = document.getElementById('wmSuperior');
+            const wmInf = document.getElementById('wmInferior');
 
             panelSuperior.className = 'panel-total';
             panelSecundario.className = 'panel-total';
@@ -3809,15 +3972,19 @@ ${sheetDataXml}
             document.getElementById('btn-modo-servicio').classList.remove('active-modo');
             document.getElementById('btn-modo-retiro').classList.remove('active-modo');
 
+            let placeholderSuperior = 'Recibo';
+
             if (modoOperacion === 'recibo') {
                 panelSuperior.classList.add('tema-recibo-header');
-                tituloSuperior.innerText = 'EFECTIVO RECIBIDO';
+                tituloSuperior.innerText = 'RECIBO POR PAGAR';
                 cajaSup.classList.add('tema-recibo-bg');
                 panelSecundario.classList.add('tema-recibo-header');
-                tituloSecundario.innerText = 'RECIBO POR PAGAR';
+                tituloSecundario.innerText = 'EFECTIVO RECIBIDO';
                 cajaInf.classList.add('tema-recibo-bg');
                 badge.innerText = 'PAGO DE SERVICIOS / RECIBO';
                 document.getElementById('btn-modo-servicio').classList.add('active-modo');
+                if (wmSup) wmSup.innerHTML = WATERMARK_SVGS.recibo;
+                placeholderSuperior = 'Recibo';
             } else if (modoOperacion === 'retiro') {
                 panelSuperior.classList.add('tema-retiro-header');
                 tituloSuperior.innerText = 'MONTO POR RETIRAR';
@@ -3827,6 +3994,8 @@ ${sheetDataXml}
                 cajaInf.classList.add('tema-retiro-bg');
                 badge.innerText = 'RETIRO EN EFECTIVO';
                 document.getElementById('btn-modo-retiro').classList.add('active-modo');
+                if (wmSup) wmSup.innerHTML = WATERMARK_SVGS.retiro;
+                placeholderSuperior = 'Retiro';
             } else if (modoOperacion === 'deposito') {
                 panelSuperior.classList.add('tema-deposito-header');
                 tituloSuperior.innerText = 'MONTO A DEPOSITAR';
@@ -3836,6 +4005,18 @@ ${sheetDataXml}
                 cajaInf.classList.add('tema-deposito-bg');
                 badge.innerText = 'DEPÓSITO EN CUENTA';
                 document.getElementById('btn-modo-deposito').classList.add('active-modo');
+                if (wmSup) wmSup.innerHTML = WATERMARK_SVGS.deposito;
+                placeholderSuperior = 'Depósito';
+            }
+
+            if (wmInf && !wmInf.innerHTML) {
+                wmInf.innerHTML = WATERMARK_SVGS.efectivo;
+            }
+            for (let i = 1; i <= TOTAL_CUADROS_POR_BLOQUE; i++) {
+                const elB = document.getElementById('b' + i);
+                if (elB) elB.placeholder = placeholderSuperior;
+                const elP = document.getElementById('p' + i);
+                if (elP) elP.placeholder = 'Efectivo';
             }
             actualizarIndicadoresColaEnBotonesModo();
         }
@@ -3889,11 +4070,10 @@ ${sheetDataXml}
             if (cuadroVinculado) {
                 const el = document.getElementById(cuadroVinculado);
                 if (el) {
-                    const esSecundario = cuadroVinculado.startsWith('p');
-                    if (esSecundario && modoOperacion === 'recibo') return;
-
-                    if (cuadroVinculado.startsWith('p')) {
-                        el.classList.add(modoOperacion === 'deposito' ? 'active-sync-deposito' : 'active-sync-retiro');
+                    if (modoOperacion === 'deposito') {
+                        el.classList.add('active-sync-deposito');
+                    } else if (modoOperacion === 'retiro') {
+                        el.classList.add('active-sync-retiro');
                     } else {
                         el.classList.add('active-sync');
                     }
@@ -3969,31 +4149,33 @@ ${sheetDataXml}
             let estadoClave = '';
 
             if (modoOperacion === 'recibo') {
-                let difCentimos = centimosSuperior - centimosInferior;
                 if (centimosInferior === 0 && centimosSuperior === 0) {
                     panel.className = "panel-resultado estado-esperando";
                     setResultadoPanel('textoFinal', 'montoFinal', 'esperando', "ESPERANDO MONTOS...", "0.00");
                     estadoClave = 'esperando';
-                } else if (centimosInferior === 0 && centimosSuperior > 0) {
+                } else if (centimosSuperior === 0 && centimosInferior > 0) {
                     panel.className = "panel-resultado estado-proceso";
-                    setResultadoPanel('textoFinal', 'montoFinal', 'mano', "EFECTIVO RECIBIDO", formatoSoles(totalSuperior));
+                    setResultadoPanel('textoFinal', 'montoFinal', 'mano', "EFECTIVO RECIBIDO", formatoSoles(totalInferior));
                     estadoClave = 'proceso';
-                } else if (centimosInferior > 0 && centimosSuperior === 0) {
+                } else if (centimosSuperior > 0 && centimosInferior === 0) {
                     panel.className = "panel-resultado estado-cobrar";
-                    setResultadoPanel('textoFinal', 'montoFinal', 'cobrar', "FALTA QUE TE PAGUE", formatoSoles(totalInferior));
+                    setResultadoPanel('textoFinal', 'montoFinal', 'cobrar', "FALTA QUE TE PAGUE", formatoSoles(totalSuperior));
                     estadoClave = 'cobrar';
-                } else if (difCentimos === 0) {
-                    panel.className = "panel-resultado estado-exacto";
-                    setResultadoPanel('textoFinal', 'montoFinal', 'exacto', "PAGO EXACTO CONFORME", formatoSoles(0));
-                    estadoClave = 'exacto';
-                } else if (difCentimos < 0) {
-                    panel.className = "panel-resultado estado-faltante";
-                    setResultadoPanel('textoFinal', 'montoFinal', 'faltante', "FALTA QUE TE PAGUE", formatoSoles(Math.abs(difCentimos) / 100));
-                    estadoClave = 'faltante';
                 } else {
-                    panel.className = "panel-resultado estado-vuelto";
-                    setResultadoPanel('textoFinal', 'montoFinal', 'vuelto', "VUELTO PARA EL CLIENTE", formatoSoles(difCentimos / 100));
-                    estadoClave = 'vuelto';
+                    let difCentimos = centimosInferior - centimosSuperior;
+                    if (difCentimos === 0) {
+                        panel.className = "panel-resultado estado-exacto";
+                        setResultadoPanel('textoFinal', 'montoFinal', 'exacto', "PAGO EXACTO CONFORME", formatoSoles(0));
+                        estadoClave = 'exacto';
+                    } else if (difCentimos < 0) {
+                        panel.className = "panel-resultado estado-faltante";
+                        setResultadoPanel('textoFinal', 'montoFinal', 'faltante', "FALTA QUE TE PAGUE", formatoSoles(Math.abs(difCentimos) / 100));
+                        estadoClave = 'faltante';
+                    } else {
+                        panel.className = "panel-resultado estado-vuelto";
+                        setResultadoPanel('textoFinal', 'montoFinal', 'vuelto', "VUELTO PARA EL CLIENTE", formatoSoles(difCentimos / 100));
+                        estadoClave = 'vuelto';
+                    }
                 }
             } else if (modoOperacion === 'retiro') {
                 if (centimosInferior === 0 && centimosSuperior === 0) {
@@ -4758,7 +4940,7 @@ ${sheetDataXml}
 
             if (contextoPrincipal === 'caja') {
                 if (granTotalNumerico > 0) {
-                    const pref = (modoOperacion === 'retiro' || modoOperacion === 'deposito') ? 'p' : 'b';
+                    const pref = 'p';
                     const listaOpciones = [];
                     for (let i = 1; i <= TOTAL_CUADROS_POR_BLOQUE; i++) {
                         listaOpciones.push(pref + i);
@@ -4787,9 +4969,7 @@ ${sheetDataXml}
                     targetInput.value = granTotalNumerico.toFixed(2);
                     formatInput(targetInput);
 
-                    if (modoOperacion === 'retiro') datosInferior.retiro[cuadroVinculado] = targetInput.value;
-                    else if (modoOperacion === 'deposito') datosInferior.deposito[cuadroVinculado] = targetInput.value;
-                    else datosSuperior.recibo[cuadroVinculado] = targetInput.value;
+                    datosInferior[modoOperacion][cuadroVinculado] = targetInput.value;
 
                     reaplicarEstiloSincronizacion();
                 } else if (cuadroVinculado) {
@@ -4799,9 +4979,9 @@ ${sheetDataXml}
                         targetInput.classList.remove('active-sync', 'active-sync-retiro', 'active-sync-deposito');
                         targetInput.readOnly = false;
                     }
-                    if (modoOperacion === 'retiro') datosInferior.retiro[cuadroVinculado] = '';
-                    else if (modoOperacion === 'deposito') datosInferior.deposito[cuadroVinculado] = '';
-                    else datosSuperior.recibo[cuadroVinculado] = '';
+                    if (datosInferior[modoOperacion] && Object.prototype.hasOwnProperty.call(datosInferior[modoOperacion], cuadroVinculado)) {
+                        datosInferior[modoOperacion][cuadroVinculado] = '';
+                    }
                     cuadroVinculado = null;
                 }
                 calcularTodoCaja();
@@ -4899,21 +5079,24 @@ ${sheetDataXml}
                     const inputRecordado = document.getElementById(ultimoInputCajaActivo);
                     if (inputRecordado && !inputRecordado.readOnly && inputRecordado.offsetParent !== null) {
                         inputRecordado.focus({ preventScroll: true });
+                        actualizarResaltadoFocoCaja(inputRecordado);
                         return;
                     }
                 }
-                let selector = (modoOperacion === 'recibo') ? `#swipeRecibo input:not([readonly])` : `#swipeEfectivo input:not([readonly])`;
+                let selector = `#swipeEfectivo input:not([readonly])`;
                 let inputsPrioridad = document.querySelectorAll(selector);
                 for (let i = 0; i < inputsPrioridad.length; i++) {
                     if (inputsPrioridad[i].offsetParent !== null && (inputsPrioridad[i].value === '' || inputsPrioridad[i].value === '0')) {
                         inputsPrioridad[i].focus({ preventScroll: true });
                         ultimoInputCajaActivo = inputsPrioridad[i].id;
+                        actualizarResaltadoFocoCaja(inputsPrioridad[i]);
                         return;
                     }
                 }
                 if (inputsPrioridad.length > 0) {
                     inputsPrioridad[0].focus({ preventScroll: true });
                     ultimoInputCajaActivo = inputsPrioridad[0].id;
+                    actualizarResaltadoFocoCaja(inputsPrioridad[0]);
                 }
                 return;
             }
