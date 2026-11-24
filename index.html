@@ -479,7 +479,7 @@
         }
 
         /* ===============================================================
-           CRECIMIENTO INTELIGENTE SOLO CUANDO HAY ESPACIO LIBRE (3 O 4 FILAS)
+           CRECIMIENTO INTELIGENTE SOLO CUANDO HAY ESPACIO LIBRE (2, 3 O 4 FILAS)
            A partir de 5 filas hasta 8 filas, todo mantiene su tamaño grande
            original (38px por cuadro y #panelFinal en su mínimo estándar)
            avanzando hacia abajo sin achicar jamás los números ni los cuadros.
@@ -1853,7 +1853,7 @@
          ========================================================= -->
     <div id="app-caja" class="main-app-container active-app">
         <form id="formCaja" onsubmit="ejecutarAccionTecladoCaja(event)" action="javascript:void(0);">
-            <div class="caja-wrapper densidad-filas-3" id="cajaWrapperPrincipal">
+            <div class="caja-wrapper densidad-filas-2" id="cajaWrapperPrincipal">
 
                 <!-- BLOQUE SUPERIOR -->
                 <div class="panel-total tema-recibo-header" id="panelSuperior" onpointerdown="event.preventDefault()" onmousedown="event.preventDefault()" onclick="manejarToqueCabeceraCaja(event, 'superior')" ondblclick="manejarDobleClickCabeceraCaja(event, 'superior')">
@@ -1889,7 +1889,7 @@
                                 <input type="text" id="b8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
                             </div>
                         </div>
-                        <!-- PÁGINA 2: También parte de 2 cuadros en Meta (b9, b10) y expande de 2 en 2 hasta 8 (b9..b16) -->
+                        <!-- PÁGINA 2: Parte de 2 cuadros (b9, b10) y expande de 2 en 2 hasta 8 (b9..b16) -->
                         <div class="pagina-deslizable pagina-secundaria pagina-fuera-de-vista" id="pagSup2">
                             <div class="grid-2">
                                 <input type="text" id="b9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Recibo">
@@ -1946,7 +1946,7 @@
                                 <input type="text" id="p8" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
                             </div>
                         </div>
-                        <!-- PÁGINA 2: También parte de 2 cuadros en Meta (p9, p10) y expande de 2 en 2 hasta 8 (p9..p16) -->
+                        <!-- PÁGINA 2: Parte de 2 cuadros (p9, p10) y expande de 2 en 2 hasta 8 (p9..p16) -->
                         <div class="pagina-deslizable pagina-secundaria pagina-fuera-de-vista" id="pagInf2">
                             <div class="grid-2">
                                 <input type="text" id="p9" inputmode="decimal" enterkeyhint="send" onfocus="registrarFocoCaja(this)" oninput="handleInput(this)" placeholder="Efectivo">
@@ -2999,7 +2999,7 @@ ${sheetDataXml}
             const sheet2Xml = construirXmlHojaExcel(filasH2, [32, 22, 18]);
 
             const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+<Types xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/content-types">
     <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
     <Default Extension="xml" ContentType="application/xml"/>
     <Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>
@@ -3735,9 +3735,9 @@ ${sheetDataXml}
         }
 
         /* ===============================================================
-           EXPANSIÓN PREDICTIVA DIFERENCIADA EN PÁG. 1 Y PÁG. 2 (CERO ESPACIO VACÍO)
-           - META: Parte de 2 cuadros (2 -> 4 -> 6 -> 8) tanto en Pág. 1 como en Pág. 2
-           - EFECTIVO: Parte de 4 cuadros (4 -> 6 -> 8) tanto en Pág. 1 como en Pág. 2
+           EXPANSIÓN PREDICTIVA UNIFICADA EN PÁG. 1 Y PÁG. 2 (CERO ESPACIO VACÍO)
+           - META Y EFECTIVO: Parten siempre de 2 cuadros (2 -> 4 -> 6 -> 8)
+             en todos los modos (Depósito, Servicio y Retiro), tanto en Pág. 1 como en Pág. 2
            =============================================================== */
         function parseValorCentimosDeTexto(str) {
             if (!str) return 0;
@@ -3790,9 +3790,9 @@ ${sheetDataXml}
         }
 
         function actualizarExpansionInteligenteBloques() {
-            // Unificación estructural en los 3 modos: Superior SIEMPRE es Meta (parte de 2) e Inferior SIEMPRE es Efectivo (parte de 4).
+            // Unificación estructural en los 3 modos: Superior (Meta) e Inferior (Efectivo) parten SIEMPRE de 2 cuadros.
             const esSupEfectivo = false;
-            const esInfEfectivo = true;
+            const esInfEfectivo = false;
 
             // --- BLOQUE SUPERIOR PÁGINA 1 (b1..b8) ---
             const sup1a2Llenos = ['b1', 'b2'].every(tieneTextoInput);
@@ -3811,7 +3811,7 @@ ${sheetDataXml}
             document.getElementById('filaSup3').classList.toggle('activa', actFilaSup3);
             document.getElementById('filaSup4').classList.toggle('activa', actFilaSup4);
 
-            // --- BLOQUE SUPERIOR PÁGINA 2 (b9..b16: parte de 2 en Meta y de 4 en Efectivo) ---
+            // --- BLOQUE SUPERIOR PÁGINA 2 (b9..b16: parte de 2 cuadros) ---
             const sup9a10Llenos = ['b9', 'b10'].every(tieneTextoInput);
             const sup11a16ConDato = ['b11', 'b12', 'b13', 'b14', 'b15', 'b16'].some(tieneTextoInput);
             const actFilaSupP2_2 = esSupEfectivo || sup9a10Llenos || sup11a16ConDato;
@@ -3828,7 +3828,7 @@ ${sheetDataXml}
             document.getElementById('filaSupP2_3').classList.toggle('activa', actFilaSupP2_3);
             document.getElementById('filaSupP2_4').classList.toggle('activa', actFilaSupP2_4);
 
-            // --- BLOQUE INFERIOR PÁGINA 1 (p1..p8) ---
+            // --- BLOQUE INFERIOR PÁGINA 1 (p1..p8: parte de 2 cuadros) ---
             const inf1a2Llenos = ['p1', 'p2'].every(tieneTextoInput);
             const inf3a8ConDato = ['p3', 'p4', 'p5', 'p6', 'p7', 'p8'].some(tieneTextoInput);
             const actFilaInf2 = esInfEfectivo || inf1a2Llenos || inf3a8ConDato;
@@ -3845,7 +3845,7 @@ ${sheetDataXml}
             document.getElementById('filaInf3').classList.toggle('activa', actFilaInf3);
             document.getElementById('filaInf4').classList.toggle('activa', actFilaInf4);
 
-            // --- BLOQUE INFERIOR PÁGINA 2 (p9..p16: parte de 2 en Meta y de 4 en Efectivo) ---
+            // --- BLOQUE INFERIOR PÁGINA 2 (p9..p16: parte de 2 cuadros) ---
             const inf9a10Llenos = ['p9', 'p10'].every(tieneTextoInput);
             const inf11a16ConDato = ['p11', 'p12', 'p13', 'p14', 'p15', 'p16'].some(tieneTextoInput);
             const actFilaInfP2_2 = esInfEfectivo || inf9a10Llenos || inf11a16ConDato;
